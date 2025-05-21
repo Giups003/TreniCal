@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.unical.trenical.client.gui.controller.SearchTrainsController">
+    <top>
+        <Label text="Ricerca treni" style="-fx-font-size: 20px; -fx-padding: 10px;"/>
+    </top>
+    <center>
+        <VBox alignment="CENTER" spacing="12">
+            <HBox spacing="10" alignment="CENTER">
+                <Label text="Stazione partenza:"/>
+                <TextField fx:id="departureField" promptText="Inserisci stazione di partenza"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER">
+                <Label text="Stazione arrivo:"/>
+                <TextField fx:id="arrivalField" promptText="Inserisci stazione di arrivo"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER">
+                <Label text="Data:"/>
+                <DatePicker fx:id="datePicker"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER">
+                <Label text="Preferenze:"/>
+                <ComboBox fx:id="trainTypeBox" promptText="Tipo treno"/>
+                <ComboBox fx:id="classBox" promptText="Classe"/>
+            </HBox>
+            <Button text="Cerca" onAction="#onSearch"/>
+        </VBox>
+    </center>
+    <bottom>
+        <VBox alignment="CENTER" spacing="8" style="-fx-padding: 10;">
+            <TableView fx:id="resultsTable" prefHeight="180">
+                <columns>
+                    <TableColumn text="Treno" fx:id="colTrain"/>
+                    <TableColumn text="Partenza" fx:id="colDeparture"/>
+                    <TableColumn text="Arrivo" fx:id="colArrival"/>
+                    <TableColumn text="Ora" fx:id="colTime"/>
+                    <TableColumn text="Posti disp." fx:id="colSeats"/>
+                </columns>
+            </TableView>
+            <Button text="Torna al menu" onAction="#onBackToDashboard"/>
+        </VBox>
+    </bottom>
+</BorderPane>

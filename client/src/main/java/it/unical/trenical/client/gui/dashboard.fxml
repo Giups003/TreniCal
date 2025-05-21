@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.unical.trenical.client.gui.controller.DashboardController">
+    <top>
+        <Label text="Benvenuto su TreniCal!" style="-fx-font-size: 22px; -fx-padding: 15px;"/>
+    </top>
+    <center>
+        <VBox alignment="CENTER" spacing="18">
+            <Button text="Ricerca treni" fx:id="searchTrainsButton" onAction="#onSearchTrains"/>
+            <Button text="Acquista biglietto" fx:id="buyTicketButton" onAction="#onBuyTicket"/>
+            <Button text="I miei biglietti" fx:id="myTicketsButton" onAction="#onMyTickets"/>
+            <Button text="Logout" fx:id="logoutButton" onAction="#onLogout"/>
+        </VBox>
+    </center>
+</BorderPane>

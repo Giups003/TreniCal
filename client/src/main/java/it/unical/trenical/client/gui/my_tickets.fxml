@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.unical.trenical.client.gui.controller.MyTicketsController"
+      alignment="CENTER" spacing="16" style="-fx-padding: 16;">
+    <Label text="I miei biglietti" style="-fx-font-size: 20px;"/>
+    <TableView fx:id="ticketsTable" prefHeight="240">
+        <columns>
+            <TableColumn text="Treno" fx:id="colTrain"/>
+            <TableColumn text="Data" fx:id="colDate"/>
+            <TableColumn text="Orario" fx:id="colTime"/>
+            <TableColumn text="Classe" fx:id="colClass"/>
+            <TableColumn text="Posti" fx:id="colSeats"/>
+            <TableColumn text="Stato" fx:id="colStatus"/>
+        </columns>
+    </TableView>
+    <HBox spacing="12" alignment="CENTER">
+        <Button text="Modifica" onAction="#onModify"/>
+        <Button text="Annulla" onAction="#onCancel"/>
+        <Button text="Torna al menu" onAction="#onBack"/>
+    </HBox>
+</VBox>
