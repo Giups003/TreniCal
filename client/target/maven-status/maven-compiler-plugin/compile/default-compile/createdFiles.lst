@@ -1,3 +1,4 @@
 it\unical\trenical\client\TicketClient.class
 it\unical\trenical\client\TrainClient.class
 it\unical\trenical\client\ClientMain.class
+it\unical\trenical\client\gui\MainWindow.class
