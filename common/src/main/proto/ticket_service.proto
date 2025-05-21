@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package trenical.ticket;
+
+option java_multiple_files = true;
+option java_package = "it.unical.trenical.grpc.ticket";
+option java_outer_classname = "TicketServiceProto";
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Servizio per la gestione dei biglietti
+service TicketService {
+  // Acquisto biglietti
+  rpc PurchaseTicket(PurchaseTicketRequest) returns (PurchaseTicketResponse);
+
+  // Modifica biglietto
+  rpc ModifyTicket(ModifyTicketRequest) returns (OperationResponse);
+}
+
+// Utilizziamo il messaggio Ticket definito in common.proto
+
+// Richiesta per l'acquisto di un biglietto
+message PurchaseTicketRequest {
+  string train_id = 1;
+  string passenger_name = 2;
+  string departure_station = 3;
+  string arrival_station = 4;
+  google.protobuf.Timestamp travel_date = 5; // Formato:
+  string service_class = 6; // Es: "Prima Classe", "Economy"
+  string promo_code = 7; // Codice promozionale opzionale
+}
+
+// Risposta per l'acquisto di un biglietto
+message PurchaseTicketResponse {
+  bool success = 1;
+  string ticket_id = 2; // ID univoco del biglietto acquistato
+  string message = 3; // Messaggio di conferma o errore
+  double price = 4; // Prezzo calcolato del biglietto
+  trenical.common.Ticket ticket = 5; // Dettagli del biglietto acquistato
+}
+
+// Richiesta per la modifica di un biglietto
+message ModifyTicketRequest {
+  string ticket_id = 1; // ID del biglietto da modificare
+  google.protobuf.Timestamp new_date = 2; // Nuova data di viaggio (opzionale)
+  google.protobuf.Timestamp new_time = 3; // Nuovo orario (opzionale)
+  string new_service_class = 4; // Nuova classe di servizio (opzionale)
+}
+
+// Risposta generica per le operazioni
+message OperationResponse {
+  bool success = 1; // Indica se l'operazione è andata a buon fine
+  string message = 2; // Messaggio di conferma o errore
+}
+
+

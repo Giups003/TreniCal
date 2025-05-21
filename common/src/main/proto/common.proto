@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package trenical.common;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "it.unical.trenical.grpc.common";
+option java_outer_classname = "CommonProto";
+
+// Messaggio per i dettagli del treno
+message Train {
+  int32 id = 1;
+  string name = 2;
+  string departure_station = 3;
+  string arrival_station = 4;
+  google.protobuf.Timestamp departure_time = 5; // Data e ora di partenza come timestamp
+  google.protobuf.Timestamp arrival_time = 6; // Data e ora di arrivo come timestamp
+}
+
+// Messaggio per i dettagli del biglietto
+message Ticket {
+  string id = 1; // ID univoco del biglietto
+  string train_id = 2; // ID del treno
+  string passenger_name = 3; // Nome del passeggero
+  string departure_station = 4; // Stazione di partenza
+  string arrival_station = 5; // Stazione di arrivo
+  google.protobuf.Timestamp travel_date = 6; // Data di viaggio come timestamp
+  string service_class = 7; // Classe di servizio (es: "Prima Classe", "Economy")
+  double price = 8; // Prezzo del biglietto
+}
