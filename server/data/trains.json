@@ -1,0 +1,13 @@
+[{"id": 1, "departureStation": "Roma Termini", "arrivalStation": "Milano Centrale", "departureTime": "2025-06-01T07:00:00Z", "arrivalTime": "2025-06-01T10:00:00Z"},
+  {"id": 2, "departureStation": "Milano Centrale", "arrivalStation": "Napoli Centrale", "departureTime": "2025-06-01T11:00:00Z", "arrivalTime": "2025-06-01T15:00:00Z"},
+  {"id": 3, "departureStation": "Napoli Centrale", "arrivalStation": "Reggio Calabria Centrale", "departureTime": "2025-06-01T16:00:00Z", "arrivalTime": "2025-06-01T21:00:00Z"},
+  {"id": 4, "departureStation": "Reggio Calabria Centrale", "arrivalStation": "Lamezia Terme Centrale", "departureTime": "2025-06-01T22:00:00Z", "arrivalTime": "2025-06-01T23:30:00Z"},
+  {"id": 5, "departureStation": "Lamezia Terme Centrale", "arrivalStation": "Cosenza", "departureTime": "2025-06-02T06:00:00Z", "arrivalTime": "2025-06-02T07:00:00Z"},
+  {"id": 6, "departureStation": "Cosenza", "arrivalStation": "Sibari", "departureTime": "2025-06-02T08:00:00Z", "arrivalTime": "2025-06-02T09:00:00Z"},
+  {"id": 7, "departureStation": "Catanzaro Lido", "arrivalStation": "Crotone", "departureTime": "2025-06-02T10:00:00Z", "arrivalTime": "2025-06-02T11:00:00Z"},
+  {"id": 8, "departureStation": "Vibo Valentia-Pizzo", "arrivalStation": "Paola", "departureTime": "2025-06-02T12:00:00Z", "arrivalTime": "2025-06-02T13:00:00Z"},
+  {"id": 9, "departureStation": "Villa San Giovanni", "arrivalStation": "Gioia Tauro", "departureTime": "2025-06-02T14:00:00Z", "arrivalTime": "2025-06-02T14:30:00Z"},
+  {"id": 10, "departureStation": "Rosarno", "arrivalStation": "Locri", "departureTime": "2025-06-02T15:00:00Z", "arrivalTime": "2025-06-02T16:00:00Z"}
+]
+
+

@@ -1,0 +1,11 @@
+[{
+  "id": "TICKET-1",
+  "trainId": 1,
+  "passengerName": "Mario Rossi",
+  "seat": "12A"
+},{
+  "id": "TICKET-2",
+  "trainId": 2,
+  "passengerName": "Giulia Bianchi",
+  "seat": "8B"
+}]
