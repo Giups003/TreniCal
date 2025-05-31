@@ -7,7 +7,7 @@
       fx:controller="it.unical.trenical.client.gui.controller.MyTicketsController"
       alignment="CENTER" spacing="16" style="-fx-padding: 16;">
     <Label text="I miei biglietti" style="-fx-font-size: 20px;"/>
-    <TableView fx:id="ticketsTable" prefHeight="240">
+    <TableView fx:id="ticketsTable" prefHeight="320" minHeight="220" maxHeight="400" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn text="Treno" fx:id="colTrain"/>
             <TableColumn text="Data" fx:id="colDate"/>

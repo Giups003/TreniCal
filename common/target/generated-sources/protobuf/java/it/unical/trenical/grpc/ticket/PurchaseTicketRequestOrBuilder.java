@@ -8,16 +8,14 @@ public interface PurchaseTicketRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string train_id = 1;</code>
+   * <pre>
+   * Cambiato da string a int32
+   * </pre>
+   *
+   * <code>int32 train_id = 1;</code>
    * @return The trainId.
    */
-  java.lang.String getTrainId();
-  /**
-   * <code>string train_id = 1;</code>
-   * @return The bytes for trainId.
-   */
-  com.google.protobuf.ByteString
-      getTrainIdBytes();
+  int getTrainId();
 
   /**
    * <code>string passenger_name = 2;</code>
@@ -56,28 +54,16 @@ public interface PurchaseTicketRequestOrBuilder extends
       getArrivalStationBytes();
 
   /**
-   * <pre>
-   * Formato:
-   * </pre>
-   *
    * <code>.google.protobuf.Timestamp travel_date = 5;</code>
    * @return Whether the travelDate field is set.
    */
   boolean hasTravelDate();
   /**
-   * <pre>
-   * Formato:
-   * </pre>
-   *
    * <code>.google.protobuf.Timestamp travel_date = 5;</code>
    * @return The travelDate.
    */
   com.google.protobuf.Timestamp getTravelDate();
   /**
-   * <pre>
-   * Formato:
-   * </pre>
-   *
    * <code>.google.protobuf.Timestamp travel_date = 5;</code>
    */
   com.google.protobuf.TimestampOrBuilder getTravelDateOrBuilder();
@@ -121,4 +107,30 @@ public interface PurchaseTicketRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPromoCodeBytes();
+
+  /**
+   * <pre>
+   * Es: "Carta di Credito", "PayPal"
+   * </pre>
+   *
+   * <code>string payment_method = 8;</code>
+   * @return The paymentMethod.
+   */
+  java.lang.String getPaymentMethod();
+  /**
+   * <pre>
+   * Es: "Carta di Credito", "PayPal"
+   * </pre>
+   *
+   * <code>string payment_method = 8;</code>
+   * @return The bytes for paymentMethod.
+   */
+  com.google.protobuf.ByteString
+      getPaymentMethodBytes();
+
+  /**
+   * <code>int32 seats = 9;</code>
+   * @return The seats.
+   */
+  int getSeats();
 }

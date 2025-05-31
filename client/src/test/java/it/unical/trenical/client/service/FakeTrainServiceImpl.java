@@ -1,9 +1,7 @@
 package it.unical.trenical.client.service;
 
 import com.google.protobuf.Timestamp;
-import it.unical.trenical.grpc.train.TrainServiceGrpc;
-import it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest;
-import it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse;
+import it.unical.trenical.grpc.train.*;
 import it.unical.trenical.grpc.common.Train;
 import io.grpc.stub.StreamObserver;
 

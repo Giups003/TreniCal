@@ -29,23 +29,13 @@ public interface TicketOrBuilder extends
 
   /**
    * <pre>
-   * ID del treno
+   * ID del treno cambiato da string a int32
    * </pre>
    *
-   * <code>string train_id = 2;</code>
+   * <code>int32 train_id = 2;</code>
    * @return The trainId.
    */
-  java.lang.String getTrainId();
-  /**
-   * <pre>
-   * ID del treno
-   * </pre>
-   *
-   * <code>string train_id = 2;</code>
-   * @return The bytes for trainId.
-   */
-  com.google.protobuf.ByteString
-      getTrainIdBytes();
+  int getTrainId();
 
   /**
    * <pre>
@@ -163,4 +153,44 @@ public interface TicketOrBuilder extends
    * @return The price.
    */
   double getPrice();
+
+  /**
+   * <pre>
+   * Numero del posto assegnato (ora string)
+   * </pre>
+   *
+   * <code>string seat = 9;</code>
+   * @return The seat.
+   */
+  java.lang.String getSeat();
+  /**
+   * <pre>
+   * Numero del posto assegnato (ora string)
+   * </pre>
+   *
+   * <code>string seat = 9;</code>
+   * @return The bytes for seat.
+   */
+  com.google.protobuf.ByteString
+      getSeatBytes();
+
+  /**
+   * <pre>
+   * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+   * </pre>
+   *
+   * <code>string status = 10;</code>
+   * @return The status.
+   */
+  java.lang.String getStatus();
+  /**
+   * <pre>
+   * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+   * </pre>
+   *
+   * <code>string status = 10;</code>
+   * @return The bytes for status.
+   */
+  com.google.protobuf.ByteString
+      getStatusBytes();
 }

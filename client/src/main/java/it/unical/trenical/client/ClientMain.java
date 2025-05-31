@@ -102,7 +102,7 @@ public class ClientMain {
         System.out.println("\n=== Acquisto Biglietto ===");
 
         System.out.print("ID Treno: ");
-        String trainId = scanner.nextLine();
+        int trainId = scanner.nextInt();
 
         System.out.print("Nome Passeggero: ");
         String passengerName = scanner.nextLine();

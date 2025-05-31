@@ -20,12 +20,12 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private PurchaseTicketRequest() {
-    trainId_ = "";
     passengerName_ = "";
     departureStation_ = "";
     arrivalStation_ = "";
     serviceClass_ = "";
     promoCode_ = "";
+    paymentMethod_ = "";
   }
 
   @java.lang.Override
@@ -50,42 +50,18 @@ private static final long serialVersionUID = 0L;
 
   private int bitField0_;
   public static final int TRAIN_ID_FIELD_NUMBER = 1;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object trainId_ = "";
+  private int trainId_ = 0;
   /**
-   * <code>string train_id = 1;</code>
+   * <pre>
+   * Cambiato da string a int32
+   * </pre>
+   *
+   * <code>int32 train_id = 1;</code>
    * @return The trainId.
    */
   @java.lang.Override
-  public java.lang.String getTrainId() {
-    java.lang.Object ref = trainId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      trainId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string train_id = 1;</code>
-   * @return The bytes for trainId.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getTrainIdBytes() {
-    java.lang.Object ref = trainId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      trainId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public int getTrainId() {
+    return trainId_;
   }
 
   public static final int PASSENGER_NAME_FIELD_NUMBER = 2;
@@ -208,10 +184,6 @@ private static final long serialVersionUID = 0L;
   public static final int TRAVEL_DATE_FIELD_NUMBER = 5;
   private com.google.protobuf.Timestamp travelDate_;
   /**
-   * <pre>
-   * Formato:
-   * </pre>
-   *
    * <code>.google.protobuf.Timestamp travel_date = 5;</code>
    * @return Whether the travelDate field is set.
    */
@@ -220,10 +192,6 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000001) != 0);
   }
   /**
-   * <pre>
-   * Formato:
-   * </pre>
-   *
    * <code>.google.protobuf.Timestamp travel_date = 5;</code>
    * @return The travelDate.
    */
@@ -232,10 +200,6 @@ private static final long serialVersionUID = 0L;
     return travelDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : travelDate_;
   }
   /**
-   * <pre>
-   * Formato:
-   * </pre>
-   *
    * <code>.google.protobuf.Timestamp travel_date = 5;</code>
    */
   @java.lang.Override
@@ -337,6 +301,64 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int PAYMENT_METHOD_FIELD_NUMBER = 8;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object paymentMethod_ = "";
+  /**
+   * <pre>
+   * Es: "Carta di Credito", "PayPal"
+   * </pre>
+   *
+   * <code>string payment_method = 8;</code>
+   * @return The paymentMethod.
+   */
+  @java.lang.Override
+  public java.lang.String getPaymentMethod() {
+    java.lang.Object ref = paymentMethod_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      paymentMethod_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Es: "Carta di Credito", "PayPal"
+   * </pre>
+   *
+   * <code>string payment_method = 8;</code>
+   * @return The bytes for paymentMethod.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPaymentMethodBytes() {
+    java.lang.Object ref = paymentMethod_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      paymentMethod_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int SEATS_FIELD_NUMBER = 9;
+  private int seats_ = 0;
+  /**
+   * <code>int32 seats = 9;</code>
+   * @return The seats.
+   */
+  @java.lang.Override
+  public int getSeats() {
+    return seats_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -351,8 +373,8 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(trainId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, trainId_);
+    if (trainId_ != 0) {
+      output.writeInt32(1, trainId_);
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(passengerName_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, passengerName_);
@@ -372,6 +394,12 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(promoCode_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, promoCode_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(paymentMethod_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 8, paymentMethod_);
+    }
+    if (seats_ != 0) {
+      output.writeInt32(9, seats_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -381,8 +409,9 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(trainId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, trainId_);
+    if (trainId_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(1, trainId_);
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(passengerName_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, passengerName_);
@@ -403,6 +432,13 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(promoCode_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, promoCode_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(paymentMethod_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, paymentMethod_);
+    }
+    if (seats_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(9, seats_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -418,8 +454,8 @@ private static final long serialVersionUID = 0L;
     }
     it.unical.trenical.grpc.ticket.PurchaseTicketRequest other = (it.unical.trenical.grpc.ticket.PurchaseTicketRequest) obj;
 
-    if (!getTrainId()
-        .equals(other.getTrainId())) return false;
+    if (getTrainId()
+        != other.getTrainId()) return false;
     if (!getPassengerName()
         .equals(other.getPassengerName())) return false;
     if (!getDepartureStation()
@@ -435,6 +471,10 @@ private static final long serialVersionUID = 0L;
         .equals(other.getServiceClass())) return false;
     if (!getPromoCode()
         .equals(other.getPromoCode())) return false;
+    if (!getPaymentMethod()
+        .equals(other.getPaymentMethod())) return false;
+    if (getSeats()
+        != other.getSeats()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -447,7 +487,7 @@ private static final long serialVersionUID = 0L;
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + TRAIN_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getTrainId().hashCode();
+    hash = (53 * hash) + getTrainId();
     hash = (37 * hash) + PASSENGER_NAME_FIELD_NUMBER;
     hash = (53 * hash) + getPassengerName().hashCode();
     hash = (37 * hash) + DEPARTURE_STATION_FIELD_NUMBER;
@@ -462,6 +502,10 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getServiceClass().hashCode();
     hash = (37 * hash) + PROMO_CODE_FIELD_NUMBER;
     hash = (53 * hash) + getPromoCode().hashCode();
+    hash = (37 * hash) + PAYMENT_METHOD_FIELD_NUMBER;
+    hash = (53 * hash) + getPaymentMethod().hashCode();
+    hash = (37 * hash) + SEATS_FIELD_NUMBER;
+    hash = (53 * hash) + getSeats();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -603,7 +647,7 @@ private static final long serialVersionUID = 0L;
     public Builder clear() {
       super.clear();
       bitField0_ = 0;
-      trainId_ = "";
+      trainId_ = 0;
       passengerName_ = "";
       departureStation_ = "";
       arrivalStation_ = "";
@@ -614,6 +658,8 @@ private static final long serialVersionUID = 0L;
       }
       serviceClass_ = "";
       promoCode_ = "";
+      paymentMethod_ = "";
+      seats_ = 0;
       return this;
     }
 
@@ -672,6 +718,12 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000040) != 0)) {
         result.promoCode_ = promoCode_;
       }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.paymentMethod_ = paymentMethod_;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.seats_ = seats_;
+      }
       result.bitField0_ |= to_bitField0_;
     }
 
@@ -719,10 +771,8 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(it.unical.trenical.grpc.ticket.PurchaseTicketRequest other) {
       if (other == it.unical.trenical.grpc.ticket.PurchaseTicketRequest.getDefaultInstance()) return this;
-      if (!other.getTrainId().isEmpty()) {
-        trainId_ = other.trainId_;
-        bitField0_ |= 0x00000001;
-        onChanged();
+      if (other.getTrainId() != 0) {
+        setTrainId(other.getTrainId());
       }
       if (!other.getPassengerName().isEmpty()) {
         passengerName_ = other.passengerName_;
@@ -752,6 +802,14 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000040;
         onChanged();
       }
+      if (!other.getPaymentMethod().isEmpty()) {
+        paymentMethod_ = other.paymentMethod_;
+        bitField0_ |= 0x00000080;
+        onChanged();
+      }
+      if (other.getSeats() != 0) {
+        setSeats(other.getSeats());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -778,11 +836,11 @@ private static final long serialVersionUID = 0L;
             case 0:
               done = true;
               break;
-            case 10: {
-              trainId_ = input.readStringRequireUtf8();
+            case 8: {
+              trainId_ = input.readInt32();
               bitField0_ |= 0x00000001;
               break;
-            } // case 10
+            } // case 8
             case 18: {
               passengerName_ = input.readStringRequireUtf8();
               bitField0_ |= 0x00000002;
@@ -815,6 +873,16 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000040;
               break;
             } // case 58
+            case 66: {
+              paymentMethod_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000080;
+              break;
+            } // case 66
+            case 72: {
+              seats_ = input.readInt32();
+              bitField0_ |= 0x00000100;
+              break;
+            } // case 72
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -832,74 +900,46 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
-    private java.lang.Object trainId_ = "";
+    private int trainId_ ;
     /**
-     * <code>string train_id = 1;</code>
+     * <pre>
+     * Cambiato da string a int32
+     * </pre>
+     *
+     * <code>int32 train_id = 1;</code>
      * @return The trainId.
      */
-    public java.lang.String getTrainId() {
-      java.lang.Object ref = trainId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        trainId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public int getTrainId() {
+      return trainId_;
     }
     /**
-     * <code>string train_id = 1;</code>
-     * @return The bytes for trainId.
-     */
-    public com.google.protobuf.ByteString
-        getTrainIdBytes() {
-      java.lang.Object ref = trainId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        trainId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string train_id = 1;</code>
+     * <pre>
+     * Cambiato da string a int32
+     * </pre>
+     *
+     * <code>int32 train_id = 1;</code>
      * @param value The trainId to set.
      * @return This builder for chaining.
      */
-    public Builder setTrainId(
-        java.lang.String value) {
-      if (value == null) { throw new NullPointerException(); }
+    public Builder setTrainId(int value) {
+
       trainId_ = value;
       bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
     /**
-     * <code>string train_id = 1;</code>
+     * <pre>
+     * Cambiato da string a int32
+     * </pre>
+     *
+     * <code>int32 train_id = 1;</code>
      * @return This builder for chaining.
      */
     public Builder clearTrainId() {
-      trainId_ = getDefaultInstance().getTrainId();
       bitField0_ = (bitField0_ & ~0x00000001);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string train_id = 1;</code>
-     * @param value The bytes for trainId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setTrainIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      checkByteStringIsUtf8(value);
-      trainId_ = value;
-      bitField0_ |= 0x00000001;
+      trainId_ = 0;
       onChanged();
       return this;
     }
@@ -1124,10 +1164,6 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> travelDateBuilder_;
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      * @return Whether the travelDate field is set.
      */
@@ -1135,10 +1171,6 @@ private static final long serialVersionUID = 0L;
       return ((bitField0_ & 0x00000010) != 0);
     }
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      * @return The travelDate.
      */
@@ -1150,10 +1182,6 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      */
     public Builder setTravelDate(com.google.protobuf.Timestamp value) {
@@ -1170,10 +1198,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      */
     public Builder setTravelDate(
@@ -1188,10 +1212,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      */
     public Builder mergeTravelDate(com.google.protobuf.Timestamp value) {
@@ -1213,10 +1233,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      */
     public Builder clearTravelDate() {
@@ -1230,10 +1246,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      */
     public com.google.protobuf.Timestamp.Builder getTravelDateBuilder() {
@@ -1242,10 +1254,6 @@ private static final long serialVersionUID = 0L;
       return getTravelDateFieldBuilder().getBuilder();
     }
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      */
     public com.google.protobuf.TimestampOrBuilder getTravelDateOrBuilder() {
@@ -1257,10 +1265,6 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <pre>
-     * Formato:
-     * </pre>
-     *
      * <code>.google.protobuf.Timestamp travel_date = 5;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -1457,6 +1461,130 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       promoCode_ = value;
       bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object paymentMethod_ = "";
+    /**
+     * <pre>
+     * Es: "Carta di Credito", "PayPal"
+     * </pre>
+     *
+     * <code>string payment_method = 8;</code>
+     * @return The paymentMethod.
+     */
+    public java.lang.String getPaymentMethod() {
+      java.lang.Object ref = paymentMethod_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        paymentMethod_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Es: "Carta di Credito", "PayPal"
+     * </pre>
+     *
+     * <code>string payment_method = 8;</code>
+     * @return The bytes for paymentMethod.
+     */
+    public com.google.protobuf.ByteString
+        getPaymentMethodBytes() {
+      java.lang.Object ref = paymentMethod_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        paymentMethod_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Es: "Carta di Credito", "PayPal"
+     * </pre>
+     *
+     * <code>string payment_method = 8;</code>
+     * @param value The paymentMethod to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPaymentMethod(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      paymentMethod_ = value;
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Es: "Carta di Credito", "PayPal"
+     * </pre>
+     *
+     * <code>string payment_method = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPaymentMethod() {
+      paymentMethod_ = getDefaultInstance().getPaymentMethod();
+      bitField0_ = (bitField0_ & ~0x00000080);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Es: "Carta di Credito", "PayPal"
+     * </pre>
+     *
+     * <code>string payment_method = 8;</code>
+     * @param value The bytes for paymentMethod to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPaymentMethodBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      paymentMethod_ = value;
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+
+    private int seats_ ;
+    /**
+     * <code>int32 seats = 9;</code>
+     * @return The seats.
+     */
+    @java.lang.Override
+    public int getSeats() {
+      return seats_;
+    }
+    /**
+     * <code>int32 seats = 9;</code>
+     * @param value The seats to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSeats(int value) {
+
+      seats_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 seats = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSeats() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      seats_ = 0;
       onChanged();
       return this;
     }

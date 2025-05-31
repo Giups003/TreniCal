@@ -21,11 +21,12 @@ private static final long serialVersionUID = 0L;
   }
   private Ticket() {
     id_ = "";
-    trainId_ = "";
     passengerName_ = "";
     departureStation_ = "";
     arrivalStation_ = "";
     serviceClass_ = "";
+    seat_ = "";
+    status_ = "";
   }
 
   @java.lang.Override
@@ -97,50 +98,18 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int TRAIN_ID_FIELD_NUMBER = 2;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object trainId_ = "";
+  private int trainId_ = 0;
   /**
    * <pre>
-   * ID del treno
+   * ID del treno cambiato da string a int32
    * </pre>
    *
-   * <code>string train_id = 2;</code>
+   * <code>int32 train_id = 2;</code>
    * @return The trainId.
    */
   @java.lang.Override
-  public java.lang.String getTrainId() {
-    java.lang.Object ref = trainId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      trainId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <pre>
-   * ID del treno
-   * </pre>
-   *
-   * <code>string train_id = 2;</code>
-   * @return The bytes for trainId.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getTrainIdBytes() {
-    java.lang.Object ref = trainId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      trainId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public int getTrainId() {
+    return trainId_;
   }
 
   public static final int PASSENGER_NAME_FIELD_NUMBER = 3;
@@ -384,6 +353,100 @@ private static final long serialVersionUID = 0L;
     return price_;
   }
 
+  public static final int SEAT_FIELD_NUMBER = 9;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object seat_ = "";
+  /**
+   * <pre>
+   * Numero del posto assegnato (ora string)
+   * </pre>
+   *
+   * <code>string seat = 9;</code>
+   * @return The seat.
+   */
+  @java.lang.Override
+  public java.lang.String getSeat() {
+    java.lang.Object ref = seat_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      seat_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Numero del posto assegnato (ora string)
+   * </pre>
+   *
+   * <code>string seat = 9;</code>
+   * @return The bytes for seat.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSeatBytes() {
+    java.lang.Object ref = seat_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      seat_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int STATUS_FIELD_NUMBER = 10;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object status_ = "";
+  /**
+   * <pre>
+   * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+   * </pre>
+   *
+   * <code>string status = 10;</code>
+   * @return The status.
+   */
+  @java.lang.Override
+  public java.lang.String getStatus() {
+    java.lang.Object ref = status_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      status_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+   * </pre>
+   *
+   * <code>string status = 10;</code>
+   * @return The bytes for status.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getStatusBytes() {
+    java.lang.Object ref = status_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      status_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -401,8 +464,8 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, id_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(trainId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, trainId_);
+    if (trainId_ != 0) {
+      output.writeInt32(2, trainId_);
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(passengerName_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 3, passengerName_);
@@ -422,6 +485,12 @@ private static final long serialVersionUID = 0L;
     if (java.lang.Double.doubleToRawLongBits(price_) != 0) {
       output.writeDouble(8, price_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(seat_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 9, seat_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(status_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 10, status_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -434,8 +503,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, id_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(trainId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, trainId_);
+    if (trainId_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(2, trainId_);
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(passengerName_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, passengerName_);
@@ -457,6 +527,12 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeDoubleSize(8, price_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(seat_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, seat_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(status_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, status_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -474,8 +550,8 @@ private static final long serialVersionUID = 0L;
 
     if (!getId()
         .equals(other.getId())) return false;
-    if (!getTrainId()
-        .equals(other.getTrainId())) return false;
+    if (getTrainId()
+        != other.getTrainId()) return false;
     if (!getPassengerName()
         .equals(other.getPassengerName())) return false;
     if (!getDepartureStation()
@@ -492,6 +568,10 @@ private static final long serialVersionUID = 0L;
     if (java.lang.Double.doubleToLongBits(getPrice())
         != java.lang.Double.doubleToLongBits(
             other.getPrice())) return false;
+    if (!getSeat()
+        .equals(other.getSeat())) return false;
+    if (!getStatus()
+        .equals(other.getStatus())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -506,7 +586,7 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + ID_FIELD_NUMBER;
     hash = (53 * hash) + getId().hashCode();
     hash = (37 * hash) + TRAIN_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getTrainId().hashCode();
+    hash = (53 * hash) + getTrainId();
     hash = (37 * hash) + PASSENGER_NAME_FIELD_NUMBER;
     hash = (53 * hash) + getPassengerName().hashCode();
     hash = (37 * hash) + DEPARTURE_STATION_FIELD_NUMBER;
@@ -522,6 +602,10 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + PRICE_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         java.lang.Double.doubleToLongBits(getPrice()));
+    hash = (37 * hash) + SEAT_FIELD_NUMBER;
+    hash = (53 * hash) + getSeat().hashCode();
+    hash = (37 * hash) + STATUS_FIELD_NUMBER;
+    hash = (53 * hash) + getStatus().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -664,7 +748,7 @@ private static final long serialVersionUID = 0L;
       super.clear();
       bitField0_ = 0;
       id_ = "";
-      trainId_ = "";
+      trainId_ = 0;
       passengerName_ = "";
       departureStation_ = "";
       arrivalStation_ = "";
@@ -675,6 +759,8 @@ private static final long serialVersionUID = 0L;
       }
       serviceClass_ = "";
       price_ = 0D;
+      seat_ = "";
+      status_ = "";
       return this;
     }
 
@@ -736,6 +822,12 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000080) != 0)) {
         result.price_ = price_;
       }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.seat_ = seat_;
+      }
+      if (((from_bitField0_ & 0x00000200) != 0)) {
+        result.status_ = status_;
+      }
       result.bitField0_ |= to_bitField0_;
     }
 
@@ -788,10 +880,8 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000001;
         onChanged();
       }
-      if (!other.getTrainId().isEmpty()) {
-        trainId_ = other.trainId_;
-        bitField0_ |= 0x00000002;
-        onChanged();
+      if (other.getTrainId() != 0) {
+        setTrainId(other.getTrainId());
       }
       if (!other.getPassengerName().isEmpty()) {
         passengerName_ = other.passengerName_;
@@ -818,6 +908,16 @@ private static final long serialVersionUID = 0L;
       }
       if (other.getPrice() != 0D) {
         setPrice(other.getPrice());
+      }
+      if (!other.getSeat().isEmpty()) {
+        seat_ = other.seat_;
+        bitField0_ |= 0x00000100;
+        onChanged();
+      }
+      if (!other.getStatus().isEmpty()) {
+        status_ = other.status_;
+        bitField0_ |= 0x00000200;
+        onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -850,11 +950,11 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000001;
               break;
             } // case 10
-            case 18: {
-              trainId_ = input.readStringRequireUtf8();
+            case 16: {
+              trainId_ = input.readInt32();
               bitField0_ |= 0x00000002;
               break;
-            } // case 18
+            } // case 16
             case 26: {
               passengerName_ = input.readStringRequireUtf8();
               bitField0_ |= 0x00000004;
@@ -887,6 +987,16 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000080;
               break;
             } // case 65
+            case 74: {
+              seat_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000100;
+              break;
+            } // case 74
+            case 82: {
+              status_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000200;
+              break;
+            } // case 82
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -996,60 +1106,30 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object trainId_ = "";
+    private int trainId_ ;
     /**
      * <pre>
-     * ID del treno
+     * ID del treno cambiato da string a int32
      * </pre>
      *
-     * <code>string train_id = 2;</code>
+     * <code>int32 train_id = 2;</code>
      * @return The trainId.
      */
-    public java.lang.String getTrainId() {
-      java.lang.Object ref = trainId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        trainId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public int getTrainId() {
+      return trainId_;
     }
     /**
      * <pre>
-     * ID del treno
+     * ID del treno cambiato da string a int32
      * </pre>
      *
-     * <code>string train_id = 2;</code>
-     * @return The bytes for trainId.
-     */
-    public com.google.protobuf.ByteString
-        getTrainIdBytes() {
-      java.lang.Object ref = trainId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        trainId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <pre>
-     * ID del treno
-     * </pre>
-     *
-     * <code>string train_id = 2;</code>
+     * <code>int32 train_id = 2;</code>
      * @param value The trainId to set.
      * @return This builder for chaining.
      */
-    public Builder setTrainId(
-        java.lang.String value) {
-      if (value == null) { throw new NullPointerException(); }
+    public Builder setTrainId(int value) {
+
       trainId_ = value;
       bitField0_ |= 0x00000002;
       onChanged();
@@ -1057,33 +1137,15 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * ID del treno
+     * ID del treno cambiato da string a int32
      * </pre>
      *
-     * <code>string train_id = 2;</code>
+     * <code>int32 train_id = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearTrainId() {
-      trainId_ = getDefaultInstance().getTrainId();
       bitField0_ = (bitField0_ & ~0x00000002);
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * ID del treno
-     * </pre>
-     *
-     * <code>string train_id = 2;</code>
-     * @param value The bytes for trainId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setTrainIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      checkByteStringIsUtf8(value);
-      trainId_ = value;
-      bitField0_ |= 0x00000002;
+      trainId_ = 0;
       onChanged();
       return this;
     }
@@ -1653,6 +1715,190 @@ private static final long serialVersionUID = 0L;
     public Builder clearPrice() {
       bitField0_ = (bitField0_ & ~0x00000080);
       price_ = 0D;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object seat_ = "";
+    /**
+     * <pre>
+     * Numero del posto assegnato (ora string)
+     * </pre>
+     *
+     * <code>string seat = 9;</code>
+     * @return The seat.
+     */
+    public java.lang.String getSeat() {
+      java.lang.Object ref = seat_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        seat_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Numero del posto assegnato (ora string)
+     * </pre>
+     *
+     * <code>string seat = 9;</code>
+     * @return The bytes for seat.
+     */
+    public com.google.protobuf.ByteString
+        getSeatBytes() {
+      java.lang.Object ref = seat_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        seat_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Numero del posto assegnato (ora string)
+     * </pre>
+     *
+     * <code>string seat = 9;</code>
+     * @param value The seat to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSeat(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      seat_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Numero del posto assegnato (ora string)
+     * </pre>
+     *
+     * <code>string seat = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSeat() {
+      seat_ = getDefaultInstance().getSeat();
+      bitField0_ = (bitField0_ & ~0x00000100);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Numero del posto assegnato (ora string)
+     * </pre>
+     *
+     * <code>string seat = 9;</code>
+     * @param value The bytes for seat to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSeatBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      seat_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object status_ = "";
+    /**
+     * <pre>
+     * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+     * </pre>
+     *
+     * <code>string status = 10;</code>
+     * @return The status.
+     */
+    public java.lang.String getStatus() {
+      java.lang.Object ref = status_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        status_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+     * </pre>
+     *
+     * <code>string status = 10;</code>
+     * @return The bytes for status.
+     */
+    public com.google.protobuf.ByteString
+        getStatusBytes() {
+      java.lang.Object ref = status_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        status_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+     * </pre>
+     *
+     * <code>string status = 10;</code>
+     * @param value The status to set.
+     * @return This builder for chaining.
+     */
+    public Builder setStatus(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      status_ = value;
+      bitField0_ |= 0x00000200;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+     * </pre>
+     *
+     * <code>string status = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearStatus() {
+      status_ = getDefaultInstance().getStatus();
+      bitField0_ = (bitField0_ & ~0x00000200);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+     * </pre>
+     *
+     * <code>string status = 10;</code>
+     * @param value The bytes for status to set.
+     * @return This builder for chaining.
+     */
+    public Builder setStatusBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      status_ = value;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }

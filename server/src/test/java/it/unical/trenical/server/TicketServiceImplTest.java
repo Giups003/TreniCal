@@ -35,7 +35,7 @@ public class TicketServiceImplTest {
     public void testPurchaseTicket_Success() {
         // Crea una richiesta di acquisto valida
         PurchaseTicketRequest request = PurchaseTicketRequest.newBuilder()
-                .setTrainId("1234")
+                .setTrainId(1234)
                 .setPassengerName("Mario Rossi")
                 .setDepartureStation("Roma")
                 .setArrivalStation("Milano")
@@ -72,7 +72,7 @@ public class TicketServiceImplTest {
     public void testPurchaseTicket_WithPromoCode() {
         // Crea una richiesta di acquisto con codice promozionale
         PurchaseTicketRequest request = PurchaseTicketRequest.newBuilder()
-                .setTrainId("1234")
+                .setTrainId(1234)
                 .setPassengerName("Mario Rossi")
                 .setDepartureStation("Roma")
                 .setArrivalStation("Milano")
@@ -122,7 +122,7 @@ public class TicketServiceImplTest {
     public void testModifyTicket_Success() {
         // Prima acquista un biglietto per avere un ID valido
         PurchaseTicketRequest purchaseRequest = PurchaseTicketRequest.newBuilder()
-                .setTrainId("1234")
+                .setTrainId(1234)
                 .setPassengerName("Mario Rossi")
                 .setDepartureStation("Roma")
                 .setArrivalStation("Milano")
@@ -189,7 +189,7 @@ public class TicketServiceImplTest {
     public void testModifyTicket_NoFieldsToModify() {
         // Prima acquista un biglietto per avere un ID valido
         PurchaseTicketRequest purchaseRequest = PurchaseTicketRequest.newBuilder()
-                .setTrainId("1234")
+                .setTrainId(1234)
                 .setPassengerName("Mario Rossi")
                 .setDepartureStation("Roma")
                 .setArrivalStation("Milano")

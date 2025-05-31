@@ -16,18 +16,16 @@ public class TicketServer {
         try {
             // Crea le implementazioni dei servizi
             TicketServiceImpl ticketService = new TicketServiceImpl();
-
-            // Nota: TrainServiceImpl sarà implementato in futuro
-            // TrainServiceImpl trainService = new TrainServiceImpl();
+            TrainServiceImplementation trainService = new TrainServiceImplementation();
 
             // Configura e avvia il server gRPC
             Server server = ServerBuilder.forPort(SERVER_PORT)
                     .addService(ticketService) // Aggiunge il servizio biglietti
-                    // .addService(trainService) // Aggiunge il servizio treni (da implementare)
+                    .addService(trainService)  // Aggiunge il servizio treni
                     .build();
 
             System.out.println("Il server gRPC è avviato sulla porta " + SERVER_PORT + "...");
-            System.out.println("Servizi disponibili: TicketService");
+            System.out.println("Servizi disponibili: TicketService, TrainService");
 
             // Avvia il server
             server.start();

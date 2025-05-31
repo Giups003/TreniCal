@@ -235,7 +235,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
      * @return true se la richiesta è valida, false altrimenti
      */
     private boolean isValidPurchaseRequest(PurchaseTicketRequest request) {
-        return isValidField(request.getTrainId()) &&
+        return request.getTrainId() != 0 &&
                isValidField(request.getPassengerName()) &&
                isValidField(request.getDepartureStation()) &&
                isValidField(request.getArrivalStation()) &&

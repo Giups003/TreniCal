@@ -67,7 +67,7 @@ public class TicketClient {
      * @throws StatusRuntimeException Se si verifica un errore durante la chiamata RPC
      */
     public PurchaseTicketResponse purchaseTicket(
-            String trainId,
+            Integer trainId,
             String passengerName,
             String departureStation,
             String arrivalStation,
@@ -120,7 +120,7 @@ public class TicketClient {
      */
     public PurchaseTicketResponse purchaseTicket() {
         return purchaseTicket(
-                "1234",
+                1234,
                 "Mario Rossi",
                 "Roma",
                 "Milano",

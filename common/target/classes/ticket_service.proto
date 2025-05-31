@@ -16,19 +16,30 @@ service TicketService {
 
   // Modifica biglietto
   rpc ModifyTicket(ModifyTicketRequest) returns (OperationResponse);
+
+  // Annulla biglietto
+  rpc CancelTicket(CancelTicketRequest) returns (OperationResponse);
+
+  // Ottieni biglietto per ID
+  rpc GetTicket(GetTicketRequest) returns (GetTicketResponse);
+
+  // Lista biglietti per utente
+  rpc ListTickets(ListTicketsRequest) returns (ListTicketsResponse);
 }
 
 // Utilizziamo il messaggio Ticket definito in common.proto
 
 // Richiesta per l'acquisto di un biglietto
 message PurchaseTicketRequest {
-  string train_id = 1;
+  int32 train_id = 1; // Cambiato da string a int32
   string passenger_name = 2;
   string departure_station = 3;
   string arrival_station = 4;
-  google.protobuf.Timestamp travel_date = 5; // Formato:
+  google.protobuf.Timestamp travel_date = 5;
   string service_class = 6; // Es: "Prima Classe", "Economy"
   string promo_code = 7; // Codice promozionale opzionale
+  string payment_method = 8; // Es: "Carta di Credito", "PayPal"
+  int32 seats = 9;
 }
 
 // Risposta per l'acquisto di un biglietto
@@ -48,10 +59,35 @@ message ModifyTicketRequest {
   string new_service_class = 4; // Nuova classe di servizio (opzionale)
 }
 
+// Richiesta per annullare un biglietto
+message CancelTicketRequest {
+  string ticket_id = 1;
+}
+
+// Richiesta per ottenere un biglietto tramite ID
+message GetTicketRequest {
+  string ticket_id = 1;
+}
+
+// Risposta per ottenere un biglietto
+message GetTicketResponse {
+  bool success = 1;
+  string message = 2;
+  trenical.common.Ticket ticket = 3;
+}
+
+// Richiesta per ottenere la lista dei biglietti di un utente
+message ListTicketsRequest {
+  string passenger_name = 1;
+}
+
+// Risposta con la lista dei biglietti
+message ListTicketsResponse {
+  repeated trenical.common.Ticket tickets = 1;
+}
+
 // Risposta generica per le operazioni
 message OperationResponse {
   bool success = 1; // Indica se l'operazione è andata a buon fine
   string message = 2; // Messaggio di conferma o errore
 }
-
-

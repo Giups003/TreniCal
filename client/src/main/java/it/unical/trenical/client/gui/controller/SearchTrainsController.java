@@ -1,47 +1,156 @@
 package it.unical.trenical.client.gui.controller;
 
+import com.google.protobuf.Timestamp;
+import it.unical.trenical.client.TrainClient;
 import it.unical.trenical.client.gui.SceneManager;
+import it.unical.trenical.client.gui.SelectedTrainService;
 import it.unical.trenical.client.model.TrainSearchResult;
+import it.unical.trenical.grpc.common.Train;
+import it.unical.trenical.grpc.train.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
+import javafx.beans.property.*;
+import javafx.scene.control.DateCell;
+import javafx.stage.Popup;
+import javafx.geometry.Bounds;
+import javafx.scene.Scene;
+import javafx.stage.Window;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller per la schermata di ricerca treni.
  */
 public class SearchTrainsController {
-    @FXML private TextField departureField;
-    @FXML private TextField arrivalField;
-    @FXML private DatePicker datePicker;
-    @FXML private ComboBox<String> trainTypeBox;
-    @FXML private ComboBox<String> classBox;
-    @FXML private TableView<TrainSearchResult> resultsTable;
-    @FXML private TableColumn<TrainSearchResult, String> colTrain;
-    @FXML private TableColumn<TrainSearchResult, String> colDeparture;
-    @FXML private TableColumn<TrainSearchResult, String> colArrival;
-    @FXML private TableColumn<TrainSearchResult, String> colTime;
-    @FXML private TableColumn<TrainSearchResult, Integer> colSeats;
+    @FXML
+    private TextField departureField;
+    @FXML
+    private TextField arrivalField;
+    @FXML
+    private DatePicker datePicker;
+    @FXML
+    private ComboBox<String> trainTypeBox;
+    @FXML
+    private ComboBox<String> classBox;
+    @FXML
+    private TableView<TrainSearchResult> resultsTable;
+    @FXML
+    private TableColumn<TrainSearchResult, String> colTrain;
+    @FXML
+    private TableColumn<TrainSearchResult, String> colDeparture;
+    @FXML
+    private TableColumn<TrainSearchResult, String> colArrival;
+    @FXML
+    private TableColumn<TrainSearchResult, String> colTime;
+    @FXML
+    private TableColumn<TrainSearchResult, Integer> colSeats;
 
     private final ObservableList<TrainSearchResult> searchResults = FXCollections.observableArrayList();
+    private TrainClient trainClient;
 
     @FXML
     public void initialize() {
-        // Inizializza colonne tabella
-        colTrain.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getTrainName()));
-        colDeparture.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getDepartureStation()));
-        colArrival.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getArrivalStation()));
-        colTime.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getTime().toString()));
-        colSeats.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().getAvailableSeats()).asObject());
-        resultsTable.setItems(searchResults);
+        // Inizializza il client gRPC
+        trainClient = new TrainClient("localhost", 9090);
 
-        // Popola le comboBox (mock)
-        trainTypeBox.setItems(FXCollections.observableArrayList("Regionale", "Intercity", "Frecciarossa"));
-        classBox.setItems(FXCollections.observableArrayList("Prima", "Seconda"));
+        // Imposta il datePicker con la data odierna e limita la selezione a oggi o date future
+        datePicker.setValue(LocalDate.now());
+        datePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isBefore(LocalDate.now()));
+            }
+        });
+
+        // Configura le colonne della tabella
+        colTrain.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTrainName()));
+        colDeparture.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDepartureStation()));
+        colArrival.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getArrivalStation()));
+        colTime.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTime().format(DateTimeFormatter.ofPattern("HH:mm"))));
+        colSeats.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getAvailableSeats()).asObject());
+
+        // Configura il doppio click sulla riga per selezionare un treno
+        resultsTable.setRowFactory(tv -> {
+            TableRow<TrainSearchResult> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    TrainSearchResult result = row.getItem();
+                    handleTrainSelection(result);
+                }
+            });
+            return row;
+        });
+        // Configura la gestione della selezione nella tabella
+        resultsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                handleTrainSelection(newSelection);
+            }
+        });
+
+        // Inizializza i combobox con i valori predefiniti
+        trainTypeBox.setItems(FXCollections.observableArrayList("Tutti", "Regionale", "Intercity", "Frecciarossa"));
+        trainTypeBox.getSelectionModel().selectFirst();
+
+        classBox.setItems(FXCollections.observableArrayList("Tutte", "Economy", "Business", "Executive"));
+        classBox.getSelectionModel().selectFirst();
+
+
+        // Configura l'autocompletamento delle stazioni
+        setupStationAutoComplete(departureField);
+        setupStationAutoComplete(arrivalField);
+
+        // Assegna i risultati alla tabella
+        resultsTable.setItems(searchResults);
+    }
+
+    private void handleTrainSelection(TrainSearchResult result) {
+        try {
+            TrainDetailsResponse response = trainClient.getTrainDetails(result.getTrainId());
+
+            // Gestisci la risposta
+            if (response != null) {
+                // Estrai le informazioni dal treno
+                Train trainDetails = response.getTrain();
+                List<Stop> stops = response.getStopsList();
+                boolean isAvailable = response.getAvailable();
+                int seatsAvailable = response.getSeatsAvailable();
+
+                // Se il treno è disponibile, si procede con la visualizzazione dei dettagli
+                if (isAvailable && seatsAvailable > 0) {
+                    // Salva i dettagli del treno selezionato in un servizio condiviso
+                    SelectedTrainService.getInstance().setSelectedTrain(trainDetails);
+                    SelectedTrainService.getInstance().setStops(stops);
+
+                    // Passa alla schermata di acquisto biglietto
+                    SceneManager.getInstance().showTicketPurchaseView();
+                } else {
+                    // Mostra un messaggio se il treno non è disponibile
+                    showAlert("Treno non disponibile",
+                            "Ci dispiace, questo treno non è più disponibile per la prenotazione o non ha posti liberi.");
+                }
+            } else {
+                showAlert("Errore", "Impossibile recuperare i dettagli del treno: risposta nulla");
+            }
+        } catch (Exception e) {
+            showAlert("Errore", "Impossibile recuperare i dettagli del treno: " + e.getMessage());
+        }
+
+    }
+
+
+    private void buyTicketForTrain(Train train) {
+        // Salva il treno selezionato (magari in un service condiviso)
+        SelectedTrainService.getInstance().setSelectedTrain(train);
+
+        // Passa alla schermata di acquisto
+        SceneManager.getInstance().switchTo(SceneManager.BUY_TICKET);
     }
 
     /**
@@ -59,24 +168,201 @@ public class SearchTrainsController {
             return;
         }
 
-        // Per ora: mock di risultati
-        searchResults.setAll(mockTrainSearch(partenza, arrivo, data));
+//        // Per ora: mock di risultati
+//        searchResults.setAll(mockTrainSearch(partenza, arrivo, data));
+        try {
+            // Converte la data di partenza in Timestamp per gRPC
+            LocalDateTime dateTime = data.atStartOfDay();
+            Instant instant = dateTime.toInstant(ZoneOffset.UTC);
+            Timestamp dateTimestamp = Timestamp.newBuilder()
+                    .setSeconds(instant.getEpochSecond())
+                    .setNanos(instant.getNano())
+                    .build();
+
+            // Imposta timeFrom e timeTo come null per cercare tutti i treni del giorno
+            Timestamp timeFromTimestamp = null;
+            Timestamp timeToTimestamp = null;
+
+            // Utilizza il metodo searchTrains già implementato in TrainClient
+            List<Train> trains = trainClient.searchTrains(
+                    partenza,
+                    arrivo,
+                    dateTimestamp,
+                    timeFromTimestamp,
+                    timeToTimestamp);
+
+            // Converte i risultati e aggiorna la tabella
+            searchResults.clear();
+            for (Train train : trains) {
+                searchResults.add(convertToTrainSearchResult(train));
+            }
+
+            resultsTable.setItems(searchResults);
+            resultsTable.refresh(); // Forza refresh della tabella
+
+            if (searchResults.isEmpty()) {
+                showAlert("Nessun risultato",
+                        "Non ci sono treni disponibili per questa tratta nella data selezionata.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Errore", "Si è verificato un errore durante la ricerca: " + e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * Converte un oggetto Train gRPC in un oggetto TrainSearchResult per la visualizzazione.
+     */
+    private TrainSearchResult convertToTrainSearchResult(Train train) {
+        // Estrae i dati dal treno
+        int trainId = train.getId();
+        String trainName = train.getName();
+        String departureStation = departureField.getText();
+        String arrivalStation = arrivalField.getText();
+        LocalDate date = datePicker.getValue();
+        LocalTime departureTime = convertTimestampToLocalTime(train.getDepartureTime());
+
+        // Ottiene i posti disponibili
+        int availableSeats = 0;
+        try {
+            TrainDetailsResponse details = trainClient.getTrainDetails(trainId);
+            availableSeats = details.getSeatsAvailable();
+        } catch (Exception e) {
+            availableSeats = 0; // fallback
+        }
+
+        // Crea e restituisce un oggetto TrainSearchResult
+        return new TrainSearchResult(
+                trainId,
+                trainName,
+                departureStation,
+                arrivalStation,
+                date,
+                departureTime,
+                availableSeats);
+    }
+
+    private void setupStationAutoComplete(TextField stationField) {
+        // Usa un Popup per i suggerimenti
+        ListView<String> suggestionsList = new ListView<>();
+        suggestionsList.setPrefHeight(180);
+        suggestionsList.setMaxHeight(220);
+        suggestionsList.setVisible(false);
+
+        Popup popup = new Popup();
+        popup.setAutoHide(true);
+        popup.getContent().add(suggestionsList);
+
+        // Mostra il popup sotto il campo di testo
+        stationField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.isEmpty()) {
+                popup.hide();
+            } else {
+                List<String> suggestions = fetchStationSuggestions(newVal);
+                suggestionsList.getItems().setAll(suggestions);
+                if (!suggestions.isEmpty()) {
+                    if (!popup.isShowing()) {
+                        Bounds bounds = stationField.localToScreen(stationField.getBoundsInLocal());
+                        popup.show(stationField, bounds.getMinX(), bounds.getMaxY());
+                    }
+                } else {
+                    popup.hide();
+                }
+            }
+        });
+
+        // Selezione con mouse
+        suggestionsList.setOnMouseClicked(e -> {
+            String selectedStation = suggestionsList.getSelectionModel().getSelectedItem();
+            if (selectedStation != null) {
+                stationField.setText(selectedStation);
+                popup.hide();
+                stationField.fireEvent(new javafx.event.ActionEvent());
+            }
+        });
+
+        // Selezione con tastiera
+        suggestionsList.setOnKeyPressed(e -> {
+            if (e.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                String selectedStation = suggestionsList.getSelectionModel().getSelectedItem();
+                if (selectedStation != null) {
+                    stationField.setText(selectedStation);
+                    popup.hide();
+                    stationField.fireEvent(new javafx.event.ActionEvent());
+                }
+            }
+        });
+
+        // Nascondi popup quando il campo perde il focus
+        stationField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                popup.hide();
+            }
+        });
     }
 
     /**
-     * Mock: restituisce una lista di risultati fittizi per la ricerca treni.
+     * Recupera i suggerimenti per le stazioni.
+     *
+     * @param query La query di ricerca
+     * @return Lista di stazioni che corrispondono alla query
      */
-    private List<TrainSearchResult> mockTrainSearch(String partenza, String arrivo, LocalDate data) {
-        return List.of(
-                new TrainSearchResult("Regionale 123", partenza, arrivo, data, LocalTime.of(9, 30), 35),
-                new TrainSearchResult("Intercity 456", partenza, arrivo, data, LocalTime.of(11, 15), 18),
-                new TrainSearchResult("Frecciarossa 789", partenza, arrivo, data, LocalTime.of(14, 45), 5)
-        );
+    private List<String> fetchStationSuggestions(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of(); // Lista vuota se la query è vuota
+        }
+
+        try {
+            SearchStationRequest request = SearchStationRequest.newBuilder()
+                    .setQuery(query)
+                    .setLimit(10)
+                    .build();
+            SearchStationResponse response = trainClient.searchStations(request);
+            return response.getStationsList().stream()
+                    .map(station -> station.getName())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+
+            // Fallback per test/demo
+            List<String> mockStations = List.of(
+                    "Roma Termini", "Roma Tiburtina", "Roma Ostiense",
+                    "Milano Centrale", "Milano Porta Garibaldi",
+                    "Napoli Centrale", "Napoli Afragola",
+                    "Firenze SMN", "Firenze Campo di Marte",
+                    "Bologna Centrale",
+                    "Torino Porta Nuova", "Torino Porta Susa",
+                    "Venezia Santa Lucia", "Venezia Mestre",
+                    "Genova Piazza Principe", "Genova Brignole",
+                    "Bari Centrale"
+            );
+            String queryLower = query.toLowerCase();
+            return mockStations.stream()
+                    .filter(station -> station.toLowerCase().contains(queryLower))
+                    .limit(10)
+                    .collect(Collectors.toList());
+        }
     }
 
+    /**
+     * Converte un Timestamp gRPC in LocalTime.
+     */
+    private LocalTime convertTimestampToLocalTime(com.google.protobuf.Timestamp timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+        Instant instant = Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
+        return LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalTime();
+    }
+
+    // Metodo di supporto per mostrare un messaggio di errore
     private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 

@@ -2,8 +2,9 @@ package it.unical.trenical.server;
 
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
-import it.unical.trenical.grpc.train.TrainServiceProto.*;
+import it.unical.trenical.grpc.train.*;
 import it.unical.trenical.grpc.common.Train;
+import it.unical.trenical.server.data.DataStore;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 
@@ -19,19 +20,29 @@ import static org.mockito.Mockito.*;
  */
 public class TrainServiceImplTest {
 
-    private TrainServiceImpl service;
+    private TrainServiceImplementation service;
     private StreamObserver<TrainResponse> trainResponseObserver;
     private StreamObserver<TrainDetailsResponse> detailsResponseObserver;
     private StreamObserver<ScheduleResponse> scheduleResponseObserver;
 
     @BeforeEach
     public void setup() {
-        service = new TrainServiceImpl();
+        service = new TrainServiceImplementation();
 
         // Mock degli stream observers
         trainResponseObserver = mock(StreamObserver.class);
         detailsResponseObserver = mock(StreamObserver.class);
         scheduleResponseObserver = mock(StreamObserver.class);
+
+        // Inizializza il DataStore con dati di esempio
+        DataStore dataStore = DataStore.getInstance();
+        dataStore.addTrain(Train.newBuilder()
+                .setId(1)
+                .setDepartureStation("Roma")
+                .setArrivalStation("Milano")
+                .setDepartureTime(Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond()).build())
+                .setArrivalTime(Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond() + 3600).build())
+                .build());
     }
 
     @Test

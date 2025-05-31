@@ -12,11 +12,15 @@
         <VBox alignment="CENTER" spacing="12">
             <HBox spacing="10" alignment="CENTER">
                 <Label text="Stazione partenza:"/>
-                <TextField fx:id="departureField" promptText="Inserisci stazione di partenza"/>
+                <StackPane prefHeight="30" maxWidth="250">
+                    <TextField fx:id="departureField" promptText="Inserisci stazione di partenza"/>
+                </StackPane>
             </HBox>
             <HBox spacing="10" alignment="CENTER">
                 <Label text="Stazione arrivo:"/>
-                <TextField fx:id="arrivalField" promptText="Inserisci stazione di arrivo"/>
+                <StackPane prefHeight="30" maxWidth="250">
+                    <TextField fx:id="arrivalField" promptText="Inserisci stazione di arrivo"/>
+                </StackPane>
             </HBox>
             <HBox spacing="10" alignment="CENTER">
                 <Label text="Data:"/>
@@ -32,7 +36,7 @@
     </center>
     <bottom>
         <VBox alignment="CENTER" spacing="8" style="-fx-padding: 10;">
-            <TableView fx:id="resultsTable" prefHeight="180">
+            <TableView fx:id="resultsTable" prefHeight="320" minHeight="220" maxHeight="400" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn text="Treno" fx:id="colTrain"/>
                     <TableColumn text="Partenza" fx:id="colDeparture"/>

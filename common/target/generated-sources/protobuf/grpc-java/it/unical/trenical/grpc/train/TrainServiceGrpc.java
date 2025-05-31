@@ -18,29 +18,60 @@ public final class TrainServiceGrpc {
   public static final java.lang.String SERVICE_NAME = "trenical.train.TrainService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest,
-      it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> getGetTrainsMethod;
+  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.SearchStationRequest,
+      it.unical.trenical.grpc.train.SearchStationResponse> getSearchStationsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SearchStations",
+      requestType = it.unical.trenical.grpc.train.SearchStationRequest.class,
+      responseType = it.unical.trenical.grpc.train.SearchStationResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.SearchStationRequest,
+      it.unical.trenical.grpc.train.SearchStationResponse> getSearchStationsMethod() {
+    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.SearchStationRequest, it.unical.trenical.grpc.train.SearchStationResponse> getSearchStationsMethod;
+    if ((getSearchStationsMethod = TrainServiceGrpc.getSearchStationsMethod) == null) {
+      synchronized (TrainServiceGrpc.class) {
+        if ((getSearchStationsMethod = TrainServiceGrpc.getSearchStationsMethod) == null) {
+          TrainServiceGrpc.getSearchStationsMethod = getSearchStationsMethod =
+              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.SearchStationRequest, it.unical.trenical.grpc.train.SearchStationResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SearchStations"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  it.unical.trenical.grpc.train.SearchStationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  it.unical.trenical.grpc.train.SearchStationResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TrainServiceMethodDescriptorSupplier("SearchStations"))
+              .build();
+        }
+      }
+    }
+    return getSearchStationsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainRequest,
+      it.unical.trenical.grpc.train.TrainResponse> getGetTrainsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetTrains",
-      requestType = it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest.class,
-      responseType = it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse.class,
+      requestType = it.unical.trenical.grpc.train.TrainRequest.class,
+      responseType = it.unical.trenical.grpc.train.TrainResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest,
-      it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> getGetTrainsMethod() {
-    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest, it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> getGetTrainsMethod;
+  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainRequest,
+      it.unical.trenical.grpc.train.TrainResponse> getGetTrainsMethod() {
+    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainRequest, it.unical.trenical.grpc.train.TrainResponse> getGetTrainsMethod;
     if ((getGetTrainsMethod = TrainServiceGrpc.getGetTrainsMethod) == null) {
       synchronized (TrainServiceGrpc.class) {
         if ((getGetTrainsMethod = TrainServiceGrpc.getGetTrainsMethod) == null) {
           TrainServiceGrpc.getGetTrainsMethod = getGetTrainsMethod =
-              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest, it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse>newBuilder()
+              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.TrainRequest, it.unical.trenical.grpc.train.TrainResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTrains"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest.getDefaultInstance()))
+                  it.unical.trenical.grpc.train.TrainRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse.getDefaultInstance()))
+                  it.unical.trenical.grpc.train.TrainResponse.getDefaultInstance()))
               .setSchemaDescriptor(new TrainServiceMethodDescriptorSupplier("GetTrains"))
               .build();
         }
@@ -49,29 +80,29 @@ public final class TrainServiceGrpc {
     return getGetTrainsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest,
-      it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> getSearchTrainsMethod;
+  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.SearchTrainRequest,
+      it.unical.trenical.grpc.train.TrainResponse> getSearchTrainsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SearchTrains",
-      requestType = it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest.class,
-      responseType = it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse.class,
+      requestType = it.unical.trenical.grpc.train.SearchTrainRequest.class,
+      responseType = it.unical.trenical.grpc.train.TrainResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest,
-      it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> getSearchTrainsMethod() {
-    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest, it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> getSearchTrainsMethod;
+  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.SearchTrainRequest,
+      it.unical.trenical.grpc.train.TrainResponse> getSearchTrainsMethod() {
+    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.SearchTrainRequest, it.unical.trenical.grpc.train.TrainResponse> getSearchTrainsMethod;
     if ((getSearchTrainsMethod = TrainServiceGrpc.getSearchTrainsMethod) == null) {
       synchronized (TrainServiceGrpc.class) {
         if ((getSearchTrainsMethod = TrainServiceGrpc.getSearchTrainsMethod) == null) {
           TrainServiceGrpc.getSearchTrainsMethod = getSearchTrainsMethod =
-              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest, it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse>newBuilder()
+              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.SearchTrainRequest, it.unical.trenical.grpc.train.TrainResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SearchTrains"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest.getDefaultInstance()))
+                  it.unical.trenical.grpc.train.SearchTrainRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse.getDefaultInstance()))
+                  it.unical.trenical.grpc.train.TrainResponse.getDefaultInstance()))
               .setSchemaDescriptor(new TrainServiceMethodDescriptorSupplier("SearchTrains"))
               .build();
         }
@@ -80,29 +111,29 @@ public final class TrainServiceGrpc {
     return getSearchTrainsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest,
-      it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse> getGetTrainDetailsMethod;
+  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainDetailsRequest,
+      it.unical.trenical.grpc.train.TrainDetailsResponse> getGetTrainDetailsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetTrainDetails",
-      requestType = it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest.class,
-      responseType = it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse.class,
+      requestType = it.unical.trenical.grpc.train.TrainDetailsRequest.class,
+      responseType = it.unical.trenical.grpc.train.TrainDetailsResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest,
-      it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse> getGetTrainDetailsMethod() {
-    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest, it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse> getGetTrainDetailsMethod;
+  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainDetailsRequest,
+      it.unical.trenical.grpc.train.TrainDetailsResponse> getGetTrainDetailsMethod() {
+    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainDetailsRequest, it.unical.trenical.grpc.train.TrainDetailsResponse> getGetTrainDetailsMethod;
     if ((getGetTrainDetailsMethod = TrainServiceGrpc.getGetTrainDetailsMethod) == null) {
       synchronized (TrainServiceGrpc.class) {
         if ((getGetTrainDetailsMethod = TrainServiceGrpc.getGetTrainDetailsMethod) == null) {
           TrainServiceGrpc.getGetTrainDetailsMethod = getGetTrainDetailsMethod =
-              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest, it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse>newBuilder()
+              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.TrainDetailsRequest, it.unical.trenical.grpc.train.TrainDetailsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTrainDetails"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest.getDefaultInstance()))
+                  it.unical.trenical.grpc.train.TrainDetailsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse.getDefaultInstance()))
+                  it.unical.trenical.grpc.train.TrainDetailsResponse.getDefaultInstance()))
               .setSchemaDescriptor(new TrainServiceMethodDescriptorSupplier("GetTrainDetails"))
               .build();
         }
@@ -111,35 +142,66 @@ public final class TrainServiceGrpc {
     return getGetTrainDetailsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest,
-      it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse> getGetTrainScheduleMethod;
+  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.ScheduleRequest,
+      it.unical.trenical.grpc.train.ScheduleResponse> getGetTrainScheduleMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetTrainSchedule",
-      requestType = it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest.class,
-      responseType = it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse.class,
+      requestType = it.unical.trenical.grpc.train.ScheduleRequest.class,
+      responseType = it.unical.trenical.grpc.train.ScheduleResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest,
-      it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse> getGetTrainScheduleMethod() {
-    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest, it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse> getGetTrainScheduleMethod;
+  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.ScheduleRequest,
+      it.unical.trenical.grpc.train.ScheduleResponse> getGetTrainScheduleMethod() {
+    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.ScheduleRequest, it.unical.trenical.grpc.train.ScheduleResponse> getGetTrainScheduleMethod;
     if ((getGetTrainScheduleMethod = TrainServiceGrpc.getGetTrainScheduleMethod) == null) {
       synchronized (TrainServiceGrpc.class) {
         if ((getGetTrainScheduleMethod = TrainServiceGrpc.getGetTrainScheduleMethod) == null) {
           TrainServiceGrpc.getGetTrainScheduleMethod = getGetTrainScheduleMethod =
-              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest, it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse>newBuilder()
+              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.ScheduleRequest, it.unical.trenical.grpc.train.ScheduleResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTrainSchedule"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest.getDefaultInstance()))
+                  it.unical.trenical.grpc.train.ScheduleRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse.getDefaultInstance()))
+                  it.unical.trenical.grpc.train.ScheduleResponse.getDefaultInstance()))
               .setSchemaDescriptor(new TrainServiceMethodDescriptorSupplier("GetTrainSchedule"))
               .build();
         }
       }
     }
     return getGetTrainScheduleMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.GetTrainStopsRequest,
+      it.unical.trenical.grpc.train.GetTrainStopsResponse> getGetTrainStopsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetTrainStops",
+      requestType = it.unical.trenical.grpc.train.GetTrainStopsRequest.class,
+      responseType = it.unical.trenical.grpc.train.GetTrainStopsResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.GetTrainStopsRequest,
+      it.unical.trenical.grpc.train.GetTrainStopsResponse> getGetTrainStopsMethod() {
+    io.grpc.MethodDescriptor<it.unical.trenical.grpc.train.GetTrainStopsRequest, it.unical.trenical.grpc.train.GetTrainStopsResponse> getGetTrainStopsMethod;
+    if ((getGetTrainStopsMethod = TrainServiceGrpc.getGetTrainStopsMethod) == null) {
+      synchronized (TrainServiceGrpc.class) {
+        if ((getGetTrainStopsMethod = TrainServiceGrpc.getGetTrainStopsMethod) == null) {
+          TrainServiceGrpc.getGetTrainStopsMethod = getGetTrainStopsMethod =
+              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.train.GetTrainStopsRequest, it.unical.trenical.grpc.train.GetTrainStopsResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTrainStops"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  it.unical.trenical.grpc.train.GetTrainStopsRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  it.unical.trenical.grpc.train.GetTrainStopsResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TrainServiceMethodDescriptorSupplier("GetTrainStops"))
+              .build();
+        }
+      }
+    }
+    return getGetTrainStopsMethod;
   }
 
   /**
@@ -198,8 +260,18 @@ public final class TrainServiceGrpc {
      * Ottiene informazioni sui treni
      * </pre>
      */
-    default void getTrains(it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest request,
-        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> responseObserver) {
+    default void searchStations(it.unical.trenical.grpc.train.SearchStationRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.SearchStationResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSearchStationsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Ottiene informazioni sui treni
+     * </pre>
+     */
+    default void getTrains(it.unical.trenical.grpc.train.TrainRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTrainsMethod(), responseObserver);
     }
 
@@ -208,8 +280,8 @@ public final class TrainServiceGrpc {
      * Cerca treni in base a criteri specifici
      * </pre>
      */
-    default void searchTrains(it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest request,
-        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> responseObserver) {
+    default void searchTrains(it.unical.trenical.grpc.train.SearchTrainRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSearchTrainsMethod(), responseObserver);
     }
 
@@ -218,8 +290,8 @@ public final class TrainServiceGrpc {
      * Ottiene dettagli di un treno specifico
      * </pre>
      */
-    default void getTrainDetails(it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest request,
-        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse> responseObserver) {
+    default void getTrainDetails(it.unical.trenical.grpc.train.TrainDetailsRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainDetailsResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTrainDetailsMethod(), responseObserver);
     }
 
@@ -228,9 +300,19 @@ public final class TrainServiceGrpc {
      * Ottiene gli orari dei treni per una specifica tratta
      * </pre>
      */
-    default void getTrainSchedule(it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest request,
-        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse> responseObserver) {
+    default void getTrainSchedule(it.unical.trenical.grpc.train.ScheduleRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.ScheduleResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTrainScheduleMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Ottieni le fermate di un treno specifico
+     * </pre>
+     */
+    default void getTrainStops(it.unical.trenical.grpc.train.GetTrainStopsRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.GetTrainStopsResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTrainStopsMethod(), responseObserver);
     }
   }
 
@@ -272,8 +354,19 @@ public final class TrainServiceGrpc {
      * Ottiene informazioni sui treni
      * </pre>
      */
-    public void getTrains(it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest request,
-        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> responseObserver) {
+    public void searchStations(it.unical.trenical.grpc.train.SearchStationRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.SearchStationResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSearchStationsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Ottiene informazioni sui treni
+     * </pre>
+     */
+    public void getTrains(it.unical.trenical.grpc.train.TrainRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetTrainsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -283,8 +376,8 @@ public final class TrainServiceGrpc {
      * Cerca treni in base a criteri specifici
      * </pre>
      */
-    public void searchTrains(it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest request,
-        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> responseObserver) {
+    public void searchTrains(it.unical.trenical.grpc.train.SearchTrainRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSearchTrainsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -294,8 +387,8 @@ public final class TrainServiceGrpc {
      * Ottiene dettagli di un treno specifico
      * </pre>
      */
-    public void getTrainDetails(it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest request,
-        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse> responseObserver) {
+    public void getTrainDetails(it.unical.trenical.grpc.train.TrainDetailsRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainDetailsResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetTrainDetailsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -305,10 +398,21 @@ public final class TrainServiceGrpc {
      * Ottiene gli orari dei treni per una specifica tratta
      * </pre>
      */
-    public void getTrainSchedule(it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest request,
-        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse> responseObserver) {
+    public void getTrainSchedule(it.unical.trenical.grpc.train.ScheduleRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.ScheduleResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetTrainScheduleMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Ottieni le fermate di un treno specifico
+     * </pre>
+     */
+    public void getTrainStops(it.unical.trenical.grpc.train.GetTrainStopsRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.GetTrainStopsResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetTrainStopsMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -336,7 +440,17 @@ public final class TrainServiceGrpc {
      * Ottiene informazioni sui treni
      * </pre>
      */
-    public it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse getTrains(it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest request) {
+    public it.unical.trenical.grpc.train.SearchStationResponse searchStations(it.unical.trenical.grpc.train.SearchStationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSearchStationsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Ottiene informazioni sui treni
+     * </pre>
+     */
+    public it.unical.trenical.grpc.train.TrainResponse getTrains(it.unical.trenical.grpc.train.TrainRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetTrainsMethod(), getCallOptions(), request);
     }
@@ -346,7 +460,7 @@ public final class TrainServiceGrpc {
      * Cerca treni in base a criteri specifici
      * </pre>
      */
-    public it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse searchTrains(it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest request) {
+    public it.unical.trenical.grpc.train.TrainResponse searchTrains(it.unical.trenical.grpc.train.SearchTrainRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSearchTrainsMethod(), getCallOptions(), request);
     }
@@ -356,7 +470,7 @@ public final class TrainServiceGrpc {
      * Ottiene dettagli di un treno specifico
      * </pre>
      */
-    public it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse getTrainDetails(it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest request) {
+    public it.unical.trenical.grpc.train.TrainDetailsResponse getTrainDetails(it.unical.trenical.grpc.train.TrainDetailsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetTrainDetailsMethod(), getCallOptions(), request);
     }
@@ -366,9 +480,19 @@ public final class TrainServiceGrpc {
      * Ottiene gli orari dei treni per una specifica tratta
      * </pre>
      */
-    public it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse getTrainSchedule(it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest request) {
+    public it.unical.trenical.grpc.train.ScheduleResponse getTrainSchedule(it.unical.trenical.grpc.train.ScheduleRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetTrainScheduleMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Ottieni le fermate di un treno specifico
+     * </pre>
+     */
+    public it.unical.trenical.grpc.train.GetTrainStopsResponse getTrainStops(it.unical.trenical.grpc.train.GetTrainStopsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetTrainStopsMethod(), getCallOptions(), request);
     }
   }
 
@@ -396,8 +520,19 @@ public final class TrainServiceGrpc {
      * Ottiene informazioni sui treni
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> getTrains(
-        it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.SearchStationResponse> searchStations(
+        it.unical.trenical.grpc.train.SearchStationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSearchStationsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Ottiene informazioni sui treni
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.TrainResponse> getTrains(
+        it.unical.trenical.grpc.train.TrainRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetTrainsMethod(), getCallOptions()), request);
     }
@@ -407,8 +542,8 @@ public final class TrainServiceGrpc {
      * Cerca treni in base a criteri specifici
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse> searchTrains(
-        it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.TrainResponse> searchTrains(
+        it.unical.trenical.grpc.train.SearchTrainRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSearchTrainsMethod(), getCallOptions()), request);
     }
@@ -418,8 +553,8 @@ public final class TrainServiceGrpc {
      * Ottiene dettagli di un treno specifico
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse> getTrainDetails(
-        it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.TrainDetailsResponse> getTrainDetails(
+        it.unical.trenical.grpc.train.TrainDetailsRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetTrainDetailsMethod(), getCallOptions()), request);
     }
@@ -429,17 +564,30 @@ public final class TrainServiceGrpc {
      * Ottiene gli orari dei treni per una specifica tratta
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse> getTrainSchedule(
-        it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.ScheduleResponse> getTrainSchedule(
+        it.unical.trenical.grpc.train.ScheduleRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetTrainScheduleMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Ottieni le fermate di un treno specifico
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.train.GetTrainStopsResponse> getTrainStops(
+        it.unical.trenical.grpc.train.GetTrainStopsRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetTrainStopsMethod(), getCallOptions()), request);
+    }
   }
 
-  private static final int METHODID_GET_TRAINS = 0;
-  private static final int METHODID_SEARCH_TRAINS = 1;
-  private static final int METHODID_GET_TRAIN_DETAILS = 2;
-  private static final int METHODID_GET_TRAIN_SCHEDULE = 3;
+  private static final int METHODID_SEARCH_STATIONS = 0;
+  private static final int METHODID_GET_TRAINS = 1;
+  private static final int METHODID_SEARCH_TRAINS = 2;
+  private static final int METHODID_GET_TRAIN_DETAILS = 3;
+  private static final int METHODID_GET_TRAIN_SCHEDULE = 4;
+  private static final int METHODID_GET_TRAIN_STOPS = 5;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -458,21 +606,29 @@ public final class TrainServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
+        case METHODID_SEARCH_STATIONS:
+          serviceImpl.searchStations((it.unical.trenical.grpc.train.SearchStationRequest) request,
+              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.SearchStationResponse>) responseObserver);
+          break;
         case METHODID_GET_TRAINS:
-          serviceImpl.getTrains((it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest) request,
-              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse>) responseObserver);
+          serviceImpl.getTrains((it.unical.trenical.grpc.train.TrainRequest) request,
+              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainResponse>) responseObserver);
           break;
         case METHODID_SEARCH_TRAINS:
-          serviceImpl.searchTrains((it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest) request,
-              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse>) responseObserver);
+          serviceImpl.searchTrains((it.unical.trenical.grpc.train.SearchTrainRequest) request,
+              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainResponse>) responseObserver);
           break;
         case METHODID_GET_TRAIN_DETAILS:
-          serviceImpl.getTrainDetails((it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest) request,
-              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse>) responseObserver);
+          serviceImpl.getTrainDetails((it.unical.trenical.grpc.train.TrainDetailsRequest) request,
+              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainDetailsResponse>) responseObserver);
           break;
         case METHODID_GET_TRAIN_SCHEDULE:
-          serviceImpl.getTrainSchedule((it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest) request,
-              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse>) responseObserver);
+          serviceImpl.getTrainSchedule((it.unical.trenical.grpc.train.ScheduleRequest) request,
+              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.ScheduleResponse>) responseObserver);
+          break;
+        case METHODID_GET_TRAIN_STOPS:
+          serviceImpl.getTrainStops((it.unical.trenical.grpc.train.GetTrainStopsRequest) request,
+              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.train.GetTrainStopsResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -493,33 +649,47 @@ public final class TrainServiceGrpc {
   public static final io.grpc.ServerServiceDefinition bindService(AsyncService service) {
     return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
         .addMethod(
+          getSearchStationsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              it.unical.trenical.grpc.train.SearchStationRequest,
+              it.unical.trenical.grpc.train.SearchStationResponse>(
+                service, METHODID_SEARCH_STATIONS)))
+        .addMethod(
           getGetTrainsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              it.unical.trenical.grpc.train.TrainServiceProto.TrainRequest,
-              it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse>(
+              it.unical.trenical.grpc.train.TrainRequest,
+              it.unical.trenical.grpc.train.TrainResponse>(
                 service, METHODID_GET_TRAINS)))
         .addMethod(
           getSearchTrainsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              it.unical.trenical.grpc.train.TrainServiceProto.SearchTrainRequest,
-              it.unical.trenical.grpc.train.TrainServiceProto.TrainResponse>(
+              it.unical.trenical.grpc.train.SearchTrainRequest,
+              it.unical.trenical.grpc.train.TrainResponse>(
                 service, METHODID_SEARCH_TRAINS)))
         .addMethod(
           getGetTrainDetailsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsRequest,
-              it.unical.trenical.grpc.train.TrainServiceProto.TrainDetailsResponse>(
+              it.unical.trenical.grpc.train.TrainDetailsRequest,
+              it.unical.trenical.grpc.train.TrainDetailsResponse>(
                 service, METHODID_GET_TRAIN_DETAILS)))
         .addMethod(
           getGetTrainScheduleMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              it.unical.trenical.grpc.train.TrainServiceProto.ScheduleRequest,
-              it.unical.trenical.grpc.train.TrainServiceProto.ScheduleResponse>(
+              it.unical.trenical.grpc.train.ScheduleRequest,
+              it.unical.trenical.grpc.train.ScheduleResponse>(
                 service, METHODID_GET_TRAIN_SCHEDULE)))
+        .addMethod(
+          getGetTrainStopsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              it.unical.trenical.grpc.train.GetTrainStopsRequest,
+              it.unical.trenical.grpc.train.GetTrainStopsResponse>(
+                service, METHODID_GET_TRAIN_STOPS)))
         .build();
   }
 
@@ -568,10 +738,12 @@ public final class TrainServiceGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new TrainServiceFileDescriptorSupplier())
+              .addMethod(getSearchStationsMethod())
               .addMethod(getGetTrainsMethod())
               .addMethod(getSearchTrainsMethod())
               .addMethod(getGetTrainDetailsMethod())
               .addMethod(getGetTrainScheduleMethod())
+              .addMethod(getGetTrainStopsMethod())
               .build();
         }
       }

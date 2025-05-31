@@ -20,6 +20,11 @@ public final class CommonProto {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_trenical_common_Train_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_trenical_common_Station_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_trenical_common_Station_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_trenical_common_Ticket_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -39,13 +44,16 @@ public final class CommonProto {
       "n\030\003 \001(\t\022\027\n\017arrival_station\030\004 \001(\t\0222\n\016depa" +
       "rture_time\030\005 \001(\0132\032.google.protobuf.Times" +
       "tamp\0220\n\014arrival_time\030\006 \001(\0132\032.google.prot" +
-      "obuf.Timestamp\"\311\001\n\006Ticket\022\n\n\002id\030\001 \001(\t\022\020\n" +
-      "\010train_id\030\002 \001(\t\022\026\n\016passenger_name\030\003 \001(\t\022" +
-      "\031\n\021departure_station\030\004 \001(\t\022\027\n\017arrival_st" +
-      "ation\030\005 \001(\t\022/\n\013travel_date\030\006 \001(\0132\032.googl" +
-      "e.protobuf.Timestamp\022\025\n\rservice_class\030\007 " +
-      "\001(\t\022\r\n\005price\030\010 \001(\001B/\n\036it.unical.trenical" +
-      ".grpc.commonB\013CommonProtoP\001b\006proto3"
+      "obuf.Timestamp\"U\n\007Station\022\n\n\002id\030\001 \001(\005\022\014\n" +
+      "\004name\030\002 \001(\t\022\014\n\004city\030\003 \001(\t\022\017\n\007address\030\004 \001" +
+      "(\t\022\021\n\tplatforms\030\005 \001(\005\"\347\001\n\006Ticket\022\n\n\002id\030\001" +
+      " \001(\t\022\020\n\010train_id\030\002 \001(\005\022\026\n\016passenger_name" +
+      "\030\003 \001(\t\022\031\n\021departure_station\030\004 \001(\t\022\027\n\017arr" +
+      "ival_station\030\005 \001(\t\022/\n\013travel_date\030\006 \001(\0132" +
+      "\032.google.protobuf.Timestamp\022\025\n\rservice_c" +
+      "lass\030\007 \001(\t\022\r\n\005price\030\010 \001(\001\022\014\n\004seat\030\t \001(\t\022" +
+      "\016\n\006status\030\n \001(\tB/\n\036it.unical.trenical.gr" +
+      "pc.commonB\013CommonProtoP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -58,12 +66,18 @@ public final class CommonProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_common_Train_descriptor,
         new java.lang.String[] { "Id", "Name", "DepartureStation", "ArrivalStation", "DepartureTime", "ArrivalTime", });
-    internal_static_trenical_common_Ticket_descriptor =
+    internal_static_trenical_common_Station_descriptor =
       getDescriptor().getMessageTypes().get(1);
+    internal_static_trenical_common_Station_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_trenical_common_Station_descriptor,
+        new java.lang.String[] { "Id", "Name", "City", "Address", "Platforms", });
+    internal_static_trenical_common_Ticket_descriptor =
+      getDescriptor().getMessageTypes().get(2);
     internal_static_trenical_common_Ticket_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_common_Ticket_descriptor,
-        new java.lang.String[] { "Id", "TrainId", "PassengerName", "DepartureStation", "ArrivalStation", "TravelDate", "ServiceClass", "Price", });
+        new java.lang.String[] { "Id", "TrainId", "PassengerName", "DepartureStation", "ArrivalStation", "TravelDate", "ServiceClass", "Price", "Seat", "Status", });
     com.google.protobuf.TimestampProto.getDescriptor();
   }
 

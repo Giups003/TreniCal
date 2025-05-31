@@ -11,29 +11,37 @@
     <center>
         <VBox alignment="CENTER" spacing="12">
             <Label text="Seleziona il treno dalla ricerca o inserisci i dettagli"/>
-            <HBox spacing="10" alignment="CENTER">
+            <VBox spacing="10" alignment="CENTER" maxWidth="300">
+                <Label text="Stazione partenza:"/>
+                <TextField fx:id="departureStationField" promptText="Stazione di partenza"/>
+            </VBox>
+            <VBox spacing="10" alignment="CENTER" maxWidth="300">
+                <Label text="Stazione arrivo:"/>
+                <TextField fx:id="arrivalStationField" promptText="Stazione di arrivo"/>
+            </VBox>
+            <VBox spacing="10" alignment="CENTER" maxWidth="300">
                 <Label text="Treno:"/>
                 <TextField fx:id="trainField" promptText="ID o nome treno"/>
-            </HBox>
-            <HBox spacing="10" alignment="CENTER">
+            </VBox>
+            <VBox spacing="10" alignment="CENTER" maxWidth="300">
                 <Label text="Classe:"/>
                 <ComboBox fx:id="classBox" promptText="Classe"/>
-            </HBox>
-            <HBox spacing="10" alignment="CENTER">
+            </VBox>
+            <VBox spacing="10" alignment="CENTER" maxWidth="300">
                 <Label text="Numero posti:"/>
                 <Spinner fx:id="seatsSpinner" min="1" max="10" initialValue="1"/>
-            </HBox>
+            </VBox>
             <Label text="Metodo di pagamento:"/>
-            <HBox spacing="10" alignment="CENTER">
+            <VBox spacing="10" alignment="CENTER" maxWidth="300">
                 <RadioButton text="Carta di credito" fx:id="creditCardRadio"/>
                 <RadioButton text="Portafoglio digitale" fx:id="digitalWalletRadio"/>
-            </HBox>
+            </VBox>
             <Button text="Acquista" onAction="#onBuy"/>
         </VBox>
     </center>
     <bottom>
-        <HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
             <Button text="Torna al menu" onAction="#onBackToDashboard"/>
-        </HBox>
+        </VBox>
     </bottom>
 </BorderPane>

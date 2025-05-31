@@ -5,8 +5,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Gestisce il cambio centralizzato delle schermate principali dell'applicazione.
@@ -17,10 +17,10 @@ public class SceneManager {
     private Stage primaryStage;
 
     // Percorsi FXML delle schermate
-    public static final String DASHBOARD = "/it/unical/trenical/client/gui/dashboard.fxml";
-    public static final String SEARCH_TRAINS = "/it/unical/trenical/client/gui/search_trains.fxml";
-    public static final String BUY_TICKET = "/it/unical/trenical/client/gui/buy_ticket.fxml";
-    public static final String MY_TICKETS = "/it/unical/trenical/client/gui/my_tickets.fxml";
+    public static final String DASHBOARD = "src/main/java/it/unical/trenical/client/gui/view/dashboard.fxml";
+    public static final String SEARCH_TRAINS = "src/main/java/it/unical/trenical/client/gui/view/search_trains.fxml";
+    public static final String BUY_TICKET = "src/main/java/it/unical/trenical/client/gui/view/buy_ticket.fxml";
+    public static final String MY_TICKETS = "src/main/java/it/unical/trenical/client/gui/view/my_tickets.fxml";
 
     private SceneManager() {}
 
@@ -40,14 +40,33 @@ public class SceneManager {
      * @param fxmlPath percorso della risorsa FXML
      */
     public void switchTo(String fxmlPath) {
+        if (primaryStage == null) {
+            System.err.println("ERRORE: primaryStage non è stato inizializzato");
+            return;
+        }
+
         try {
-            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath)));
+            File file = new File(fxmlPath);
+
+            if (!file.exists()) {
+                System.err.println("ERRORE: Impossibile trovare il file FXML: " + fxmlPath);
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(file.toURI().toURL());
             Parent root = loader.load();
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
-        } catch (IOException | NullPointerException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("ERRORE durante il caricamento della schermata: " + e.getMessage());
             // Puoi mostrare un alert di errore qui se vuoi
         }
+    }
+    /**
+     * Mostra la schermata di acquisto biglietti.
+     */
+    public void showTicketPurchaseView() {
+        switchTo(BUY_TICKET);
     }
 }
