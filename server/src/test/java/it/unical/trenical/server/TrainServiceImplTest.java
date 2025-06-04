@@ -4,7 +4,7 @@ import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import it.unical.trenical.grpc.train.*;
 import it.unical.trenical.grpc.common.Train;
-import it.unical.trenical.server.data.DataStore;
+import it.unical.trenical.server.DataStore;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 
@@ -20,14 +20,14 @@ import static org.mockito.Mockito.*;
  */
 public class TrainServiceImplTest {
 
-    private TrainServiceImplementation service;
+    private TrainServiceImpl service;
     private StreamObserver<TrainResponse> trainResponseObserver;
     private StreamObserver<TrainDetailsResponse> detailsResponseObserver;
     private StreamObserver<ScheduleResponse> scheduleResponseObserver;
 
     @BeforeEach
     public void setup() {
-        service = new TrainServiceImplementation();
+        service = new TrainServiceImpl();
 
         // Mock degli stream observers
         trainResponseObserver = mock(StreamObserver.class);

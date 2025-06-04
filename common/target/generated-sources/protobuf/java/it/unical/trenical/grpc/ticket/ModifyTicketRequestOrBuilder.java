@@ -100,4 +100,44 @@ public interface ModifyTicketRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getNewServiceClassBytes();
+
+  /**
+   * <pre>
+   * Nuova stazione di partenza (opzionale)
+   * </pre>
+   *
+   * <code>string new_departure_station = 5;</code>
+   * @return The newDepartureStation.
+   */
+  java.lang.String getNewDepartureStation();
+  /**
+   * <pre>
+   * Nuova stazione di partenza (opzionale)
+   * </pre>
+   *
+   * <code>string new_departure_station = 5;</code>
+   * @return The bytes for newDepartureStation.
+   */
+  com.google.protobuf.ByteString
+      getNewDepartureStationBytes();
+
+  /**
+   * <pre>
+   * Nuova stazione di arrivo (opzionale)
+   * </pre>
+   *
+   * <code>string new_arrival_station = 6;</code>
+   * @return The newArrivalStation.
+   */
+  java.lang.String getNewArrivalStation();
+  /**
+   * <pre>
+   * Nuova stazione di arrivo (opzionale)
+   * </pre>
+   *
+   * <code>string new_arrival_station = 6;</code>
+   * @return The bytes for newArrivalStation.
+   */
+  com.google.protobuf.ByteString
+      getNewArrivalStationBytes();
 }

@@ -21,6 +21,7 @@ public class SceneManager {
     public static final String SEARCH_TRAINS = "src/main/java/it/unical/trenical/client/gui/view/search_trains.fxml";
     public static final String BUY_TICKET = "src/main/java/it/unical/trenical/client/gui/view/buy_ticket.fxml";
     public static final String MY_TICKETS = "src/main/java/it/unical/trenical/client/gui/view/my_tickets.fxml";
+    public static final String LOGIN = "src/main/java/it/unical/trenical/client/gui/view/login.fxml";
 
     private SceneManager() {}
 
@@ -33,6 +34,14 @@ public class SceneManager {
 
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
+        // Mostra la schermata di login solo se non c'è un utente salvato
+        String savedUsername = java.util.prefs.Preferences.userNodeForPackage(it.unical.trenical.client.gui.controller.LoginController.class)
+                .get("trenical_username", "");
+        if (savedUsername == null || savedUsername.isEmpty()) {
+            showLogin();
+        } else {
+            switchTo(DASHBOARD);
+        }
     }
 
     /**
@@ -69,4 +78,12 @@ public class SceneManager {
     public void showTicketPurchaseView() {
         switchTo(BUY_TICKET);
     }
+
+    /**
+     * Mostra la schermata di login.
+     */
+    public void showLogin() {
+        switchTo(LOGIN);
+    }
 }
+

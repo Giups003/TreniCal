@@ -16,7 +16,7 @@ public class TicketServer {
         try {
             // Crea le implementazioni dei servizi
             TicketServiceImpl ticketService = new TicketServiceImpl();
-            TrainServiceImplementation trainService = new TrainServiceImplementation();
+            TrainServiceImpl trainService = new TrainServiceImpl();
 
             // Configura e avvia il server gRPC
             Server server = ServerBuilder.forPort(SERVER_PORT)

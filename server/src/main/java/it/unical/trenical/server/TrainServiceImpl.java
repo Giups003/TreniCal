@@ -6,16 +6,14 @@ package it.unical.trenical.server;
     import it.unical.trenical.grpc.common.Station;
     import it.unical.trenical.grpc.common.Train;
     import it.unical.trenical.grpc.train.*;
-    import it.unical.trenical.server.data.DataStore;
-
     import java.time.LocalDateTime;
     import java.time.ZoneOffset;
     import java.util.List;
 
-    public class TrainServiceImplementation extends TrainServiceGrpc.TrainServiceImplBase {
+    public class TrainServiceImpl extends TrainServiceGrpc.TrainServiceImplBase {
         private final DataStore dataStore;
 
-        public TrainServiceImplementation() {
+        public TrainServiceImpl() {
             this.dataStore = DataStore.getInstance();
         }
 
@@ -86,11 +84,14 @@ package it.unical.trenical.server;
                     return;
                 }
 
-                // Creiamo una risposta base con il treno trovato
+                // Ottieni i posti realmente disponibili dal DataStore
+                int seatsAvailable = dataStore.getAvailableSeats(trainId);
+                boolean isAvailable = seatsAvailable > 0;
+
                 TrainDetailsResponse response = TrainDetailsResponse.newBuilder()
                         .setTrain(train)
-                        .setAvailable(true)
-                        .setSeatsAvailable(50) // Valore di esempio
+                        .setAvailable(isAvailable)
+                        .setSeatsAvailable(seatsAvailable)
                         .build();
 
                 responseObserver.onNext(response);

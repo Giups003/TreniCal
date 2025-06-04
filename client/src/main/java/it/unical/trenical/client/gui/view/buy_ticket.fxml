@@ -29,13 +29,17 @@
             </VBox>
             <VBox spacing="10" alignment="CENTER" maxWidth="300">
                 <Label text="Numero posti:"/>
-                <Spinner fx:id="seatsSpinner" min="1" max="10" initialValue="1"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Spinner fx:id="seatsSpinner" min="1" max="10" initialValue="1"/>
+                    <Label fx:id="seatsAvailableLabel" text="Disponibili: -" style="-fx-font-size: 12px; -fx-text-fill: #555;"/>
+                </HBox>
             </VBox>
             <Label text="Metodo di pagamento:"/>
             <VBox spacing="10" alignment="CENTER" maxWidth="300">
                 <RadioButton text="Carta di credito" fx:id="creditCardRadio"/>
                 <RadioButton text="Portafoglio digitale" fx:id="digitalWalletRadio"/>
             </VBox>
+            <Label fx:id="priceLabel" text="Prezzo: -" style="-fx-font-size: 16px; -fx-padding: 8;"/>
             <Button text="Acquista" onAction="#onBuy"/>
         </VBox>
     </center>

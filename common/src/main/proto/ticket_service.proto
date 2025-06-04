@@ -57,6 +57,8 @@ message ModifyTicketRequest {
   google.protobuf.Timestamp new_date = 2; // Nuova data di viaggio (opzionale)
   google.protobuf.Timestamp new_time = 3; // Nuovo orario (opzionale)
   string new_service_class = 4; // Nuova classe di servizio (opzionale)
+  string new_departure_station = 5; // Nuova stazione di partenza (opzionale)
+  string new_arrival_station = 6; // Nuova stazione di arrivo (opzionale)
 }
 
 // Richiesta per annullare un biglietto

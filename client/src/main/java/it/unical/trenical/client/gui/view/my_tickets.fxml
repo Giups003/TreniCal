@@ -13,7 +13,7 @@
             <TableColumn text="Data" fx:id="colDate"/>
             <TableColumn text="Orario" fx:id="colTime"/>
             <TableColumn text="Classe" fx:id="colClass"/>
-            <TableColumn text="Posti" fx:id="colSeats"/>
+            <TableColumn text="Posti" fx:id="colSeat"/>
             <TableColumn text="Stato" fx:id="colStatus"/>
         </columns>
     </TableView>

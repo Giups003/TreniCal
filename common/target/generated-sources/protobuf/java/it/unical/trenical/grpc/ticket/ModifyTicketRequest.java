@@ -22,6 +22,8 @@ private static final long serialVersionUID = 0L;
   private ModifyTicketRequest() {
     ticketId_ = "";
     newServiceClass_ = "";
+    newDepartureStation_ = "";
+    newArrivalStation_ = "";
   }
 
   @java.lang.Override
@@ -215,6 +217,100 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int NEW_DEPARTURE_STATION_FIELD_NUMBER = 5;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object newDepartureStation_ = "";
+  /**
+   * <pre>
+   * Nuova stazione di partenza (opzionale)
+   * </pre>
+   *
+   * <code>string new_departure_station = 5;</code>
+   * @return The newDepartureStation.
+   */
+  @java.lang.Override
+  public java.lang.String getNewDepartureStation() {
+    java.lang.Object ref = newDepartureStation_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      newDepartureStation_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Nuova stazione di partenza (opzionale)
+   * </pre>
+   *
+   * <code>string new_departure_station = 5;</code>
+   * @return The bytes for newDepartureStation.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getNewDepartureStationBytes() {
+    java.lang.Object ref = newDepartureStation_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      newDepartureStation_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int NEW_ARRIVAL_STATION_FIELD_NUMBER = 6;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object newArrivalStation_ = "";
+  /**
+   * <pre>
+   * Nuova stazione di arrivo (opzionale)
+   * </pre>
+   *
+   * <code>string new_arrival_station = 6;</code>
+   * @return The newArrivalStation.
+   */
+  @java.lang.Override
+  public java.lang.String getNewArrivalStation() {
+    java.lang.Object ref = newArrivalStation_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      newArrivalStation_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Nuova stazione di arrivo (opzionale)
+   * </pre>
+   *
+   * <code>string new_arrival_station = 6;</code>
+   * @return The bytes for newArrivalStation.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getNewArrivalStationBytes() {
+    java.lang.Object ref = newArrivalStation_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      newArrivalStation_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -241,6 +337,12 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(newServiceClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, newServiceClass_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(newDepartureStation_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, newDepartureStation_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(newArrivalStation_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, newArrivalStation_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -263,6 +365,12 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(newServiceClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, newServiceClass_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(newDepartureStation_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, newDepartureStation_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(newArrivalStation_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, newArrivalStation_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -293,6 +401,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!getNewServiceClass()
         .equals(other.getNewServiceClass())) return false;
+    if (!getNewDepartureStation()
+        .equals(other.getNewDepartureStation())) return false;
+    if (!getNewArrivalStation()
+        .equals(other.getNewArrivalStation())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -316,6 +428,10 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + NEW_SERVICE_CLASS_FIELD_NUMBER;
     hash = (53 * hash) + getNewServiceClass().hashCode();
+    hash = (37 * hash) + NEW_DEPARTURE_STATION_FIELD_NUMBER;
+    hash = (53 * hash) + getNewDepartureStation().hashCode();
+    hash = (37 * hash) + NEW_ARRIVAL_STATION_FIELD_NUMBER;
+    hash = (53 * hash) + getNewArrivalStation().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -470,6 +586,8 @@ private static final long serialVersionUID = 0L;
         newTimeBuilder_ = null;
       }
       newServiceClass_ = "";
+      newDepartureStation_ = "";
+      newArrivalStation_ = "";
       return this;
     }
 
@@ -521,6 +639,12 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000008) != 0)) {
         result.newServiceClass_ = newServiceClass_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.newDepartureStation_ = newDepartureStation_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.newArrivalStation_ = newArrivalStation_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -585,6 +709,16 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000008;
         onChanged();
       }
+      if (!other.getNewDepartureStation().isEmpty()) {
+        newDepartureStation_ = other.newDepartureStation_;
+        bitField0_ |= 0x00000010;
+        onChanged();
+      }
+      if (!other.getNewArrivalStation().isEmpty()) {
+        newArrivalStation_ = other.newArrivalStation_;
+        bitField0_ |= 0x00000020;
+        onChanged();
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -635,6 +769,16 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000008;
               break;
             } // case 34
+            case 42: {
+              newDepartureStation_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 42
+            case 50: {
+              newArrivalStation_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 50
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1146,6 +1290,190 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       newServiceClass_ = value;
       bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object newDepartureStation_ = "";
+    /**
+     * <pre>
+     * Nuova stazione di partenza (opzionale)
+     * </pre>
+     *
+     * <code>string new_departure_station = 5;</code>
+     * @return The newDepartureStation.
+     */
+    public java.lang.String getNewDepartureStation() {
+      java.lang.Object ref = newDepartureStation_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        newDepartureStation_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Nuova stazione di partenza (opzionale)
+     * </pre>
+     *
+     * <code>string new_departure_station = 5;</code>
+     * @return The bytes for newDepartureStation.
+     */
+    public com.google.protobuf.ByteString
+        getNewDepartureStationBytes() {
+      java.lang.Object ref = newDepartureStation_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        newDepartureStation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Nuova stazione di partenza (opzionale)
+     * </pre>
+     *
+     * <code>string new_departure_station = 5;</code>
+     * @param value The newDepartureStation to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNewDepartureStation(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      newDepartureStation_ = value;
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Nuova stazione di partenza (opzionale)
+     * </pre>
+     *
+     * <code>string new_departure_station = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNewDepartureStation() {
+      newDepartureStation_ = getDefaultInstance().getNewDepartureStation();
+      bitField0_ = (bitField0_ & ~0x00000010);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Nuova stazione di partenza (opzionale)
+     * </pre>
+     *
+     * <code>string new_departure_station = 5;</code>
+     * @param value The bytes for newDepartureStation to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNewDepartureStationBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      newDepartureStation_ = value;
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object newArrivalStation_ = "";
+    /**
+     * <pre>
+     * Nuova stazione di arrivo (opzionale)
+     * </pre>
+     *
+     * <code>string new_arrival_station = 6;</code>
+     * @return The newArrivalStation.
+     */
+    public java.lang.String getNewArrivalStation() {
+      java.lang.Object ref = newArrivalStation_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        newArrivalStation_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Nuova stazione di arrivo (opzionale)
+     * </pre>
+     *
+     * <code>string new_arrival_station = 6;</code>
+     * @return The bytes for newArrivalStation.
+     */
+    public com.google.protobuf.ByteString
+        getNewArrivalStationBytes() {
+      java.lang.Object ref = newArrivalStation_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        newArrivalStation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Nuova stazione di arrivo (opzionale)
+     * </pre>
+     *
+     * <code>string new_arrival_station = 6;</code>
+     * @param value The newArrivalStation to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNewArrivalStation(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      newArrivalStation_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Nuova stazione di arrivo (opzionale)
+     * </pre>
+     *
+     * <code>string new_arrival_station = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNewArrivalStation() {
+      newArrivalStation_ = getDefaultInstance().getNewArrivalStation();
+      bitField0_ = (bitField0_ & ~0x00000020);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Nuova stazione di arrivo (opzionale)
+     * </pre>
+     *
+     * <code>string new_arrival_station = 6;</code>
+     * @param value The bytes for newArrivalStation to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNewArrivalStationBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      newArrivalStation_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }

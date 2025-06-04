@@ -1,6 +1,7 @@
 package it.unical.trenical.client.gui.controller;
 
 import it.unical.trenical.client.gui.SceneManager;
+import it.unical.trenical.client.session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -27,7 +28,8 @@ public class DashboardController {
 
     @FXML
     private void onLogout(ActionEvent event) {
-        // Da implementare: ritorno a eventuale login o chiusura
-        System.out.println("Logout cliccato!");
+        UserSession.setUsername(null);
+        SceneManager.getInstance().showLogin();
     }
 }
+

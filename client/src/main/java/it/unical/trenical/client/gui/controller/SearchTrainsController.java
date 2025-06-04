@@ -7,17 +7,14 @@ import it.unical.trenical.client.gui.SelectedTrainService;
 import it.unical.trenical.client.model.TrainSearchResult;
 import it.unical.trenical.grpc.common.Train;
 import it.unical.trenical.grpc.train.*;
+import it.unical.trenical.client.gui.util.AlertUtils;
+import it.unical.trenical.client.gui.util.AutoCompleteUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
 import javafx.beans.property.*;
 import javafx.scene.control.DateCell;
-import javafx.stage.Popup;
-import javafx.geometry.Bounds;
-import javafx.scene.Scene;
-import javafx.stage.Window;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -101,10 +98,9 @@ public class SearchTrainsController {
         classBox.setItems(FXCollections.observableArrayList("Tutte", "Economy", "Business", "Executive"));
         classBox.getSelectionModel().selectFirst();
 
-
-        // Configura l'autocompletamento delle stazioni
-        setupStationAutoComplete(departureField);
-        setupStationAutoComplete(arrivalField);
+        // Uso la utility centralizzata per l'autocompletamento delle stazioni
+        AutoCompleteUtil.setupAutoComplete(departureField, this::fetchStationSuggestions);
+        AutoCompleteUtil.setupAutoComplete(arrivalField, this::fetchStationSuggestions);
 
         // Assegna i risultati alla tabella
         resultsTable.setItems(searchResults);
@@ -132,14 +128,14 @@ public class SearchTrainsController {
                     SceneManager.getInstance().showTicketPurchaseView();
                 } else {
                     // Mostra un messaggio se il treno non è disponibile
-                    showAlert("Treno non disponibile",
+                    AlertUtils.showError("Treno non disponibile",
                             "Ci dispiace, questo treno non è più disponibile per la prenotazione o non ha posti liberi.");
                 }
             } else {
-                showAlert("Errore", "Impossibile recuperare i dettagli del treno: risposta nulla");
+                AlertUtils.showError("Errore", "Impossibile recuperare i dettagli del treno: risposta nulla");
             }
         } catch (Exception e) {
-            showAlert("Errore", "Impossibile recuperare i dettagli del treno: " + e.getMessage());
+            AlertUtils.showError("Errore", "Impossibile recuperare i dettagli del treno: " + e.getMessage());
         }
 
     }
@@ -164,7 +160,7 @@ public class SearchTrainsController {
 
         // Validazione input base
         if (partenza == null || partenza.isBlank() || arrivo == null || arrivo.isBlank() || data == null) {
-            showAlert("Errore", "Compila tutti i campi obbligatori (partenza, arrivo, data).");
+            AlertUtils.showError("Errore", "Compila tutti i campi obbligatori (partenza, arrivo, data).");
             return;
         }
 
@@ -201,13 +197,13 @@ public class SearchTrainsController {
             resultsTable.refresh(); // Forza refresh della tabella
 
             if (searchResults.isEmpty()) {
-                showAlert("Nessun risultato",
+                AlertUtils.showError("Nessun risultato",
                         "Non ci sono treni disponibili per questa tratta nella data selezionata.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Errore", "Si è verificato un errore durante la ricerca: " + e.getMessage());
+            AlertUtils.showError("Errore", "Si è verificato un errore durante la ricerca: " + e.getMessage());
         }
 
     }
@@ -243,65 +239,6 @@ public class SearchTrainsController {
                 date,
                 departureTime,
                 availableSeats);
-    }
-
-    private void setupStationAutoComplete(TextField stationField) {
-        // Usa un Popup per i suggerimenti
-        ListView<String> suggestionsList = new ListView<>();
-        suggestionsList.setPrefHeight(180);
-        suggestionsList.setMaxHeight(220);
-        suggestionsList.setVisible(false);
-
-        Popup popup = new Popup();
-        popup.setAutoHide(true);
-        popup.getContent().add(suggestionsList);
-
-        // Mostra il popup sotto il campo di testo
-        stationField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal.isEmpty()) {
-                popup.hide();
-            } else {
-                List<String> suggestions = fetchStationSuggestions(newVal);
-                suggestionsList.getItems().setAll(suggestions);
-                if (!suggestions.isEmpty()) {
-                    if (!popup.isShowing()) {
-                        Bounds bounds = stationField.localToScreen(stationField.getBoundsInLocal());
-                        popup.show(stationField, bounds.getMinX(), bounds.getMaxY());
-                    }
-                } else {
-                    popup.hide();
-                }
-            }
-        });
-
-        // Selezione con mouse
-        suggestionsList.setOnMouseClicked(e -> {
-            String selectedStation = suggestionsList.getSelectionModel().getSelectedItem();
-            if (selectedStation != null) {
-                stationField.setText(selectedStation);
-                popup.hide();
-                stationField.fireEvent(new javafx.event.ActionEvent());
-            }
-        });
-
-        // Selezione con tastiera
-        suggestionsList.setOnKeyPressed(e -> {
-            if (e.getCode() == javafx.scene.input.KeyCode.ENTER) {
-                String selectedStation = suggestionsList.getSelectionModel().getSelectedItem();
-                if (selectedStation != null) {
-                    stationField.setText(selectedStation);
-                    popup.hide();
-                    stationField.fireEvent(new javafx.event.ActionEvent());
-                }
-            }
-        });
-
-        // Nascondi popup quando il campo perde il focus
-        stationField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) {
-                popup.hide();
-            }
-        });
     }
 
     /**
@@ -355,15 +292,6 @@ public class SearchTrainsController {
         }
         Instant instant = Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
         return LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalTime();
-    }
-
-    // Metodo di supporto per mostrare un messaggio di errore
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     /**
