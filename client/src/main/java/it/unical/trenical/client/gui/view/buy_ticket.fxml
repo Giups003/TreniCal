@@ -34,13 +34,21 @@
                     <Label fx:id="seatsAvailableLabel" text="Disponibili: -" style="-fx-font-size: 12px; -fx-text-fill: #555;"/>
                 </HBox>
             </VBox>
+            <VBox spacing="10" alignment="CENTER" maxWidth="300">
+                <Label text="Codice promozionale:"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="promoCodeField" promptText="Codice promo (opzionale)"/>
+                    <Button text="Valida" fx:id="validatePromoButton" onAction="#onValidatePromo"/>
+                </HBox>
+                <Label fx:id="promoValidationLabel" text="" style="-fx-text-fill: #1976d2;"/>
+            </VBox>
             <Label text="Metodo di pagamento:"/>
             <VBox spacing="10" alignment="CENTER" maxWidth="300">
                 <RadioButton text="Carta di credito" fx:id="creditCardRadio"/>
                 <RadioButton text="Portafoglio digitale" fx:id="digitalWalletRadio"/>
             </VBox>
             <Label fx:id="priceLabel" text="Prezzo: -" style="-fx-font-size: 16px; -fx-padding: 8;"/>
-            <Button text="Acquista" onAction="#onBuy"/>
+            <Button text="Acquista" fx:id="buyButton" onAction="#onBuy"/>
         </VBox>
     </center>
     <bottom>

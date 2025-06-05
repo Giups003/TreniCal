@@ -25,12 +25,14 @@ public class DataStore {
     private static final String TRAINS_FILE = DATA_DIR + "/trains.json";
     private static final String TICKETS_FILE = DATA_DIR + "/tickets.json";
     private static final String ROUTES_FILE = DATA_DIR + "/routes.json";
+    private static final String PROMOTIONS_FILE = DATA_DIR + "/promotions.json";
 
     private static DataStore instance;
     private List<Station> stations = new ArrayList<>();
     private List<Train> trains = new ArrayList<>();
     private List<Ticket> tickets = Collections.synchronizedList(new ArrayList<>());
     private List<Route> routes = new ArrayList<>();
+    private List<Promotion> promotions = new ArrayList<>();
     private final Map<Integer, Integer> trainSeatsAvailable = new ConcurrentHashMap<>();
     private static final int DEFAULT_SEATS_PER_TRAIN = 50;
 
@@ -50,6 +52,7 @@ public class DataStore {
         createEmptyJsonIfNotExist(TRAINS_FILE);
         createEmptyJsonIfNotExist(TICKETS_FILE);
         createEmptyJsonIfNotExist(ROUTES_FILE);
+        createEmptyJsonIfNotExist(PROMOTIONS_FILE);
     }
 
     private void createEmptyJsonIfNotExist(String filename) {
@@ -81,6 +84,7 @@ public class DataStore {
         resetFileIfMalformed(TRAINS_FILE);
         resetFileIfMalformed(TICKETS_FILE);
         resetFileIfMalformed(ROUTES_FILE);
+        resetFileIfMalformed(PROMOTIONS_FILE);
 
         try {
             stations = loadStationsFromFile(STATIONS_FILE);
@@ -113,6 +117,13 @@ public class DataStore {
         } catch (Exception e) {
             System.out.println("Impossibile caricare le tratte: " + e.getMessage());
             routes = new ArrayList<>();
+        }
+
+        try {
+            promotions = loadPromotionsFromFile(PROMOTIONS_FILE);
+        } catch (Exception e) {
+            System.out.println("Impossibile caricare le promozioni: " + e.getMessage());
+            promotions = new ArrayList<>();
         }
     }
 
@@ -262,6 +273,54 @@ public class DataStore {
         return result;
     }
 
+    private List<Promotion> loadPromotionsFromFile(String filename) throws IOException {
+        File file = new File(filename);
+        if (!file.exists()) {
+            return new ArrayList<>();
+        }
+        String json = Files.readString(Paths.get(filename)).trim();
+        if (json.equals("[]") || json.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Promotion> result = new ArrayList<>();
+        json = json.substring(1, json.length() - 1);
+        if (json.trim().isEmpty()) return result;
+        String[] objects = json.split("},\\s*\\{");
+        for (String obj : objects) {
+            if (!obj.startsWith("{")) obj = "{" + obj;
+            if (!obj.endsWith("}")) obj = obj + "}";
+            try {
+                // Parsing manuale (senza Gson)
+                int id = 0;
+                String name = null, description = null, routeName = null, serviceClass = null;
+                double discountPercent = 0.0;
+                java.time.LocalDate validFrom = null, validTo = null;
+                obj = obj.replaceAll("[{}]", "");
+                String[] fields = obj.split(",\\s*");
+                for (String field : fields) {
+                    String[] kv = field.split(":", 2);
+                    if (kv.length != 2) continue;
+                    String key = kv[0].replaceAll("\"", "").trim();
+                    String value = kv[1].replaceAll("\"", "").trim();
+                    switch (key) {
+                        case "id": id = Integer.parseInt(value); break;
+                        case "name": name = value; break;
+                        case "description": description = value; break;
+                        case "discountPercent": discountPercent = Double.parseDouble(value); break;
+                        case "routeName": routeName = value.equals("null") ? null : value; break;
+                        case "serviceClass": serviceClass = value.equals("null") ? null : value; break;
+                        case "validFrom": validFrom = value.equals("null") ? null : java.time.LocalDate.parse(value); break;
+                        case "validTo": validTo = value.equals("null") ? null : java.time.LocalDate.parse(value); break;
+                    }
+                }
+                result.add(new Promotion(id, name, description, discountPercent, routeName, serviceClass, validFrom, validTo));
+            } catch (Exception e) {
+                System.out.println("Errore parsing promozione: " + obj + " - " + e.getMessage());
+            }
+        }
+        return result;
+    }
+
     private void saveToFile(String filename, List<?> objects) throws IOException {
         File file = new File(filename);
         File dir = file.getParentFile();
@@ -276,6 +335,17 @@ public class DataStore {
             }
             if (obj instanceof Route r) {
                 jsonArray.append("{\"id\":" + r.id + ",\"name\":\"" + r.name + "\",\"departureStationId\":" + r.departureStationId + ",\"arrivalStationId\":" + r.arrivalStationId + ",\"departureTime\":\"" + r.departureTime + "\",\"arrivalTime\":\"" + r.arrivalTime + "\"}");
+            } else if (obj instanceof Promotion p) {
+                jsonArray.append(String.format("{\"id\":%d,\"name\":\"%s\",\"description\":\"%s\",\"discountPercent\":%.2f,\"routeName\":%s,\"serviceClass\":%s,\"validFrom\":%s,\"validTo\":%s}",
+                        p.id,
+                        p.name.replace("\"", "'"),
+                        p.description.replace("\"", "'"),
+                        p.discountPercent,
+                        p.routeName == null ? "null" : "\"" + p.routeName.replace("\"", "'") + "\"",
+                        p.serviceClass == null ? "null" : "\"" + p.serviceClass.replace("\"", "'") + "\"",
+                        p.validFrom == null ? "null" : "\"" + p.validFrom.toString() + "\"",
+                        p.validTo == null ? "null" : "\"" + p.validTo.toString() + "\""
+                ));
             } else {
                 String json = JsonFormat.printer().print((com.google.protobuf.MessageOrBuilder) obj);
                 jsonArray.append(json);
@@ -292,6 +362,7 @@ public class DataStore {
             saveToFile(TRAINS_FILE, trains);
             saveToFile(TICKETS_FILE, tickets);
             saveToFile(ROUTES_FILE, routes);
+            saveToFile(PROMOTIONS_FILE, promotions);
         } catch (IOException e) {
             System.err.println("Errore nel salvataggio dei dati: " + e.getMessage());
         }
@@ -456,5 +527,26 @@ public class DataStore {
     public synchronized void incrementSeat(int trainId, int seats) {
         int available = trainSeatsAvailable.getOrDefault(trainId, DEFAULT_SEATS_PER_TRAIN);
         trainSeatsAvailable.put(trainId, available + seats);
+    }
+
+    // --- PROMOZIONI ---
+    public List<Promotion> getAllPromotions() {
+        return new ArrayList<>(promotions);
+    }
+    public void addPromotion(Promotion promotion) {
+        int maxId = promotions.stream().mapToInt(p -> p.id).max().orElse(0);
+        promotion.id = maxId + 1;
+        promotions.add(promotion);
+        saveData();
+    }
+    public void deletePromotion(int id) {
+        promotions.removeIf(p -> p.id == id);
+        saveData();
+    }
+    /**
+     * Trova la promozione migliore applicabile delegando alla classe Promotion.
+     */
+    public Promotion findBestPromotion(String routeName, String serviceClass, java.time.LocalDate travelDate) {
+        return Promotion.findBestPromotion(promotions, routeName, serviceClass, travelDate);
     }
 }

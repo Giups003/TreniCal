@@ -39,8 +39,8 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
 
     /**
      * Gestisce la richiesta di acquisto di un biglietto.
-     * 
-     * @param request Richiesta contenente i dettagli del biglietto da acquistare.
+     *
+     * @param request          Richiesta contenente i dettagli del biglietto da acquistare.
      * @param responseObserver Stream per inviare la risposta al client.
      */
     @Override
@@ -51,6 +51,24 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
                         .setSuccess(false)
                         .setMessage("Richiesta non valida. Assicurati di fornire tutti i campi obbligatori.")
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+
+            boolean isPriceCheck = request.getPromoCode() != null && !request.getPromoCode().isEmpty() && request.getSeats() == 1 && request.getPassengerName() != null && !request.getPassengerName().isEmpty();
+            if (isPriceCheck) {
+                double price = priceCalculator.calculateTicketPrice(
+                        request.getDepartureStation(),
+                        request.getArrivalStation(),
+                        request.getServiceClass(),
+                        request.getTravelDate(),
+                        request.getPromoCode()
+                );
+                PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
+                        .setSuccess(true)
+                        .setPrice(price)
                         .build();
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
@@ -124,8 +142,8 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
 
     /**
      * Gestisce la richiesta di modifica di un biglietto.
-     * 
-     * @param request Richiesta contenente i dettagli della modifica.
+     *
+     * @param request          Richiesta contenente i dettagli della modifica.
      * @param responseObserver Stream per inviare la risposta al client.
      */
     @Override
@@ -151,7 +169,6 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
             String newServiceClass = isValidField(request.getNewServiceClass()) ? request.getNewServiceClass() : ticket.getServiceClass();
             com.google.protobuf.Timestamp newDate = isValidField(request.getNewDate()) ? request.getNewDate() : ticket.getTravelDate();
 
-            // Applica le modifiche solo a data, orario, classe di servizio
             if (isValidField(request.getNewDepartureStation())) {
                 updatedTicket.setDepartureStation(request.getNewDepartureStation());
                 modified = true;
@@ -181,14 +198,21 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 );
                 double finalPrice = newPrice;
                 String msg = "Biglietto modificato con successo!";
-                // Esempio: applica penale fissa di 5 euro se la classe cambia
+                // Penale variabile: 10% del prezzo originale se cambia classe, altrimenti 5% se cambia solo data/orario
+                double penale = 0.0;
                 if (!ticket.getServiceClass().equals(newServiceClass)) {
-                    finalPrice += 5.0;
-                    msg += " (penale cambio classe: 5 euro)";
-                } else if (newPrice > oldPrice) {
+                    penale = oldPrice * 0.10; // 10% se cambia classe
+                    msg += String.format(" (penale cambio classe: %.2f euro)", penale);
+                } else if (!ticket.getTravelDate().equals(newDate)) {
+                    penale = oldPrice * 0.05; // 5% se cambia solo data/orario
+                    msg += String.format(" (penale cambio data/orario: %.2f euro)", penale);
+                }
+                if (newPrice > oldPrice) {
                     double diff = newPrice - oldPrice;
-                    finalPrice = newPrice;
+                    finalPrice = newPrice + penale;
                     msg += String.format(" (differenza tariffaria: %.2f euro)", diff);
+                } else {
+                    finalPrice = newPrice + penale;
                 }
                 updatedTicket.setPrice(finalPrice);
                 dataStore.deleteTicket(ticket.getId());
@@ -205,14 +229,68 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
             );
         }
     }
-
     /**
-     * Metodo di supporto per inviare una risposta generica di operazione.
-     *
-     * @param success Stato di successo dell'operazione.
-     * @param message Messaggio da inviare al client.
-     * @param responseObserver Stream per inviare la risposta.
+     * Gestisce la richiesta di annullamento di un biglietto.
+     * @param request Richiesta contenente l'ID del biglietto da annullare.
+     * @param responseObserver Stream per inviare la risposta al client.
      */
+    @Override
+    public void cancelTicket(CancelTicketRequest request, StreamObserver<OperationResponse> responseObserver) {
+        try {
+            String ticketId = request.getTicketId();
+            System.out.println("[cancelTicket] Richiesta annullamento per biglietto ID: " + ticketId);
+            if (ticketId == null || ticketId.isEmpty()) {
+                OperationResponse response = OperationResponse.newBuilder()
+                        .setSuccess(false)
+                        .setMessage("ID biglietto non valido!")
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+            Ticket ticket = dataStore.getTicketById(ticketId);
+            if (ticket == null) {
+                OperationResponse response = OperationResponse.newBuilder()
+                        .setSuccess(false)
+                        .setMessage("Biglietto non trovato!")
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+            dataStore.deleteTicket(ticketId);
+            OperationResponse response = OperationResponse.newBuilder()
+                    .setSuccess(true)
+                    .setMessage("Biglietto annullato con successo.")
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Errore durante l'annullamento del biglietto: " + e.getMessage())
+                            .asRuntimeException()
+            );
+        }
+    }
+
+    private boolean isValidPurchaseRequest(PurchaseTicketRequest request) {
+        return request != null &&
+                request.getTrainId() > 0 &&
+                request.getPassengerName() != null && !request.getPassengerName().isEmpty() &&
+                request.getDepartureStation() != null && !request.getDepartureStation().isEmpty() &&
+                request.getArrivalStation() != null && !request.getArrivalStation().isEmpty() &&
+                request.getServiceClass() != null && !request.getServiceClass().isEmpty() &&
+                request.getTravelDate() != null;
+    }
+
+    private boolean isValidField(String s) {
+        return s != null && !s.isEmpty();
+    }
+    private boolean isValidField(com.google.protobuf.Timestamp t) {
+        return t != null && t.getSeconds() > 0;
+    }
+
     private void sendOperationResponse(boolean success, String message, StreamObserver<OperationResponse> responseObserver) {
         OperationResponse response = OperationResponse.newBuilder()
                 .setSuccess(success)
@@ -220,40 +298,5 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
-    }
-
-    /**
-     * Verifica se un campo è valido (non nullo e non vuoto).
-     *
-     * @param field Campo da verificare
-     * @return true se il campo è valido, false altrimenti
-     */
-    private boolean isValidField(String field) {
-        return field != null && !field.trim().isEmpty();
-    }
-
-    /**
-     * Verifica se un Timestamp è valido (non nullo e non rappresenta un timestamp vuoto).
-     *
-     * @param timestamp Timestamp da verificare.
-     * @return true se il timestamp è valido, false altrimenti.
-     */
-    private boolean isValidField(com.google.protobuf.Timestamp timestamp) {
-        return timestamp != null && (timestamp.getSeconds() != 0 || timestamp.getNanos() != 0);
-    }
-
-    /**
-     * Verifica se una richiesta di acquisto biglietto è valida.
-     *
-     * @param request Richiesta da validare
-     * @return true se la richiesta è valida, false altrimenti
-     */
-    private boolean isValidPurchaseRequest(PurchaseTicketRequest request) {
-        return request.getTrainId() != 0 &&
-               isValidField(request.getPassengerName()) &&
-               isValidField(request.getDepartureStation()) &&
-               isValidField(request.getArrivalStation()) &&
-               isValidField(request.getTravelDate()) &&
-               isValidField(request.getServiceClass());
     }
 }

@@ -2,6 +2,7 @@ package it.unical.trenical.server;
 
 import com.google.protobuf.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -93,10 +94,18 @@ public class PriceCalculator {
             finalPrice *= promoDiscount;
         }
 
+        // Applicazione promozione da DataStore
+        LocalDate travelLocalDate = travelDateTime.toLocalDate();
+        String routeName = departureStation + "-" + arrivalStation;
+        var dataStore = DataStore.getInstance();
+        var promo = dataStore.findBestPromotion(routeName, serviceClass, travelLocalDate);
+        if (promo != null) {
+            finalPrice = promo.applyDiscount(finalPrice);
+        }
+
         // Assicurarsi che il prezzo non sia mai inferiore al prezzo minimo
         return Math.max(finalPrice, MIN_PRICE);
     }
-
 
     // Convertire Timestamp in LocalDateTime
     private LocalDateTime toLocalDateTime(Timestamp timestamp) {

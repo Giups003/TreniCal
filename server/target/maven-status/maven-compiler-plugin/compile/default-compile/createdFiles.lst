@@ -1,6 +1,8 @@
-it\unical\trenical\server\TicketServer.class
 it\unical\trenical\server\TicketServiceImpl.class
 it\unical\trenical\server\TrainServiceImpl.class
+it\unical\trenical\server\PriceCalculator.class
+it\unical\trenical\server\PromotionServiceImpl.class
+it\unical\trenical\server\TicketServer.class
+it\unical\trenical\server\Promotion.class
 it\unical\trenical\server\Route.class
 it\unical\trenical\server\DataStore.class
-it\unical\trenical\server\PriceCalculator.class

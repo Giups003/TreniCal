@@ -2,6 +2,7 @@ C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\src\main\java\it\unical\tre
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\src\main\java\it\unical\trenical\common\util\DateTimeUtil.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\src\main\java\it\unical\trenical\common\util\ValidationUtil.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\src\main\java\it\unical\trenical\common\ValidationUtils.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\grpc-java\it\unical\trenical\grpc\promotion\PromotionServiceGrpc.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\grpc-java\it\unical\trenical\grpc\ticket\TicketServiceGrpc.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\grpc-java\it\unical\trenical\grpc\train\TrainServiceGrpc.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\common\CommonProto.java
@@ -11,6 +12,17 @@ C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\pr
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\common\TicketOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\common\Train.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\common\TrainOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\AddPromotionRequest.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\AddPromotionRequestOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\DeletePromotionRequest.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\DeletePromotionRequestOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\Promotion.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\PromotionList.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\PromotionListOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\PromotionOperationResponse.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\PromotionOperationResponseOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\PromotionOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\PromotionServiceProto.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\CancelTicketRequest.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\CancelTicketRequestOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\GetTicketRequest.java

@@ -41,6 +41,14 @@ public class BuyTicketController {
     private Label priceLabel;
     @FXML
     private Label seatsAvailableLabel;
+    @FXML
+    private TextField promoCodeField;
+    @FXML
+    private Button validatePromoButton;
+    @FXML
+    private Button buyButton;
+    @FXML
+    private Label promoValidationLabel;
 
     // Servizio per l'accesso ai dati dei treni
     private TrainServiceGrpc.TrainServiceBlockingStub trainService;
@@ -106,7 +114,6 @@ public class BuyTicketController {
             priceLabel.setText("Prezzo: -");
             return;
         }
-        // Validazione avanzata dei campi
         String partenza = departureStationField.getText();
         String arrivo = arrivalStationField.getText();
         if (partenza == null || partenza.isBlank() || arrivo == null || arrivo.isBlank()) {
@@ -124,7 +131,7 @@ public class BuyTicketController {
                 return;
             }
             int seats = seatsSpinner.getValue();
-            // Chiamata al server per calcolare il prezzo unitario
+            String promoCode = promoCodeField != null ? promoCodeField.getText() : "";
             PurchaseTicketRequest req = PurchaseTicketRequest.newBuilder()
                     .setTrainId(selectedTrain.getId())
                     .setDepartureStation(partenza)
@@ -133,12 +140,62 @@ public class BuyTicketController {
                     .setSeats(1)
                     .setPassengerName(username)
                     .setTravelDate(Timestamp.newBuilder().setSeconds(System.currentTimeMillis() / 1000).build())
+                    .setPromoCode(promoCode)
                     .build();
             PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
             double total = resp.getPrice() * seats;
             priceLabel.setText("Prezzo: " + String.format("%.2f", total) + " €");
         } catch (Exception e) {
             priceLabel.setText("Prezzo: errore");
+        }
+    }
+
+    private double getCurrentBasePrice() {
+        // Simula richiesta senza promo
+        try {
+            if (selectedTrain == null) return 0.0;
+            String partenza = departureStationField.getText();
+            String arrivo = arrivalStationField.getText();
+            String username = UserSession.getUsername();
+            if (username == null || username.isEmpty()) return 0.0;
+            PurchaseTicketRequest req = PurchaseTicketRequest.newBuilder()
+                    .setTrainId(selectedTrain.getId())
+                    .setDepartureStation(partenza)
+                    .setArrivalStation(arrivo)
+                    .setServiceClass(classBox.getValue())
+                    .setSeats(1)
+                    .setPassengerName(username)
+                    .setTravelDate(Timestamp.newBuilder().setSeconds(System.currentTimeMillis() / 1000).build())
+                    .setPromoCode("")
+                    .build();
+            PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
+            return resp.getPrice();
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+
+    private double getPromoPrice(String promoCode) {
+        try {
+            if (selectedTrain == null) return 0.0;
+            String partenza = departureStationField.getText();
+            String arrivo = arrivalStationField.getText();
+            String username = UserSession.getUsername();
+            if (username == null || username.isEmpty()) return 0.0;
+            PurchaseTicketRequest req = PurchaseTicketRequest.newBuilder()
+                    .setTrainId(selectedTrain.getId())
+                    .setDepartureStation(partenza)
+                    .setArrivalStation(arrivo)
+                    .setServiceClass(classBox.getValue())
+                    .setSeats(1)
+                    .setPassengerName(username)
+                    .setTravelDate(Timestamp.newBuilder().setSeconds(System.currentTimeMillis() / 1000).build())
+                    .setPromoCode(promoCode)
+                    .build();
+            PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
+            return resp.getPrice();
+        } catch (Exception e) {
+            return 0.0;
         }
     }
 
@@ -285,23 +342,28 @@ public class BuyTicketController {
      */
     @FXML
     private void onBuy() {
+        buyButton.setDisable(true); // Disabilita subito il pulsante
         // Validazione avanzata dei campi
         String partenza = departureStationField.getText();
         String arrivo = arrivalStationField.getText();
         if (trainField.getText().isEmpty()) {
             AlertUtils.showError("Errore", "Seleziona un treno");
+            buyButton.setDisable(false); // Riabilita il pulsante
             return;
         }
         if (selectedTrain == null) {
             AlertUtils.showError("Errore", "Seleziona un treno valido dalla lista.");
+            buyButton.setDisable(false); // Riabilita il pulsante
             return;
         }
         if (partenza == null || partenza.isBlank() || arrivo == null || arrivo.isBlank()) {
             AlertUtils.showError("Errore", "Compila sia la stazione di partenza che quella di arrivo.");
+            buyButton.setDisable(false); // Riabilita il pulsante
             return;
         }
         if (partenza.trim().equalsIgnoreCase(arrivo.trim())) {
             AlertUtils.showError("Errore", "Le stazioni di partenza e arrivo devono essere diverse.");
+            buyButton.setDisable(false); // Riabilita il pulsante
             return;
         }
 
@@ -309,6 +371,7 @@ public class BuyTicketController {
         String username = UserSession.getUsername();
         if (username == null || username.isEmpty()) {
             AlertUtils.showError("Errore", "Utente non loggato. Effettua il login.");
+            buyButton.setDisable(false); // Riabilita il pulsante
             return;
         }
 
@@ -320,6 +383,7 @@ public class BuyTicketController {
         int maxSeats = seatsSpinnerMax;
         if (seatsRequested > maxSeats) {
             AlertUtils.showError("Errore", "Non ci sono abbastanza posti disponibili su questo treno.");
+            buyButton.setDisable(false); // Riabilita il pulsante
             return;
         }
 
@@ -355,6 +419,8 @@ public class BuyTicketController {
             }
         } catch (Exception e) {
             AlertUtils.showError("Errore", "Impossibile completare l'acquisto. Riprova più tardi.");
+        } finally {
+            buyButton.setDisable(false); // Riabilita il pulsante
         }
     }
 
@@ -364,5 +430,23 @@ public class BuyTicketController {
     @FXML
     private void onBackToDashboard() {
         SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
+    }
+
+    @FXML
+    private void onValidatePromo() {
+        String promoCode = promoCodeField.getText();
+        if (promoCode == null || promoCode.isBlank()) {
+            promoValidationLabel.setText("Inserisci un codice promo.");
+            updatePrice();
+            return;
+        }
+        double oldPrice = getCurrentBasePrice();
+        double newPrice = getPromoPrice(promoCode);
+        if (newPrice < oldPrice) {
+            promoValidationLabel.setText("Codice valido! Sconto applicato: " + String.format("%.2f", oldPrice - newPrice) + " €");
+        } else {
+            promoValidationLabel.setText("Codice non valido o non applicabile.");
+        }
+        updatePrice();
     }
 }

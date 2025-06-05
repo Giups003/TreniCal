@@ -34,9 +34,21 @@ public class MyTicketsController {
 
     private final ObservableList<TicketViewModel> tickets = FXCollections.observableArrayList();
     private TicketServiceGrpc.TicketServiceBlockingStub ticketService;
+    private ManagedChannel channel;
 
     @FXML
     public void initialize() {
+        String username = UserSession.getUsername();
+        if (username == null || username.isEmpty()) {
+            AlertUtils.showError("Errore", "Utente non loggato. Effettua il login.");
+            SceneManager.getInstance().showLogin();
+            // Nasconde la finestra corrente se presente
+            if (ticketsTable != null && ticketsTable.getScene() != null && ticketsTable.getScene().getWindow() != null) {
+                ticketsTable.getScene().getWindow().hide();
+            }
+            // Blocca la visualizzazione della schermata
+            return;
+        }
         colTrain.setCellValueFactory(data -> data.getValue().trainProperty());
         colDate.setCellValueFactory(data -> data.getValue().dateProperty());
         colTime.setCellValueFactory(data -> data.getValue().timeProperty());
@@ -45,7 +57,7 @@ public class MyTicketsController {
         colStatus.setCellValueFactory(data -> data.getValue().statusProperty());
         ticketsTable.setItems(tickets);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+        channel = ManagedChannelBuilder.forAddress("localhost", 9090)
                 .usePlaintext()
                 .build();
         ticketService = TicketServiceGrpc.newBlockingStub(channel);
@@ -173,8 +185,21 @@ public class MyTicketsController {
             AlertUtils.showError("Errore", "Seleziona un biglietto da annullare.");
             return;
         }
-        tickets.remove(selected);
-        refreshTicketsTable();
+        // Chiamata gRPC per annullare il biglietto dal server
+        try {
+            var req = it.unical.trenical.grpc.ticket.CancelTicketRequest.newBuilder()
+                    .setTicketId(selected.getTicketId())
+                    .build();
+            var resp = ticketService.cancelTicket(req);
+            if (resp.getSuccess()) {
+                AlertUtils.showInfo("Successo", "Biglietto annullato con successo.");
+                loadTicketsFromServer();
+            } else {
+                AlertUtils.showError("Errore", resp.getMessage());
+            }
+        } catch (Exception e) {
+            AlertUtils.showError("Errore", "Impossibile annullare il biglietto: " + e.getMessage());
+        }
     }
 
     /**
@@ -183,6 +208,15 @@ public class MyTicketsController {
     @FXML
     private void onBack() {
         SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
+    }
+
+    /**
+     * Cleanup del canale gRPC quando il controller viene distrutto.
+     */
+    public void dispose() {
+        if (channel != null && !channel.isShutdown()) {
+            channel.shutdown();
+        }
     }
 
     /**
