@@ -6,8 +6,7 @@ package it.unical.trenical.server;
     import it.unical.trenical.grpc.common.Station;
     import it.unical.trenical.grpc.common.Train;
     import it.unical.trenical.grpc.train.*;
-    import java.time.LocalDateTime;
-    import java.time.ZoneOffset;
+    import java.time.*;
     import java.util.List;
 
     public class TrainServiceImpl extends TrainServiceGrpc.TrainServiceImplBase {
@@ -43,6 +42,7 @@ package it.unical.trenical.server;
             try {
                 String departureStation = request.getDepartureStation();
                 String arrivalStation = request.getArrivalStation();
+                String trainType = request.getTrainType(); // Leggi la tipologia
 
                 // Estrai la data dal timestamp, se presente
                 String date = null;
@@ -56,7 +56,7 @@ package it.unical.trenical.server;
 
                 int limit = 20; // valore predefinito
 
-                List<Train> trains = dataStore.searchTrains(departureStation, arrivalStation, date, limit);
+                List<Train> trains = dataStore.searchTrains(departureStation, arrivalStation, date, trainType, limit);
 
                 TrainResponse response = TrainResponse.newBuilder()
                         .addAllTrains(trains)
@@ -75,16 +75,30 @@ package it.unical.trenical.server;
         public void getTrainDetails(TrainDetailsRequest request, StreamObserver<TrainDetailsResponse> responseObserver) {
             try {
                 int trainId = request.getTrainId();
-                Train train = dataStore.getTrainById(trainId);
+                Train train = null;
+                // Se la data è presente nella richiesta, cerca il treno per ID e data
+                if (request.hasDate()) {
+                    Timestamp dateTs = request.getDate();
+                    LocalDate date = Instant.ofEpochSecond(dateTs.getSeconds())
+                            .atZone(ZoneId.systemDefault()).toLocalDate();
+                    // Cerca il treno per ID e data
+                    List<Train> trainsForDay = dataStore.generateTrainsForDay(null, null, date);
+                    train = trainsForDay.stream()
+                            .filter(t -> t.getId() == trainId)
+                            .findFirst()
+                            .orElse(null);
+                } else {
+                    // Cerca solo per ID (comportamento legacy)
+                    train = dataStore.getTrainById(trainId);
+                }
 
                 if (train == null) {
                     responseObserver.onError(Status.NOT_FOUND
-                            .withDescription("Treno con ID " + trainId + " non trovato")
+                            .withDescription("Treno con ID " + trainId + " non trovato per la data richiesta")
                             .asRuntimeException());
                     return;
                 }
 
-                // Ottieni i posti realmente disponibili dal DataStore
                 int seatsAvailable = dataStore.getAvailableSeats(trainId);
                 boolean isAvailable = seatsAvailable > 0;
 
@@ -133,15 +147,130 @@ package it.unical.trenical.server;
 
         @Override
         public void getTrainSchedule(ScheduleRequest request, StreamObserver<ScheduleResponse> responseObserver) {
-            // Implementazione temporanea - restituisce una risposta vuota
-            responseObserver.onNext(ScheduleResponse.newBuilder().build());
-            responseObserver.onCompleted();
+            try {
+                // La ScheduleRequest non ha trainId, ma solo station e date
+                // Quindi questa funzione deve restituire tutte le partenze/arrivi per la stazione e data richieste
+                String stationName = request.getStation();
+                Timestamp date = request.hasDate() ? request.getDate() : null;
+                List<ScheduleEntry> departures = new java.util.ArrayList<>();
+                List<ScheduleEntry> arrivals = new java.util.ArrayList<>();
+                // Per ogni treno, controlla se parte o arriva dalla stazione richiesta
+                for (Train train : dataStore.getAllTrains()) {
+                    Route route = dataStore.getAllRoutes().stream()
+                        .filter(r -> r.getId() == train.getId())
+                        .findFirst().orElse(null);
+                    if (route == null) continue;
+                    Station depStation = dataStore.getStationById(route.getDepartureStationId());
+                    Station arrStation = dataStore.getStationById(route.getArrivalStationId());
+                    if (depStation != null && depStation.getName().equalsIgnoreCase(stationName)) {
+                        // Partenza
+                        ScheduleEntry.Builder entry = ScheduleEntry.newBuilder()
+                            .setTrainId(train.getId())
+                            .setTrainName(train.getName())
+                            .setTime(Timestamp.newBuilder().setSeconds(parseTimeToEpoch(route.getDepartureTime(), date)).build())
+                            .setDestination(arrStation != null ? arrStation.getName() : "?")
+                            .setStatus(TrainStatus.ON_TIME);
+                        departures.add(entry.build());
+                    }
+                    if (arrStation != null && arrStation.getName().equalsIgnoreCase(stationName)) {
+                        // Arrivo
+                        ScheduleEntry.Builder entry = ScheduleEntry.newBuilder()
+                            .setTrainId(train.getId())
+                            .setTrainName(train.getName())
+                            .setTime(Timestamp.newBuilder().setSeconds(parseTimeToEpoch(route.getArrivalTime(), date)).build())
+                            .setDestination(depStation != null ? depStation.getName() : "?")
+                            .setStatus(TrainStatus.ON_TIME);
+                        arrivals.add(entry.build());
+                    }
+                }
+                ScheduleResponse response = ScheduleResponse.newBuilder()
+                    .addAllDepartures(departures)
+                    .addAllArrivals(arrivals)
+                    .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            } catch (Exception e) {
+                responseObserver.onError(Status.INTERNAL
+                        .withDescription("Errore interno: " + e.getMessage())
+                        .asRuntimeException());
+            }
+        }
+
+        private long parseTimeToEpoch(String time, Timestamp date) {
+            // time formato HH:mm, date è la data del giorno
+            if (date == null || time == null) return 0L;
+            LocalDate localDate = Instant.ofEpochSecond(date.getSeconds()).atZone(ZoneOffset.UTC).toLocalDate();
+            LocalTime localTime = LocalTime.parse(time);
+            LocalDateTime dateTime = LocalDateTime.of(localDate, localTime);
+            return dateTime.toEpochSecond(ZoneOffset.UTC);
         }
 
         @Override
         public void getTrainStops(GetTrainStopsRequest request, StreamObserver<GetTrainStopsResponse> responseObserver) {
-            // Implementazione temporanea - restituisce una risposta vuota
-            responseObserver.onNext(GetTrainStopsResponse.newBuilder().build());
-            responseObserver.onCompleted();
+            try {
+                int trainId = request.getTrainId();
+                Train train = dataStore.getTrainById(trainId);
+                if (train == null) {
+                    responseObserver.onError(Status.NOT_FOUND
+                            .withDescription("Treno con ID " + trainId + " non trovato")
+                            .asRuntimeException());
+                    return;
+                }
+                Route route = dataStore.getAllRoutes().stream()
+                        .filter(r -> r.getId() == trainId)
+                        .findFirst().orElse(null);
+                List<Stop> stops = new java.util.ArrayList<>();
+                if (route != null) {
+                    // Fermata di partenza
+                    Stop.Builder dep = Stop.newBuilder()
+                        .setId(1)
+                        .setTrainId(trainId)
+                        .setStationId(route.getDepartureStationId())
+                        .setDepartureTime(parseTimeToTimestamp(route.getDepartureTime()))
+                        .setNote("Partenza");
+                    stops.add(dep.build());
+                    // Fermata di arrivo
+                    Stop.Builder arr = Stop.newBuilder()
+                        .setId(2)
+                        .setTrainId(trainId)
+                        .setStationId(route.getArrivalStationId())
+                        .setArrivalTime(parseTimeToTimestamp(route.getArrivalTime()))
+                        .setNote("Arrivo");
+                    stops.add(arr.build());
+                }
+                GetTrainStopsResponse response = GetTrainStopsResponse.newBuilder()
+                        .addAllStops(stops)
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            } catch (Exception e) {
+                responseObserver.onError(Status.INTERNAL
+                        .withDescription("Errore interno: " + e.getMessage())
+                        .asRuntimeException());
+            }
+        }
+
+        private Timestamp parseTimeToTimestamp(String time) {
+            if (time == null) return Timestamp.getDefaultInstance();
+            LocalTime localTime = LocalTime.parse(time);
+            LocalDate today = LocalDate.now();
+            LocalDateTime dateTime = LocalDateTime.of(today, localTime);
+            return Timestamp.newBuilder().setSeconds(dateTime.toEpochSecond(ZoneOffset.UTC)).build();
+        }
+
+        @Override
+        public void listRoutes(ListRoutesRequest request, StreamObserver<ListRoutesResponse> responseObserver) {
+            try {
+                List<Route> routes = dataStore.getAllRoutes();
+                ListRoutesResponse response = ListRoutesResponse.newBuilder()
+                        .addAllRoutes(routes)
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            } catch (Exception e) {
+                responseObserver.onError(Status.INTERNAL
+                        .withDescription("Errore interno: " + e.getMessage())
+                        .asRuntimeException());
+            }
         }
     }

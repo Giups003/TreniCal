@@ -1,0 +1,189 @@
+package it.unical.trenical.client.gui.controller;
+
+import it.unical.trenical.client.gui.SceneManager;
+import it.unical.trenical.client.gui.util.AlertUtils;
+import it.unical.trenical.client.session.UserSession;
+import it.unical.trenical.client.session.UserManager;
+import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.CheckBox;
+import java.util.prefs.Preferences;
+
+/**
+ * Controller per la gestione della schermata di login.
+ * Permette l'accesso come utente normale o come admin.
+ * Salva username ed email nelle preferenze locali.
+ */
+public class LoginController {
+    /** Campo per l'inserimento dello username */
+    @FXML
+    private TextField usernameField;
+
+    /** Campo per l'inserimento della password (solo admin) */
+    @FXML
+    private PasswordField passwordField;
+
+    /** Campo per l'inserimento dell'email (solo utenti normali) */
+    @FXML
+    private TextField emailField;
+
+    /** CheckBox per "Ricorda accesso" */
+    @FXML
+    private CheckBox rememberMeCheckBox;
+
+    private static final String PREF_KEY = "trenical_username";
+    private static final String PREF_EMAIL_KEY = "trenical_email";
+
+    /**
+     * Inizializza i campi username ed email con i valori salvati nelle preferenze.
+     */
+    @FXML
+    public void initialize() {
+        Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+        String savedUsername = prefs.get(PREF_KEY, "");
+        String savedEmail = prefs.get(PREF_EMAIL_KEY, "");
+        String savedPassword = prefs.get("trenical_password", "");
+        boolean rememberMe = prefs.getBoolean("trenical_remember_me", false);
+        if (savedUsername != null && !savedUsername.isEmpty()) {
+            usernameField.setText(savedUsername);
+        }
+        if (savedEmail != null && !savedEmail.isEmpty()) {
+            emailField.setText(savedEmail);
+        }
+        if (rememberMeCheckBox != null) {
+            rememberMeCheckBox.setSelected(rememberMe);
+        }
+        // Login automatico solo se la password è presente
+        if (savedPassword != null && !savedPassword.isEmpty()
+                && savedUsername != null && !savedUsername.isEmpty()
+                && it.unical.trenical.client.session.UserManager.userExists(savedUsername)
+                && it.unical.trenical.client.session.UserManager.validateLogin(savedUsername, savedPassword)) {
+            passwordField.setText(""); // NON precompilare la password
+            // NON chiamare onLogin() automaticamente
+        }
+        // Logica dinamica: aggiorna i campi in base al nome inserito
+        usernameField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if ("admin".equalsIgnoreCase(newVal.trim())) {
+                emailField.setPromptText("Email (opzionale per admin)");
+                passwordField.setPromptText("Password (obbligatoria)");
+            } else {
+                emailField.setPromptText("Email (obbligatoria)");
+                passwordField.setPromptText("Password (obbligatoria, richiesta insieme all'email)");
+            }
+        });
+        // Permetti login con Invio su tutti i campi
+        usernameField.setOnAction(e -> onLogin());
+        passwordField.setOnAction(e -> onLogin());
+        emailField.setOnAction(e -> onLogin());
+    }
+
+    /**
+     * Gestisce il tentativo di login.
+     * Valida i dati inseriti, distingue tra login admin e utente normale,
+     * salva le preferenze e aggiorna la sessione utente.
+     */
+    @FXML
+    private void onLogin() {
+        String username = usernameField.getText();
+        String email = emailField.getText();
+        String password = passwordField.getText();
+        boolean rememberMe = rememberMeCheckBox != null && rememberMeCheckBox.isSelected();
+        if (username == null || username.isBlank()) {
+            AlertUtils.showError("Errore", "Il nome utente è obbligatorio.");
+            return;
+        }
+        if ("admin".equalsIgnoreCase(username.trim())) {
+            // Admin: password obbligatoria
+            if (password == null || password.isBlank()) {
+                AlertUtils.showError("Errore", "La password è obbligatoria per l'admin.");
+                return;
+            }
+            if (!"admin".equals(password)) {
+                AlertUtils.showError("Accesso negato", "Password admin errata.");
+                return;
+            }
+            UserSession.setAdmin(true);
+            UserSession.setLoyaltyMember(false); // Admin non è mai utente fedeltà
+            UserSession.clearTickets();
+            AlertUtils.showInfo("Accesso riuscito", "Login admin effettuato con successo.");
+        } else {
+            // Utente normale: login solo se registrato
+            if (!UserManager.userExists(username)) {
+                AlertUtils.showError("Errore", "Utente non registrato. Premi 'Registrati' per creare un account.");
+                return;
+            }
+            if (!UserManager.validateLogin(username, password)) {
+                AlertUtils.showError("Errore", "Password errata.");
+                return;
+            }
+            UserSession.setAdmin(false);
+            // Carica stato fedeltà e biglietti
+            boolean fidelity = UserManager.isFidelityMember(username);
+            UserSession.setLoyaltyMember(fidelity);
+            UserSession.setTickets(UserManager.getTickets(username));
+            AlertUtils.showInfo("Accesso riuscito", "Login utente effettuato con successo.");
+            email = UserManager.getEmail(username);
+        }
+        // Salva il nome, email e password nelle preferenze
+        Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+        if (rememberMe) {
+            prefs.put(PREF_KEY, username);
+            prefs.put(PREF_EMAIL_KEY, email);
+            prefs.put("trenical_password", password);
+            prefs.putBoolean("trenical_remember_me", true);
+        } else {
+            prefs.remove(PREF_KEY);
+            prefs.remove(PREF_EMAIL_KEY);
+            prefs.remove("trenical_password");
+            prefs.putBoolean("trenical_remember_me", false);
+        }
+        UserSession.setUsername(username);
+        UserSession.setEmail(email);
+        SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
+    }
+
+    @FXML
+    private void onRegister() {
+        String username = usernameField.getText();
+        String email = emailField.getText();
+        String password = passwordField.getText();
+        if (username == null || username.isBlank() || email == null || email.isBlank() || password == null || password.isBlank()) {
+            AlertUtils.showError("Errore", "Tutti i campi sono obbligatori per la registrazione.");
+            return;
+        }
+        if (UserManager.userExists(username)) {
+            AlertUtils.showError("Errore", "Nome utente già registrato. Scegli un altro nome o effettua il login.");
+            return;
+        }
+        boolean ok = UserManager.registerUser(username, email, password);
+        if (ok) {
+            AlertUtils.showInfo("Registrazione riuscita", "Account creato con successo. Ora puoi accedere.");
+            // Salva credenziali
+            Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+            prefs.put(PREF_KEY, username);
+            prefs.put(PREF_EMAIL_KEY, email);
+            prefs.put("trenical_password", password);
+        } else {
+            AlertUtils.showError("Errore", "Registrazione fallita. Riprova.");
+        }
+    }
+
+    @FXML
+    public void onLogout() {
+        Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+        prefs.remove(PREF_KEY);
+        prefs.remove(PREF_EMAIL_KEY);
+        prefs.remove("trenical_password");
+        UserSession.setUsername("");
+        UserSession.setEmail("");
+        UserSession.setAdmin(false);
+        UserSession.setLoyaltyMember(false);
+        UserSession.clearTickets();
+        usernameField.setText("");
+        emailField.setText("");
+        passwordField.setText("");
+        // Torna alla schermata di login
+        SceneManager.getInstance().switchTo(SceneManager.LOGIN);
+    }
+}

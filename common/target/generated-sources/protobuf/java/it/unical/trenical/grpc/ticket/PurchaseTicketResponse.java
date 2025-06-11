@@ -22,6 +22,7 @@ private static final long serialVersionUID = 0L;
   private PurchaseTicketResponse() {
     ticketId_ = "";
     message_ = "";
+    tickets_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -61,7 +62,7 @@ private static final long serialVersionUID = 0L;
   private volatile java.lang.Object ticketId_ = "";
   /**
    * <pre>
-   * ID univoco del biglietto acquistato
+   * ID univoco del biglietto acquistato (primo biglietto)
    * </pre>
    *
    * <code>string ticket_id = 2;</code>
@@ -82,7 +83,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * ID univoco del biglietto acquistato
+   * ID univoco del biglietto acquistato (primo biglietto)
    * </pre>
    *
    * <code>string ticket_id = 2;</code>
@@ -169,7 +170,7 @@ private static final long serialVersionUID = 0L;
   private it.unical.trenical.grpc.common.Ticket ticket_;
   /**
    * <pre>
-   * Dettagli del biglietto acquistato
+   * Dettagli del primo biglietto acquistato
    * </pre>
    *
    * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -181,7 +182,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Dettagli del biglietto acquistato
+   * Dettagli del primo biglietto acquistato
    * </pre>
    *
    * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -193,7 +194,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Dettagli del biglietto acquistato
+   * Dettagli del primo biglietto acquistato
    * </pre>
    *
    * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -201,6 +202,67 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public it.unical.trenical.grpc.common.TicketOrBuilder getTicketOrBuilder() {
     return ticket_ == null ? it.unical.trenical.grpc.common.Ticket.getDefaultInstance() : ticket_;
+  }
+
+  public static final int TICKETS_FIELD_NUMBER = 6;
+  @SuppressWarnings("serial")
+  private java.util.List<it.unical.trenical.grpc.common.Ticket> tickets_;
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  @java.lang.Override
+  public java.util.List<it.unical.trenical.grpc.common.Ticket> getTicketsList() {
+    return tickets_;
+  }
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends it.unical.trenical.grpc.common.TicketOrBuilder> 
+      getTicketsOrBuilderList() {
+    return tickets_;
+  }
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  @java.lang.Override
+  public int getTicketsCount() {
+    return tickets_.size();
+  }
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  @java.lang.Override
+  public it.unical.trenical.grpc.common.Ticket getTickets(int index) {
+    return tickets_.get(index);
+  }
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  @java.lang.Override
+  public it.unical.trenical.grpc.common.TicketOrBuilder getTicketsOrBuilder(
+      int index) {
+    return tickets_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -232,6 +294,9 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000001) != 0)) {
       output.writeMessage(5, getTicket());
     }
+    for (int i = 0; i < tickets_.size(); i++) {
+      output.writeMessage(6, tickets_.get(i));
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -258,6 +323,10 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(5, getTicket());
+    }
+    for (int i = 0; i < tickets_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(6, tickets_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -288,6 +357,8 @@ private static final long serialVersionUID = 0L;
       if (!getTicket()
           .equals(other.getTicket())) return false;
     }
+    if (!getTicketsList()
+        .equals(other.getTicketsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -312,6 +383,10 @@ private static final long serialVersionUID = 0L;
     if (hasTicket()) {
       hash = (37 * hash) + TICKET_FIELD_NUMBER;
       hash = (53 * hash) + getTicket().hashCode();
+    }
+    if (getTicketsCount() > 0) {
+      hash = (37 * hash) + TICKETS_FIELD_NUMBER;
+      hash = (53 * hash) + getTicketsList().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -448,6 +523,7 @@ private static final long serialVersionUID = 0L;
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
         getTicketFieldBuilder();
+        getTicketsFieldBuilder();
       }
     }
     @java.lang.Override
@@ -463,6 +539,13 @@ private static final long serialVersionUID = 0L;
         ticketBuilder_.dispose();
         ticketBuilder_ = null;
       }
+      if (ticketsBuilder_ == null) {
+        tickets_ = java.util.Collections.emptyList();
+      } else {
+        tickets_ = null;
+        ticketsBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -489,9 +572,22 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public it.unical.trenical.grpc.ticket.PurchaseTicketResponse buildPartial() {
       it.unical.trenical.grpc.ticket.PurchaseTicketResponse result = new it.unical.trenical.grpc.ticket.PurchaseTicketResponse(this);
+      buildPartialRepeatedFields(result);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartialRepeatedFields(it.unical.trenical.grpc.ticket.PurchaseTicketResponse result) {
+      if (ticketsBuilder_ == null) {
+        if (((bitField0_ & 0x00000020) != 0)) {
+          tickets_ = java.util.Collections.unmodifiableList(tickets_);
+          bitField0_ = (bitField0_ & ~0x00000020);
+        }
+        result.tickets_ = tickets_;
+      } else {
+        result.tickets_ = ticketsBuilder_.build();
+      }
     }
 
     private void buildPartial0(it.unical.trenical.grpc.ticket.PurchaseTicketResponse result) {
@@ -581,6 +677,32 @@ private static final long serialVersionUID = 0L;
       if (other.hasTicket()) {
         mergeTicket(other.getTicket());
       }
+      if (ticketsBuilder_ == null) {
+        if (!other.tickets_.isEmpty()) {
+          if (tickets_.isEmpty()) {
+            tickets_ = other.tickets_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+          } else {
+            ensureTicketsIsMutable();
+            tickets_.addAll(other.tickets_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.tickets_.isEmpty()) {
+          if (ticketsBuilder_.isEmpty()) {
+            ticketsBuilder_.dispose();
+            ticketsBuilder_ = null;
+            tickets_ = other.tickets_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+            ticketsBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getTicketsFieldBuilder() : null;
+          } else {
+            ticketsBuilder_.addAllMessages(other.tickets_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -634,6 +756,19 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000010;
               break;
             } // case 42
+            case 50: {
+              it.unical.trenical.grpc.common.Ticket m =
+                  input.readMessage(
+                      it.unical.trenical.grpc.common.Ticket.parser(),
+                      extensionRegistry);
+              if (ticketsBuilder_ == null) {
+                ensureTicketsIsMutable();
+                tickets_.add(m);
+              } else {
+                ticketsBuilder_.addMessage(m);
+              }
+              break;
+            } // case 50
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -686,7 +821,7 @@ private static final long serialVersionUID = 0L;
     private java.lang.Object ticketId_ = "";
     /**
      * <pre>
-     * ID univoco del biglietto acquistato
+     * ID univoco del biglietto acquistato (primo biglietto)
      * </pre>
      *
      * <code>string ticket_id = 2;</code>
@@ -706,7 +841,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * ID univoco del biglietto acquistato
+     * ID univoco del biglietto acquistato (primo biglietto)
      * </pre>
      *
      * <code>string ticket_id = 2;</code>
@@ -727,7 +862,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * ID univoco del biglietto acquistato
+     * ID univoco del biglietto acquistato (primo biglietto)
      * </pre>
      *
      * <code>string ticket_id = 2;</code>
@@ -744,7 +879,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * ID univoco del biglietto acquistato
+     * ID univoco del biglietto acquistato (primo biglietto)
      * </pre>
      *
      * <code>string ticket_id = 2;</code>
@@ -758,7 +893,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * ID univoco del biglietto acquistato
+     * ID univoco del biglietto acquistato (primo biglietto)
      * </pre>
      *
      * <code>string ticket_id = 2;</code>
@@ -916,7 +1051,7 @@ private static final long serialVersionUID = 0L;
         it.unical.trenical.grpc.common.Ticket, it.unical.trenical.grpc.common.Ticket.Builder, it.unical.trenical.grpc.common.TicketOrBuilder> ticketBuilder_;
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -927,7 +1062,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -942,7 +1077,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -962,7 +1097,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -980,7 +1115,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -1005,7 +1140,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -1022,7 +1157,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -1034,7 +1169,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -1049,7 +1184,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Dettagli del biglietto acquistato
+     * Dettagli del primo biglietto acquistato
      * </pre>
      *
      * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -1066,6 +1201,318 @@ private static final long serialVersionUID = 0L;
         ticket_ = null;
       }
       return ticketBuilder_;
+    }
+
+    private java.util.List<it.unical.trenical.grpc.common.Ticket> tickets_ =
+      java.util.Collections.emptyList();
+    private void ensureTicketsIsMutable() {
+      if (!((bitField0_ & 0x00000020) != 0)) {
+        tickets_ = new java.util.ArrayList<it.unical.trenical.grpc.common.Ticket>(tickets_);
+        bitField0_ |= 0x00000020;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        it.unical.trenical.grpc.common.Ticket, it.unical.trenical.grpc.common.Ticket.Builder, it.unical.trenical.grpc.common.TicketOrBuilder> ticketsBuilder_;
+
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public java.util.List<it.unical.trenical.grpc.common.Ticket> getTicketsList() {
+      if (ticketsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(tickets_);
+      } else {
+        return ticketsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public int getTicketsCount() {
+      if (ticketsBuilder_ == null) {
+        return tickets_.size();
+      } else {
+        return ticketsBuilder_.getCount();
+      }
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public it.unical.trenical.grpc.common.Ticket getTickets(int index) {
+      if (ticketsBuilder_ == null) {
+        return tickets_.get(index);
+      } else {
+        return ticketsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder setTickets(
+        int index, it.unical.trenical.grpc.common.Ticket value) {
+      if (ticketsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTicketsIsMutable();
+        tickets_.set(index, value);
+        onChanged();
+      } else {
+        ticketsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder setTickets(
+        int index, it.unical.trenical.grpc.common.Ticket.Builder builderForValue) {
+      if (ticketsBuilder_ == null) {
+        ensureTicketsIsMutable();
+        tickets_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        ticketsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder addTickets(it.unical.trenical.grpc.common.Ticket value) {
+      if (ticketsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTicketsIsMutable();
+        tickets_.add(value);
+        onChanged();
+      } else {
+        ticketsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder addTickets(
+        int index, it.unical.trenical.grpc.common.Ticket value) {
+      if (ticketsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTicketsIsMutable();
+        tickets_.add(index, value);
+        onChanged();
+      } else {
+        ticketsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder addTickets(
+        it.unical.trenical.grpc.common.Ticket.Builder builderForValue) {
+      if (ticketsBuilder_ == null) {
+        ensureTicketsIsMutable();
+        tickets_.add(builderForValue.build());
+        onChanged();
+      } else {
+        ticketsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder addTickets(
+        int index, it.unical.trenical.grpc.common.Ticket.Builder builderForValue) {
+      if (ticketsBuilder_ == null) {
+        ensureTicketsIsMutable();
+        tickets_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        ticketsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder addAllTickets(
+        java.lang.Iterable<? extends it.unical.trenical.grpc.common.Ticket> values) {
+      if (ticketsBuilder_ == null) {
+        ensureTicketsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, tickets_);
+        onChanged();
+      } else {
+        ticketsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder clearTickets() {
+      if (ticketsBuilder_ == null) {
+        tickets_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        onChanged();
+      } else {
+        ticketsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public Builder removeTickets(int index) {
+      if (ticketsBuilder_ == null) {
+        ensureTicketsIsMutable();
+        tickets_.remove(index);
+        onChanged();
+      } else {
+        ticketsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public it.unical.trenical.grpc.common.Ticket.Builder getTicketsBuilder(
+        int index) {
+      return getTicketsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public it.unical.trenical.grpc.common.TicketOrBuilder getTicketsOrBuilder(
+        int index) {
+      if (ticketsBuilder_ == null) {
+        return tickets_.get(index);  } else {
+        return ticketsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public java.util.List<? extends it.unical.trenical.grpc.common.TicketOrBuilder> 
+         getTicketsOrBuilderList() {
+      if (ticketsBuilder_ != null) {
+        return ticketsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(tickets_);
+      }
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public it.unical.trenical.grpc.common.Ticket.Builder addTicketsBuilder() {
+      return getTicketsFieldBuilder().addBuilder(
+          it.unical.trenical.grpc.common.Ticket.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public it.unical.trenical.grpc.common.Ticket.Builder addTicketsBuilder(
+        int index) {
+      return getTicketsFieldBuilder().addBuilder(
+          index, it.unical.trenical.grpc.common.Ticket.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * Tutti i biglietti acquistati
+     * </pre>
+     *
+     * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+     */
+    public java.util.List<it.unical.trenical.grpc.common.Ticket.Builder> 
+         getTicketsBuilderList() {
+      return getTicketsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        it.unical.trenical.grpc.common.Ticket, it.unical.trenical.grpc.common.Ticket.Builder, it.unical.trenical.grpc.common.TicketOrBuilder> 
+        getTicketsFieldBuilder() {
+      if (ticketsBuilder_ == null) {
+        ticketsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            it.unical.trenical.grpc.common.Ticket, it.unical.trenical.grpc.common.Ticket.Builder, it.unical.trenical.grpc.common.TicketOrBuilder>(
+                tickets_,
+                ((bitField0_ & 0x00000020) != 0),
+                getParentForChildren(),
+                isClean());
+        tickets_ = null;
+      }
+      return ticketsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

@@ -1,0 +1,26 @@
+[{
+  "id": 1,
+  "name": "Frecciarossa Roma-Milano",
+  "departureStationId": 1,
+  "arrivalStationId": 2
+},{
+  "id": 2,
+  "name": "Italo Milano-Napoli",
+  "departureStationId": 2,
+  "arrivalStationId": 3
+},{
+  "id": 3,
+  "name": "Intercity Napoli-Reggio Calabria",
+  "departureStationId": 3,
+  "arrivalStationId": 10
+},{
+  "id": 4,
+  "name": "Regionale Reggio-Lamezia",
+  "departureStationId": 10,
+  "arrivalStationId": 11
+},{
+  "id": 5,
+  "name": "Regionale Lamezia-Cosenza",
+  "departureStationId": 11,
+  "arrivalStationId": 15
+}]

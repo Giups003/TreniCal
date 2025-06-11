@@ -447,6 +447,44 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int TRAVEL_TIME_FIELD_NUMBER = 11;
+  private com.google.protobuf.Timestamp travelTime_;
+  /**
+   * <pre>
+   * Orario di viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+   * @return Whether the travelTime field is set.
+   */
+  @java.lang.Override
+  public boolean hasTravelTime() {
+    return ((bitField0_ & 0x00000002) != 0);
+  }
+  /**
+   * <pre>
+   * Orario di viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+   * @return The travelTime.
+   */
+  @java.lang.Override
+  public com.google.protobuf.Timestamp getTravelTime() {
+    return travelTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : travelTime_;
+  }
+  /**
+   * <pre>
+   * Orario di viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+   */
+  @java.lang.Override
+  public com.google.protobuf.TimestampOrBuilder getTravelTimeOrBuilder() {
+    return travelTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : travelTime_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -491,6 +529,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(status_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 10, status_);
     }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      output.writeMessage(11, getTravelTime());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -533,6 +574,10 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(status_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, status_);
     }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(11, getTravelTime());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -572,6 +617,11 @@ private static final long serialVersionUID = 0L;
         .equals(other.getSeat())) return false;
     if (!getStatus()
         .equals(other.getStatus())) return false;
+    if (hasTravelTime() != other.hasTravelTime()) return false;
+    if (hasTravelTime()) {
+      if (!getTravelTime()
+          .equals(other.getTravelTime())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -606,6 +656,10 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getSeat().hashCode();
     hash = (37 * hash) + STATUS_FIELD_NUMBER;
     hash = (53 * hash) + getStatus().hashCode();
+    if (hasTravelTime()) {
+      hash = (37 * hash) + TRAVEL_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + getTravelTime().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -741,6 +795,7 @@ private static final long serialVersionUID = 0L;
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
         getTravelDateFieldBuilder();
+        getTravelTimeFieldBuilder();
       }
     }
     @java.lang.Override
@@ -761,6 +816,11 @@ private static final long serialVersionUID = 0L;
       price_ = 0D;
       seat_ = "";
       status_ = "";
+      travelTime_ = null;
+      if (travelTimeBuilder_ != null) {
+        travelTimeBuilder_.dispose();
+        travelTimeBuilder_ = null;
+      }
       return this;
     }
 
@@ -827,6 +887,12 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000200) != 0)) {
         result.status_ = status_;
+      }
+      if (((from_bitField0_ & 0x00000400) != 0)) {
+        result.travelTime_ = travelTimeBuilder_ == null
+            ? travelTime_
+            : travelTimeBuilder_.build();
+        to_bitField0_ |= 0x00000002;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -919,6 +985,9 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000200;
         onChanged();
       }
+      if (other.hasTravelTime()) {
+        mergeTravelTime(other.getTravelTime());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -997,6 +1066,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000200;
               break;
             } // case 82
+            case 90: {
+              input.readMessage(
+                  getTravelTimeFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000400;
+              break;
+            } // case 90
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1901,6 +1977,163 @@ private static final long serialVersionUID = 0L;
       bitField0_ |= 0x00000200;
       onChanged();
       return this;
+    }
+
+    private com.google.protobuf.Timestamp travelTime_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> travelTimeBuilder_;
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     * @return Whether the travelTime field is set.
+     */
+    public boolean hasTravelTime() {
+      return ((bitField0_ & 0x00000400) != 0);
+    }
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     * @return The travelTime.
+     */
+    public com.google.protobuf.Timestamp getTravelTime() {
+      if (travelTimeBuilder_ == null) {
+        return travelTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : travelTime_;
+      } else {
+        return travelTimeBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     */
+    public Builder setTravelTime(com.google.protobuf.Timestamp value) {
+      if (travelTimeBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        travelTime_ = value;
+      } else {
+        travelTimeBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     */
+    public Builder setTravelTime(
+        com.google.protobuf.Timestamp.Builder builderForValue) {
+      if (travelTimeBuilder_ == null) {
+        travelTime_ = builderForValue.build();
+      } else {
+        travelTimeBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     */
+    public Builder mergeTravelTime(com.google.protobuf.Timestamp value) {
+      if (travelTimeBuilder_ == null) {
+        if (((bitField0_ & 0x00000400) != 0) &&
+          travelTime_ != null &&
+          travelTime_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+          getTravelTimeBuilder().mergeFrom(value);
+        } else {
+          travelTime_ = value;
+        }
+      } else {
+        travelTimeBuilder_.mergeFrom(value);
+      }
+      if (travelTime_ != null) {
+        bitField0_ |= 0x00000400;
+        onChanged();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     */
+    public Builder clearTravelTime() {
+      bitField0_ = (bitField0_ & ~0x00000400);
+      travelTime_ = null;
+      if (travelTimeBuilder_ != null) {
+        travelTimeBuilder_.dispose();
+        travelTimeBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     */
+    public com.google.protobuf.Timestamp.Builder getTravelTimeBuilder() {
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return getTravelTimeFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     */
+    public com.google.protobuf.TimestampOrBuilder getTravelTimeOrBuilder() {
+      if (travelTimeBuilder_ != null) {
+        return travelTimeBuilder_.getMessageOrBuilder();
+      } else {
+        return travelTime_ == null ?
+            com.google.protobuf.Timestamp.getDefaultInstance() : travelTime_;
+      }
+    }
+    /**
+     * <pre>
+     * Orario di viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
+        getTravelTimeFieldBuilder() {
+      if (travelTimeBuilder_ == null) {
+        travelTimeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
+                getTravelTime(),
+                getParentForChildren(),
+                isClean());
+        travelTime_ = null;
+      }
+      return travelTimeBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

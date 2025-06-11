@@ -57,8 +57,8 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 return;
             }
 
-            boolean isPriceCheck = request.getPromoCode() != null && !request.getPromoCode().isEmpty() && request.getSeats() == 1 && request.getPassengerName() != null && !request.getPassengerName().isEmpty();
-            if (isPriceCheck) {
+            // Se la richiesta non contiene un metodo di pagamento, è solo una simulazione di prezzo
+            if (request.getPaymentMethod() == null || request.getPaymentMethod().isEmpty()) {
                 double price = priceCalculator.calculateTicketPrice(
                         request.getDepartureStation(),
                         request.getArrivalStation(),
@@ -91,10 +91,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 return;
             }
 
-            // Genera un ID univoco per il biglietto
-            String ticketId = UUID.randomUUID().toString();
-
-            // Calcola il prezzo del biglietto usando il calcolatore di prezzi
+            // Calcola il prezzo del biglietto una sola volta prima del ciclo
             double price = priceCalculator.calculateTicketPrice(
                     request.getDepartureStation(),
                     request.getArrivalStation(),
@@ -102,30 +99,48 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                     request.getTravelDate(),
                     request.getPromoCode()
             );
+            // Crea e salva un biglietto per ogni posto richiesto
+            java.util.List<Ticket> createdTickets = new java.util.ArrayList<>();
+            // Trova tutti i posti già occupati per il treno
+            java.util.Set<Integer> occupiedSeats = new java.util.HashSet<>();
+            for (Ticket t : dataStore.getAllTickets()) {
+                if (t.getTrainId() == trainId) {
+                    try { occupiedSeats.add(Integer.parseInt(t.getSeat())); } catch (Exception ignored) {}
+                }
+            }
+            int seatNumber = 1;
+            for (int i = 0; i < seatsRequested; i++) {
+                // Trova il primo posto libero
+                while (occupiedSeats.contains(seatNumber)) {
+                    seatNumber++;
+                }
+                String ticketId = UUID.randomUUID().toString();
+                Ticket ticket = Ticket.newBuilder()
+                        .setId(ticketId)
+                        .setTrainId(request.getTrainId())
+                        .setPassengerName(request.getPassengerName())
+                        .setDepartureStation(request.getDepartureStation())
+                        .setArrivalStation(request.getArrivalStation())
+                        .setTravelDate(request.getTravelDate())
+                        .setServiceClass(request.getServiceClass())
+                        .setPrice(price)
+                        .setSeat(String.valueOf(seatNumber))
+                        .build();
+                dataStore.addTicket(ticket);
+                createdTickets.add(ticket);
+                occupiedSeats.add(seatNumber);
+                seatNumber++;
+            }
 
-            // Crea il biglietto
-            Ticket ticket = Ticket.newBuilder()
-                    .setId(ticketId)
-                    .setTrainId(request.getTrainId())
-                    .setPassengerName(request.getPassengerName())
-                    .setDepartureStation(request.getDepartureStation())
-                    .setArrivalStation(request.getArrivalStation())
-                    .setTravelDate(request.getTravelDate())
-                    .setServiceClass(request.getServiceClass())
-                    .setPrice(price)
-                    .setSeat(String.valueOf(seatsRequested))
-                    .build();
-
-            // Salva il biglietto reale nel DataStore
-            dataStore.addTicket(ticket);
-
-            // Prepara e invia la risposta al client
+            // Prepara e invia la risposta al client (tutti i biglietti acquistati)
+            Ticket firstTicket = createdTickets.get(0);
             PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
                     .setSuccess(true)
-                    .setTicketId(ticketId)
-                    .setMessage("Biglietto acquistato con successo!")
+                    .setTicketId(firstTicket.getId())
+                    .setMessage("Biglietti acquistati con successo!")
                     .setPrice(price)
-                    .setTicket(ticket)
+                    .setTicket(firstTicket)
+                    .addAllTickets(createdTickets)
                     .build();
 
             responseObserver.onNext(response);
@@ -258,7 +273,10 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 responseObserver.onCompleted();
                 return;
             }
+            // Aggiorna lo stato del biglietto a "Annullato" invece di cancellarlo
+            Ticket annullato = ticket.toBuilder().setStatus("Annullato").build();
             dataStore.deleteTicket(ticketId);
+            dataStore.addTicket(annullato);
             OperationResponse response = OperationResponse.newBuilder()
                     .setSuccess(true)
                     .setMessage("Biglietto annullato con successo.")
@@ -271,6 +289,55 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                             .withDescription("Errore durante l'annullamento del biglietto: " + e.getMessage())
                             .asRuntimeException()
             );
+        }
+    }
+
+    /**
+     * Gestisce la richiesta di elenco dei biglietti.
+     * Restituisce solo i biglietti dell'utente richiesto.
+     * @param request Richiesta contenente i criteri di ricerca (es. nome passeggero).
+     * @param responseObserver Stream per inviare la risposta al client.
+     */
+    @Override
+    public void listTickets(ListTicketsRequest request, StreamObserver<ListTicketsResponse> responseObserver) {
+        try {
+            String passengerName = request.getPassengerName();
+            java.util.List<Ticket> allTickets = dataStore.getAllTickets();
+            java.util.List<Ticket> userTickets = new java.util.ArrayList<>();
+            for (Ticket t : allTickets) {
+                if (t.getPassengerName().equals(passengerName)) {
+                    userTickets.add(t);
+                }
+            }
+            ListTicketsResponse response = ListTicketsResponse.newBuilder()
+                    .addAllTickets(userTickets)
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL.withDescription("Errore durante il recupero dei biglietti: " + e.getMessage()).asRuntimeException()
+            );
+        }
+    }
+
+    @Override
+    public void clearAllTickets(ClearAllTicketsRequest request, StreamObserver<OperationResponse> responseObserver) {
+        try {
+            dataStore.clearAllTickets();
+            OperationResponse response = OperationResponse.newBuilder()
+                    .setSuccess(true)
+                    .setMessage("Tutti i biglietti sono stati eliminati.")
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            OperationResponse response = OperationResponse.newBuilder()
+                    .setSuccess(false)
+                    .setMessage("Errore durante l'eliminazione dei biglietti: " + e.getMessage())
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
         }
     }
 

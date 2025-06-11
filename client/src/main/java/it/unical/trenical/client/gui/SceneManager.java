@@ -22,6 +22,7 @@ public class SceneManager {
     public static final String BUY_TICKET = "src/main/java/it/unical/trenical/client/gui/view/buy_ticket.fxml";
     public static final String MY_TICKETS = "src/main/java/it/unical/trenical/client/gui/view/my_tickets.fxml";
     public static final String LOGIN = "src/main/java/it/unical/trenical/client/gui/view/login.fxml";
+    public static final String ADMIN_PANEL = "src/main/java/it/unical/trenical/client/gui/view/admin_panel.fxml";
 
     private SceneManager() {}
 
@@ -64,12 +65,17 @@ public class SceneManager {
 
             FXMLLoader loader = new FXMLLoader(file.toURI().toURL());
             Parent root = loader.load();
-            primaryStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            // Imposta dimensioni minime della finestra in base alla scena
+            primaryStage.setMinWidth(scene.getRoot().minWidth(0));
+            primaryStage.setMinHeight(scene.getRoot().minHeight(0));
+            // Centra la finestra ogni volta che si cambia schermata
+            primaryStage.centerOnScreen();
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("ERRORE durante il caricamento della schermata: " + e.getMessage());
-            // Puoi mostrare un alert di errore qui se vuoi
         }
     }
     /**
@@ -85,5 +91,11 @@ public class SceneManager {
     public void showLogin() {
         switchTo(LOGIN);
     }
-}
 
+    /**
+     * Mostra la schermata admin panel.
+     */
+    public void showAdminPanel() {
+        switchTo(ADMIN_PANEL);
+    }
+}

@@ -4,20 +4,19 @@ import com.google.protobuf.util.JsonFormat;
 import it.unical.trenical.grpc.common.Ticket;
 import it.unical.trenical.grpc.common.Train;
 import it.unical.trenical.grpc.common.Station;
-import com.google.protobuf.Timestamp;
-import it.unical.trenical.server.Route;
+import it.unical.trenical.grpc.train.Route;
+import it.unical.trenical.grpc.promotion.Promotion;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DataStore {
     private static final String DATA_DIR = "C:/Users/Giuseppe/Documents/TreniCal/TreniCal/server/data";
@@ -100,11 +99,6 @@ public class DataStore {
             trains = new ArrayList<>();
         }
 
-        // Inizializza i posti disponibili per ogni treno
-        for (Train t : trains) {
-            trainSeatsAvailable.putIfAbsent(t.getId(), DEFAULT_SEATS_PER_TRAIN);
-        }
-
         try {
             tickets = loadTicketsFromFile(TICKETS_FILE);
         } catch (Exception e) {
@@ -125,6 +119,61 @@ public class DataStore {
             System.out.println("Impossibile caricare le promozioni: " + e.getMessage());
             promotions = new ArrayList<>();
         }
+
+        int oldTrainSize = trains.size();
+        generateTrainsForWeeks(2); // 2 settimane, treni ogni ora
+        if (trains.size() > oldTrainSize) {
+            saveData();
+        }
+
+        for (Train t : trains) {
+            // Se il treno è già presente nella mappa, non sovrascrivere il valore (così i posti già prenotati restano validi)
+            trainSeatsAvailable.putIfAbsent(t.getId(), DEFAULT_SEATS_PER_TRAIN);
+        }
+    }
+
+    /**
+     * Genera treni per tutte le tratte, per un certo numero di settimane e corse ogni ora tra 6:00 e 22:00
+     * @param weeks numero di settimane
+     */
+    private void generateTrainsForWeeks(int weeks) {
+        if (routes == null || routes.isEmpty()) return;
+        int maxId = trains.stream().mapToInt(Train::getId).max().orElse(0);
+        var today = java.time.LocalDate.now();
+        var rand = new java.util.Random();
+        int firstHour = 6;
+        int lastHour = 22;
+        Set<String> uniqueTrainKeys = new HashSet<>();
+        for (Route route : routes) {
+            for (int w = 0; w < weeks; w++) {
+                for (int d = 0; d < 7; d++) {
+                    var date = today.plusDays(w * 7 + d);
+                    for (int hour = firstHour; hour <= lastHour; hour++) {
+                        var departure = date.atTime(hour, 0);
+                        var arrival = departure.plusMinutes(60 + rand.nextInt(60));
+                        String routeKey = route.getName() + "_" +
+                                getStationById(route.getDepartureStationId()).getName() + "_" +
+                                getStationById(route.getArrivalStationId()).getName();
+                        String key = routeKey + "_" + date + "_" + hour;
+                        if (!uniqueTrainKeys.add(key)) continue;
+
+                        Train train = Train.newBuilder()
+                                .setId(++maxId)
+                                .setName(route.getName())
+                                .setDepartureStation(getStationById(route.getDepartureStationId()).getName())
+                                .setArrivalStation(getStationById(route.getArrivalStationId()).getName())
+                                .setDepartureTime(com.google.protobuf.Timestamp.newBuilder()
+                                        .setSeconds(departure.toEpochSecond(java.time.ZoneOffset.UTC))
+                                        .build())
+                                .setArrivalTime(com.google.protobuf.Timestamp.newBuilder()
+                                        .setSeconds(arrival.toEpochSecond(java.time.ZoneOffset.UTC))
+                                        .build())
+                                .build();
+                        trains.add(train);
+                    }
+                }
+            }
+        }
     }
 
     private void resetFileIfMalformed(String filename) {
@@ -143,24 +192,17 @@ public class DataStore {
     }
 
     private List<Station> loadStationsFromFile(String filename) throws IOException {
-        File file = new File(filename);
-        if (!file.exists()) {
-            return new ArrayList<>();
-        }
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<Station> result = new ArrayList<>();
-        json = json.substring(1, json.length() - 1);
-        if (json.trim().isEmpty()) return result;
-        String[] objects = json.split("},\\s*\\{");
-        for (String obj : objects) {
-            if (!obj.startsWith("{")) obj = "{" + obj;
-            if (!obj.endsWith("}")) obj = obj + "}";
+        File file = new File(filename);
+        if (!file.exists()) return result;
+        String json = Files.readString(Paths.get(filename)).trim();
+        if (json.equals("[]") || json.isEmpty()) return result;
+        JSONArray array = new JSONArray(json);
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = array.getJSONObject(i);
             try {
                 Station.Builder builder = Station.newBuilder();
-                JsonFormat.parser().ignoringUnknownFields().merge(obj, builder);
+                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add(builder.build());
             } catch (Exception e) {
                 System.out.println("Errore parsing stazione: " + obj + " - " + e.getMessage());
@@ -170,24 +212,17 @@ public class DataStore {
     }
 
     private List<Train> loadTrainsFromFile(String filename) throws IOException {
-        File file = new File(filename);
-        if (!file.exists()) {
-            return new ArrayList<>();
-        }
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<Train> result = new ArrayList<>();
-        json = json.substring(1, json.length() - 1);
-        if (json.trim().isEmpty()) return result;
-        String[] objects = json.split("},\\s*\\{");
-        for (String obj : objects) {
-            if (!obj.startsWith("{")) obj = "{" + obj;
-            if (!obj.endsWith("}")) obj = obj + "}";
+        File file = new File(filename);
+        if (!file.exists()) return result;
+        String json = Files.readString(Paths.get(filename)).trim();
+        if (json.equals("[]") || json.isEmpty()) return result;
+        JSONArray array = new JSONArray(json);
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = array.getJSONObject(i);
             try {
                 Train.Builder builder = Train.newBuilder();
-                JsonFormat.parser().ignoringUnknownFields().merge(obj, builder);
+                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add(builder.build());
             } catch (Exception e) {
                 System.out.println("Errore parsing treno: " + obj + " - " + e.getMessage());
@@ -197,24 +232,17 @@ public class DataStore {
     }
 
     private List<Ticket> loadTicketsFromFile(String filename) throws IOException {
-        File file = new File(filename);
-        if (!file.exists()) {
-            return new ArrayList<>();
-        }
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<Ticket> result = new ArrayList<>();
-        json = json.substring(1, json.length() - 1);
-        if (json.trim().isEmpty()) return result;
-        String[] objects = json.split("},\\s*\\{");
-        for (String obj : objects) {
-            if (!obj.startsWith("{")) obj = "{" + obj;
-            if (!obj.endsWith("}")) obj = obj + "}";
+        File file = new File(filename);
+        if (!file.exists()) return result;
+        String json = Files.readString(Paths.get(filename)).trim();
+        if (json.equals("[]") || json.isEmpty()) return result;
+        JSONArray array = new JSONArray(json);
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = array.getJSONObject(i);
             try {
                 Ticket.Builder builder = Ticket.newBuilder();
-                JsonFormat.parser().ignoringUnknownFields().merge(obj, builder);
+                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add(builder.build());
             } catch (Exception e) {
                 System.out.println("Errore parsing biglietto: " + obj + " - " + e.getMessage());
@@ -224,48 +252,18 @@ public class DataStore {
     }
 
     private List<Route> loadRoutesFromFile(String filename) throws IOException {
-        File file = new File(filename);
-        if (!file.exists()) {
-            return new ArrayList<>();
-        }
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<Route> result = new ArrayList<>();
-        // Rimuovi parentesi quadre iniziali/finali
-        if (json.startsWith("[") && json.endsWith("]")) {
-            json = json.substring(1, json.length() - 1).trim();
-        }
-        if (json.isEmpty()) return result;
-        // Split robusto sugli oggetti JSON
-        String[] objects = json.split("(?<=\\}),\\s*(?=\\{)");
-        for (String obj : objects) {
-            obj = obj.trim();
+        File file = new File(filename);
+        if (!file.exists()) return result;
+        String json = Files.readString(Paths.get(filename)).trim();
+        if (json.equals("[]") || json.isEmpty()) return result;
+        JSONArray array = new JSONArray(json);
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = array.getJSONObject(i);
             try {
-                // Parsing manuale senza org.json né Gson
-                // Rimuovi eventuali virgole finali
-                if (obj.endsWith(",")) obj = obj.substring(0, obj.length() - 1);
-                // Rimuovi parentesi graffe
-                if (obj.startsWith("{")) obj = obj.substring(1);
-                if (obj.endsWith("}")) obj = obj.substring(0, obj.length() - 1);
-                String[] fields = obj.split(",\\s*\"?");
-                Route r = new Route();
-                for (String field : fields) {
-                    String[] kv = field.split(":", 2);
-                    if (kv.length != 2) continue;
-                    String key = kv[0].replaceAll("[\"{}]", "").trim();
-                    String value = kv[1].replaceAll("[\"{}]", "").trim();
-                    switch (key) {
-                        case "id": r.id = Integer.parseInt(value); break;
-                        case "name": r.name = value; break;
-                        case "departureStationId": r.departureStationId = Integer.parseInt(value); break;
-                        case "arrivalStationId": r.arrivalStationId = Integer.parseInt(value); break;
-                        case "departureTime": r.departureTime = value; break;
-                        case "arrivalTime": r.arrivalTime = value; break;
-                    }
-                }
-                result.add(r);
+                Route.Builder builder = Route.newBuilder();
+                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
+                result.add(builder.build());
             } catch (Exception e) {
                 System.out.println("Errore parsing tratta: " + obj + " - " + e.getMessage());
             }
@@ -274,46 +272,18 @@ public class DataStore {
     }
 
     private List<Promotion> loadPromotionsFromFile(String filename) throws IOException {
-        File file = new File(filename);
-        if (!file.exists()) {
-            return new ArrayList<>();
-        }
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<Promotion> result = new ArrayList<>();
-        json = json.substring(1, json.length() - 1);
-        if (json.trim().isEmpty()) return result;
-        String[] objects = json.split("},\\s*\\{");
-        for (String obj : objects) {
-            if (!obj.startsWith("{")) obj = "{" + obj;
-            if (!obj.endsWith("}")) obj = obj + "}";
+        File file = new File(filename);
+        if (!file.exists()) return result;
+        String json = Files.readString(Paths.get(filename)).trim();
+        if (json.equals("[]") || json.isEmpty()) return result;
+        JSONArray array = new JSONArray(json);
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = array.getJSONObject(i);
             try {
-                // Parsing manuale (senza Gson)
-                int id = 0;
-                String name = null, description = null, routeName = null, serviceClass = null;
-                double discountPercent = 0.0;
-                java.time.LocalDate validFrom = null, validTo = null;
-                obj = obj.replaceAll("[{}]", "");
-                String[] fields = obj.split(",\\s*");
-                for (String field : fields) {
-                    String[] kv = field.split(":", 2);
-                    if (kv.length != 2) continue;
-                    String key = kv[0].replaceAll("\"", "").trim();
-                    String value = kv[1].replaceAll("\"", "").trim();
-                    switch (key) {
-                        case "id": id = Integer.parseInt(value); break;
-                        case "name": name = value; break;
-                        case "description": description = value; break;
-                        case "discountPercent": discountPercent = Double.parseDouble(value); break;
-                        case "routeName": routeName = value.equals("null") ? null : value; break;
-                        case "serviceClass": serviceClass = value.equals("null") ? null : value; break;
-                        case "validFrom": validFrom = value.equals("null") ? null : java.time.LocalDate.parse(value); break;
-                        case "validTo": validTo = value.equals("null") ? null : java.time.LocalDate.parse(value); break;
-                    }
-                }
-                result.add(new Promotion(id, name, description, discountPercent, routeName, serviceClass, validFrom, validTo));
+                Promotion.Builder builder = Promotion.newBuilder();
+                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
+                result.add(builder.build());
             } catch (Exception e) {
                 System.out.println("Errore parsing promozione: " + obj + " - " + e.getMessage());
             }
@@ -334,18 +304,11 @@ public class DataStore {
                 jsonArray.append(",");
             }
             if (obj instanceof Route r) {
-                jsonArray.append("{\"id\":" + r.id + ",\"name\":\"" + r.name + "\",\"departureStationId\":" + r.departureStationId + ",\"arrivalStationId\":" + r.arrivalStationId + ",\"departureTime\":\"" + r.departureTime + "\",\"arrivalTime\":\"" + r.arrivalTime + "\"}");
+                String json = JsonFormat.printer().print(r);
+                jsonArray.append(json);
             } else if (obj instanceof Promotion p) {
-                jsonArray.append(String.format("{\"id\":%d,\"name\":\"%s\",\"description\":\"%s\",\"discountPercent\":%.2f,\"routeName\":%s,\"serviceClass\":%s,\"validFrom\":%s,\"validTo\":%s}",
-                        p.id,
-                        p.name.replace("\"", "'"),
-                        p.description.replace("\"", "'"),
-                        p.discountPercent,
-                        p.routeName == null ? "null" : "\"" + p.routeName.replace("\"", "'") + "\"",
-                        p.serviceClass == null ? "null" : "\"" + p.serviceClass.replace("\"", "'") + "\"",
-                        p.validFrom == null ? "null" : "\"" + p.validFrom.toString() + "\"",
-                        p.validTo == null ? "null" : "\"" + p.validTo.toString() + "\""
-                ));
+                String json = JsonFormat.printer().print(p);
+                jsonArray.append(json);
             } else {
                 String json = JsonFormat.printer().print((com.google.protobuf.MessageOrBuilder) obj);
                 jsonArray.append(json);
@@ -368,11 +331,116 @@ public class DataStore {
         }
     }
 
-    public List<Station> getAllStations() { return stations; }
-    public Station getStationById(int id) {
+    // --- THREAD SAFETY SU TUTTE LE LISTE ---
+    // RIMOSSI METODI DUPLICATI E NON USATI
+    // --- METODI DI UPDATE (corretti, senza validazioni inutili) ---
+    public synchronized void updateStation(Station updated) {
+        if (updated == null || updated.getId() <= 0) return;
+        for (int i = 0; i < stations.size(); i++) {
+            if (stations.get(i).getId() == updated.getId()) {
+                stations.set(i, updated);
+                saveData();
+                return;
+            }
+        }
+    }
+    public synchronized void updateTrain(Train updated) {
+        if (updated == null || updated.getId() <= 0) return;
+        for (int i = 0; i < trains.size(); i++) {
+            if (trains.get(i).getId() == updated.getId()) {
+                trains.set(i, updated);
+                saveData();
+                return;
+            }
+        }
+    }
+    public synchronized void updateTicket(Ticket updated) {
+        if (updated == null || updated.getId() == null) return;
+        for (int i = 0; i < tickets.size(); i++) {
+            if (tickets.get(i).getId().equals(updated.getId())) {
+                tickets.set(i, updated);
+                saveData();
+                return;
+            }
+        }
+    }
+    public synchronized void updateRoute(Route updated) {
+        if (updated == null || updated.getId() <= 0) return;
+        for (int i = 0; i < routes.size(); i++) {
+            if (routes.get(i).getId() == updated.getId()) {
+                routes.set(i, updated);
+                saveData();
+                return;
+            }
+        }
+    }
+    public synchronized void updatePromotion(Promotion updated) {
+        if (updated == null || updated.getId() <= 0) return;
+        for (int i = 0; i < promotions.size(); i++) {
+            if (promotions.get(i).getId() == updated.getId()) {
+                promotions.set(i, updated);
+                saveData();
+                return;
+            }
+        }
+    }
+    // --- GESTIONE ID CENTRALIZZATA ---
+    private synchronized int generateNextId(List<?> list, java.util.function.ToIntFunction<Object> idGetter) {
+        return list.stream().mapToInt(idGetter).max().orElse(0) + 1;
+    }
+    public synchronized int generateNextStationId() { return generateNextId(stations, s -> ((Station)s).getId()); }
+    public synchronized int generateNextTrainId() { return generateNextId(trains, t -> ((Train)t).getId()); }
+    public synchronized int generateNextRouteId() { return generateNextId(routes, r -> ((Route)r).getId()); }
+    public synchronized int generateNextPromotionId() { return generateNextId(promotions, p -> ((Promotion)p).getId()); }
+    // --- BACKUP/RESTORE ---
+    /**
+     * Esporta tutti i dati in una stringa JSON.
+     */
+    public synchronized String exportAllData() {
+        JSONObject obj = new JSONObject();
+        obj.put("stations", stations);
+        obj.put("trains", trains);
+        obj.put("tickets", tickets);
+        obj.put("routes", routes);
+        obj.put("promotions", promotions);
+        return obj.toString();
+    }
+    /**
+     * Importa tutti i dati da una stringa JSON.
+     */
+    public synchronized void importAllData(String json) {
+        // Placeholder: implementazione da completare
+    }
+    // --- LAZY LOADING E CACHE (ESEMPIO SU PROMOTIONS) ---
+    private boolean promotionsLoaded = false;
+    public synchronized List<Promotion> getPromotionsLazy() {
+        if (!promotionsLoaded) {
+            try { promotions = loadPromotionsFromFile(PROMOTIONS_FILE); promotionsLoaded = true; }
+            catch (Exception e) { promotions = new ArrayList<>(); }
+        }
+        return new ArrayList<>(promotions);
+    }
+
+    // --- METODI PUBBLICI DI ACCESSO E GESTIONE ---
+    public synchronized List<Station> getAllStations() {
+        return new ArrayList<>(stations);
+    }
+    public synchronized Station getStationById(int id) {
         return stations.stream().filter(station -> station.getId() == id).findFirst().orElse(null);
     }
-    public List<Station> searchStations(String query, int limit) {
+    public synchronized void addStation(Station station) {
+        if (station == null || station.getId() <= 0) return;
+        boolean exists = stations.stream().anyMatch(s -> s.getId() == station.getId());
+        if (!exists) {
+            stations.add(station);
+            saveData();
+        }
+    }
+    public synchronized void deleteStation(int id) {
+        stations.removeIf(s -> s.getId() == id);
+        saveData();
+    }
+    public synchronized List<Station> searchStations(String query, int limit) {
         if (query == null || query.isEmpty()) {
             return stations.stream().limit(limit).collect(Collectors.toList());
         }
@@ -384,113 +452,115 @@ public class DataStore {
                 .collect(Collectors.toList());
     }
 
-    public List<Train> getAllTrains() {
-        // Genera i treni dinamicamente dalle tratte per la data odierna
+    public synchronized List<Train> getAllTrains() {
         java.time.LocalDate today = java.time.LocalDate.now();
         return generateTrainsForDay(null, null, today);
     }
-
-    public Train getTrainById(int id) {
+    public synchronized Train getTrainById(int id) {
         java.time.LocalDate today = java.time.LocalDate.now();
         return generateTrainsForDay(null, null, today).stream()
                 .filter(train -> train.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
-
-    public List<Ticket> getAllTickets() { return tickets; }
-    public Ticket getTicketById(String id) {
-        return tickets.stream().filter(ticket -> ticket.getId().equals(id)).findFirst().orElse(null);
-    }
-
-    public List<Route> getAllRoutes() { return routes; }
-    public Route getRouteById(int id) {
-        return routes.stream().filter(r -> r.id == id).findFirst().orElse(null);
-    }
-
-    public void addStation(Station station) {
-        boolean exists = stations.stream().anyMatch(s -> s.getId() == station.getId());
-        if (!exists) {
-            stations.add(station);
-            saveData();
-        }
-    }
-    public void addTrain(Train train) {
+    public synchronized void addTrain(Train train) {
+        if (train == null || train.getId() <= 0) return;
         boolean exists = trains.stream().anyMatch(t -> t.getId() == train.getId());
         if (!exists) {
             trains.add(train);
             saveData();
         }
     }
-    public void addTicket(Ticket ticket) {
-        synchronized (tickets) {
-            boolean exists = tickets.stream().anyMatch(t -> t.getId().equals(ticket.getId()));
-            if (!exists) {
-                tickets.add(ticket);
-                saveData();
-            }
+    public synchronized void deleteTrain(int id) {
+        trains.removeIf(t -> t.getId() == id);
+        saveData();
+    }
+
+    public synchronized List<Ticket> getAllTickets() {
+        return new ArrayList<>(tickets);
+    }
+    public synchronized Ticket getTicketById(String id) {
+        return tickets.stream().filter(ticket -> ticket.getId().equals(id)).findFirst().orElse(null);
+    }
+    public synchronized void addTicket(Ticket ticket) {
+        if (ticket == null || ticket.getId() == null) return;
+        boolean exists = tickets.stream().anyMatch(t -> t.getId().equals(ticket.getId()));
+        if (!exists) {
+            tickets.add(ticket);
+            saveData();
         }
     }
-    public void addRoute(Route route) {
-        boolean exists = routes.stream().anyMatch(r -> r.id == route.id);
+    public synchronized void deleteTicket(String id) {
+        Ticket toRemove = null;
+        for (Ticket t : tickets) {
+            if (t.getId().equals(id)) {
+                toRemove = t;
+                break;
+            }
+        }
+        if (toRemove != null) {
+            tickets.remove(toRemove);
+            int trainId = toRemove.getTrainId();
+            int seats = 1;
+            try { seats = Integer.parseInt(toRemove.getSeat()); } catch (Exception ignored) {}
+            incrementSeat(trainId, seats); // Usa incrementSeat per ripristinare i posti
+            saveData();
+        }
+    }
+
+    public synchronized List<Route> getAllRoutes() {
+        return new ArrayList<>(routes);
+    }
+    public synchronized Route getRouteById(int id) {
+        return routes.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
+    }
+    public synchronized void addRoute(Route route) {
+        if (route == null || route.getId() <= 0) return;
+        boolean exists = routes.stream().anyMatch(r -> r.getId() == route.getId());
         if (!exists) {
             routes.add(route);
             saveData();
         }
     }
-    public void deleteTicket(String id) {
-        Ticket toRemove = null;
-        synchronized (tickets) {
-            for (Ticket t : tickets) {
-                if (t.getId().equals(id)) {
-                    toRemove = t;
-                    break;
-                }
-            }
-            if (toRemove != null) {
-                tickets.remove(toRemove);
-                // Ripristina i posti disponibili per il treno associato
-                int trainId = toRemove.getTrainId();
-                int seats = 1;
-                try { seats = Integer.parseInt(toRemove.getSeat()); } catch (Exception ignored) {}
-                trainSeatsAvailable.put(trainId, trainSeatsAvailable.getOrDefault(trainId, DEFAULT_SEATS_PER_TRAIN) + seats);
-                saveData();
-            }
-        }
-    }
-    public void deleteRoute(int id) {
-        routes.removeIf(r -> r.id == id);
+    public synchronized void deleteRoute(int id) {
+        routes.removeIf(r -> r.getId() == id);
         saveData();
     }
 
-    public List<Train> generateTrainsForDay(String departureStation, String arrivalStation, java.time.LocalDate date) {
+    public synchronized List<Promotion> getAllPromotions() {
+        return new ArrayList<>(promotions);
+    }
+    public synchronized Promotion getPromotionById(int id) {
+        return promotions.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+    }
+    public synchronized void addPromotion(Promotion promotion) {
+        if (promotion == null || promotion.getId() <= 0) return;
+        boolean exists = promotions.stream().anyMatch(p -> p.getId() == promotion.getId());
+        if (!exists) {
+            promotions.add(promotion);
+            saveData();
+        }
+    }
+    public synchronized void deletePromotion(int id) {
+        promotions.removeIf(p -> p.getId() == id);
+        saveData();
+    }
+
+    // --- GENERAZIONE DINAMICA TRENI E RICERCA ---
+    public synchronized List<Train> generateTrainsForDay(String departureStation, String arrivalStation, java.time.LocalDate date) {
         List<Train> result = new ArrayList<>();
-        for (Route r : routes) {
-            Station dep = getStationById(r.departureStationId);
-            Station arr = getStationById(r.arrivalStationId);
-            if (dep == null || arr == null) continue;
-            if ((departureStation == null || departureStation.isEmpty() || dep.getName().toLowerCase().contains(departureStation.toLowerCase())) &&
-                (arrivalStation == null || arrivalStation.isEmpty() || arr.getName().toLowerCase().contains(arrivalStation.toLowerCase()))) {
-                java.time.LocalTime depTime = java.time.LocalTime.parse(r.departureTime);
-                java.time.LocalTime arrTime = java.time.LocalTime.parse(r.arrivalTime);
-                java.time.LocalDateTime depDateTime = java.time.LocalDateTime.of(date, depTime);
-                java.time.LocalDateTime arrDateTime = java.time.LocalDateTime.of(date, arrTime);
-                Train t = Train.newBuilder()
-                    .setId(r.id)
-                    .setName(r.name)
-                    .setDepartureStation(dep.getName())
-                    .setArrivalStation(arr.getName())
-                    .setDepartureTime(Timestamp.newBuilder().setSeconds(depDateTime.toEpochSecond(java.time.ZoneOffset.UTC)).build())
-                    .setArrivalTime(Timestamp.newBuilder().setSeconds(arrDateTime.toEpochSecond(java.time.ZoneOffset.UTC)).build())
-                    .build();
+        for (Train t : trains) {
+            boolean matchDep = (departureStation == null || departureStation.isEmpty() || t.getDepartureStation().toLowerCase().contains(departureStation.toLowerCase()));
+            boolean matchArr = (arrivalStation == null || arrivalStation.isEmpty() || t.getArrivalStation().toLowerCase().contains(arrivalStation.toLowerCase()));
+            java.time.LocalDate depDate = java.time.Instant.ofEpochSecond(t.getDepartureTime().getSeconds())
+                .atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+            if (matchDep && matchArr && depDate.equals(date)) {
                 result.add(t);
             }
         }
         return result;
     }
-
-    // Cerca treni in base a partenza, arrivo, data e limite
-    public List<Train> searchTrains(String departureStation, String arrivalStation, String date, int limit) {
+    public synchronized List<Train> searchTrains(String departureStation, String arrivalStation, String date, String trainType, int limit) {
         java.time.LocalDate searchDate;
         if (date == null || date.isEmpty()) {
             searchDate = java.time.LocalDate.now();
@@ -502,51 +572,49 @@ public class DataStore {
             }
         }
         List<Train> found = generateTrainsForDay(departureStation, arrivalStation, searchDate);
+        // Filtro per tipologia se specificata e diversa da null/vuota
+        if (trainType != null && !trainType.isEmpty() && !trainType.equalsIgnoreCase("Tutti")) {
+            found = found.stream()
+                    .filter(t -> t.getName().toLowerCase().contains(trainType.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
         if (limit > 0 && found.size() > limit) {
             return found.subList(0, limit);
         }
         return found;
     }
 
-    // Ottieni i posti disponibili per un treno
-    public int getAvailableSeats(int trainId) {
-        return trainSeatsAvailable.getOrDefault(trainId, DEFAULT_SEATS_PER_TRAIN);
+    // --- GESTIONE POSTI DISPONIBILI ---
+    public synchronized int getAvailableSeats(int trainId) {
+        // Se il treno non è presente nella mappa, inizializza con il valore di default
+        return trainSeatsAvailable.computeIfAbsent(trainId, k -> DEFAULT_SEATS_PER_TRAIN);
     }
-
-    // Decrementa i posti disponibili in modo thread-safe, restituisce true se riuscito
     public synchronized boolean decrementSeat(int trainId, int seats) {
-        int available = trainSeatsAvailable.getOrDefault(trainId, DEFAULT_SEATS_PER_TRAIN);
+        int available = getAvailableSeats(trainId);
         if (available >= seats) {
             trainSeatsAvailable.put(trainId, available - seats);
             return true;
         }
         return false;
     }
-
-    // Incrementa i posti disponibili in modo thread-safe
     public synchronized void incrementSeat(int trainId, int seats) {
-        int available = trainSeatsAvailable.getOrDefault(trainId, DEFAULT_SEATS_PER_TRAIN);
+        // Usa solo per cancellazione/annullamento biglietto
+        int available = getAvailableSeats(trainId);
         trainSeatsAvailable.put(trainId, available + seats);
     }
 
     // --- PROMOZIONI ---
-    public List<Promotion> getAllPromotions() {
-        return new ArrayList<>(promotions);
+    public synchronized Promotion findBestPromotion(String routeName, String serviceClass, java.time.LocalDate travelDate) {
+        // Implementazione da aggiornare se serve, ora non più usata direttamente
+        return null;
     }
-    public void addPromotion(Promotion promotion) {
-        int maxId = promotions.stream().mapToInt(p -> p.id).max().orElse(0);
-        promotion.id = maxId + 1;
-        promotions.add(promotion);
+
+    public synchronized void clearAllTickets() {
+        tickets.clear();
+        // Reset posti disponibili per ogni treno
+        for (Train t : trains) {
+            trainSeatsAvailable.put(t.getId(), DEFAULT_SEATS_PER_TRAIN);
+        }
         saveData();
-    }
-    public void deletePromotion(int id) {
-        promotions.removeIf(p -> p.id == id);
-        saveData();
-    }
-    /**
-     * Trova la promozione migliore applicabile delegando alla classe Promotion.
-     */
-    public Promotion findBestPromotion(String routeName, String serviceClass, java.time.LocalDate travelDate) {
-        return Promotion.findBestPromotion(promotions, routeName, serviceClass, travelDate);
     }
 }

@@ -75,6 +75,21 @@ public final class TrainServiceProto {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_trenical_train_ScheduleEntry_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_trenical_train_ListRoutesRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_trenical_train_ListRoutesRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_trenical_train_Route_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_trenical_train_Route_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_trenical_train_ListRoutesResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_trenical_train_ListRoutesResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_trenical_train_TrainResponse_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -92,53 +107,63 @@ public final class TrainServiceProto {
       "ommon.proto\032\037google/protobuf/timestamp.p" +
       "roto\"\032\n\014TrainRequest\022\n\n\002id\030\001 \001(\005\"4\n\024Sear" +
       "chStationRequest\022\r\n\005query\030\001 \001(\t\022\r\n\005limit" +
-      "\030\002 \001(\005\"\316\001\n\022SearchTrainRequest\022\031\n\021departu" +
+      "\030\002 \001(\005\"\342\001\n\022SearchTrainRequest\022\031\n\021departu" +
       "re_station\030\001 \001(\t\022\027\n\017arrival_station\030\002 \001(" +
       "\t\022(\n\004date\030\003 \001(\0132\032.google.protobuf.Timest" +
       "amp\022-\n\ttime_from\030\004 \001(\0132\032.google.protobuf" +
       ".Timestamp\022+\n\007time_to\030\005 \001(\0132\032.google.pro" +
-      "tobuf.Timestamp\"C\n\025SearchStationResponse" +
-      "\022*\n\010stations\030\001 \003(\0132\030.trenical.common.Sta" +
-      "tion\"\'\n\023TrainDetailsRequest\022\020\n\010train_id\030" +
-      "\001 \001(\005\"\216\001\n\024TrainDetailsResponse\022%\n\005train\030" +
-      "\001 \001(\0132\026.trenical.common.Train\022#\n\005stops\030\002" +
-      " \003(\0132\024.trenical.train.Stop\022\021\n\tavailable\030" +
-      "\003 \001(\010\022\027\n\017seats_available\030\004 \001(\005\"L\n\017Schedu" +
-      "leRequest\022\017\n\007station\030\001 \001(\t\022(\n\004date\030\002 \001(\013" +
-      "2\032.google.protobuf.Timestamp\"v\n\020Schedule" +
-      "Response\0221\n\ndepartures\030\001 \003(\0132\035.trenical." +
-      "train.ScheduleEntry\022/\n\010arrivals\030\002 \003(\0132\035." +
-      "trenical.train.ScheduleEntry\"(\n\024GetTrain" +
-      "StopsRequest\022\020\n\010train_id\030\001 \001(\005\"<\n\025GetTra" +
-      "inStopsResponse\022#\n\005stops\030\001 \003(\0132\024.trenica" +
-      "l.train.Stop\"\276\001\n\004Stop\022\n\n\002id\030\001 \001(\005\022\020\n\010tra" +
-      "in_id\030\002 \001(\005\022\022\n\nstation_id\030\003 \001(\005\0220\n\014arriv" +
-      "al_time\030\004 \001(\0132\032.google.protobuf.Timestam" +
-      "p\0222\n\016departure_time\030\005 \001(\0132\032.google.proto" +
-      "buf.Timestamp\022\020\n\010platform\030\006 \001(\005\022\014\n\004note\030" +
-      "\007 \001(\t\"\263\001\n\rScheduleEntry\022\020\n\010train_id\030\001 \001(" +
-      "\005\022\022\n\ntrain_name\030\002 \001(\t\022(\n\004time\030\003 \001(\0132\032.go" +
-      "ogle.protobuf.Timestamp\022\023\n\013destination\030\004" +
-      " \001(\t\022\020\n\010platform\030\005 \001(\005\022+\n\006status\030\006 \001(\0162\033" +
-      ".trenical.train.TrainStatus\"7\n\rTrainResp" +
-      "onse\022&\n\006trains\030\001 \003(\0132\026.trenical.common.T" +
-      "rain*C\n\013TrainStatus\022\013\n\007UNKNOWN\020\000\022\013\n\007ON_T" +
-      "IME\020\001\022\013\n\007DELAYED\020\002\022\r\n\tCANCELLED\020\0032\235\004\n\014Tr" +
-      "ainService\022]\n\016SearchStations\022$.trenical." +
-      "train.SearchStationRequest\032%.trenical.tr" +
-      "ain.SearchStationResponse\022H\n\tGetTrains\022\034" +
-      ".trenical.train.TrainRequest\032\035.trenical." +
-      "train.TrainResponse\022Q\n\014SearchTrains\022\".tr" +
-      "enical.train.SearchTrainRequest\032\035.trenic" +
-      "al.train.TrainResponse\022\\\n\017GetTrainDetail" +
-      "s\022#.trenical.train.TrainDetailsRequest\032$" +
-      ".trenical.train.TrainDetailsResponse\022U\n\020" +
-      "GetTrainSchedule\022\037.trenical.train.Schedu" +
-      "leRequest\032 .trenical.train.ScheduleRespo" +
-      "nse\022\\\n\rGetTrainStops\022$.trenical.train.Ge" +
-      "tTrainStopsRequest\032%.trenical.train.GetT" +
-      "rainStopsResponseB4\n\035it.unical.trenical." +
-      "grpc.trainB\021TrainServiceProtoP\001b\006proto3"
+      "tobuf.Timestamp\022\022\n\ntrain_type\030\006 \001(\t\"C\n\025S" +
+      "earchStationResponse\022*\n\010stations\030\001 \003(\0132\030" +
+      ".trenical.common.Station\"Q\n\023TrainDetails" +
+      "Request\022\020\n\010train_id\030\001 \001(\005\022(\n\004date\030\002 \001(\0132" +
+      "\032.google.protobuf.Timestamp\"\216\001\n\024TrainDet" +
+      "ailsResponse\022%\n\005train\030\001 \001(\0132\026.trenical.c" +
+      "ommon.Train\022#\n\005stops\030\002 \003(\0132\024.trenical.tr" +
+      "ain.Stop\022\021\n\tavailable\030\003 \001(\010\022\027\n\017seats_ava" +
+      "ilable\030\004 \001(\005\"L\n\017ScheduleRequest\022\017\n\007stati" +
+      "on\030\001 \001(\t\022(\n\004date\030\002 \001(\0132\032.google.protobuf" +
+      ".Timestamp\"v\n\020ScheduleResponse\0221\n\ndepart" +
+      "ures\030\001 \003(\0132\035.trenical.train.ScheduleEntr" +
+      "y\022/\n\010arrivals\030\002 \003(\0132\035.trenical.train.Sch" +
+      "eduleEntry\"(\n\024GetTrainStopsRequest\022\020\n\010tr" +
+      "ain_id\030\001 \001(\005\"<\n\025GetTrainStopsResponse\022#\n" +
+      "\005stops\030\001 \003(\0132\024.trenical.train.Stop\"\276\001\n\004S" +
+      "top\022\n\n\002id\030\001 \001(\005\022\020\n\010train_id\030\002 \001(\005\022\022\n\nsta" +
+      "tion_id\030\003 \001(\005\0220\n\014arrival_time\030\004 \001(\0132\032.go" +
+      "ogle.protobuf.Timestamp\0222\n\016departure_tim" +
+      "e\030\005 \001(\0132\032.google.protobuf.Timestamp\022\020\n\010p" +
+      "latform\030\006 \001(\005\022\014\n\004note\030\007 \001(\t\"\263\001\n\rSchedule" +
+      "Entry\022\020\n\010train_id\030\001 \001(\005\022\022\n\ntrain_name\030\002 " +
+      "\001(\t\022(\n\004time\030\003 \001(\0132\032.google.protobuf.Time" +
+      "stamp\022\023\n\013destination\030\004 \001(\t\022\020\n\010platform\030\005" +
+      " \001(\005\022+\n\006status\030\006 \001(\0162\033.trenical.train.Tr" +
+      "ainStatus\"\023\n\021ListRoutesRequest\"\211\001\n\005Route" +
+      "\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\034\n\024departure_" +
+      "station_id\030\003 \001(\005\022\032\n\022arrival_station_id\030\004" +
+      " \001(\005\022\026\n\016departure_time\030\005 \001(\t\022\024\n\014arrival_" +
+      "time\030\006 \001(\t\";\n\022ListRoutesResponse\022%\n\006rout" +
+      "es\030\001 \003(\0132\025.trenical.train.Route\"7\n\rTrain" +
+      "Response\022&\n\006trains\030\001 \003(\0132\026.trenical.comm" +
+      "on.Train*C\n\013TrainStatus\022\013\n\007UNKNOWN\020\000\022\013\n\007" +
+      "ON_TIME\020\001\022\013\n\007DELAYED\020\002\022\r\n\tCANCELLED\020\0032\362\004" +
+      "\n\014TrainService\022]\n\016SearchStations\022$.treni" +
+      "cal.train.SearchStationRequest\032%.trenica" +
+      "l.train.SearchStationResponse\022H\n\tGetTrai" +
+      "ns\022\034.trenical.train.TrainRequest\032\035.treni" +
+      "cal.train.TrainResponse\022Q\n\014SearchTrains\022" +
+      "\".trenical.train.SearchTrainRequest\032\035.tr" +
+      "enical.train.TrainResponse\022\\\n\017GetTrainDe" +
+      "tails\022#.trenical.train.TrainDetailsReque" +
+      "st\032$.trenical.train.TrainDetailsResponse" +
+      "\022U\n\020GetTrainSchedule\022\037.trenical.train.Sc" +
+      "heduleRequest\032 .trenical.train.ScheduleR" +
+      "esponse\022\\\n\rGetTrainStops\022$.trenical.trai" +
+      "n.GetTrainStopsRequest\032%.trenical.train." +
+      "GetTrainStopsResponse\022S\n\nListRoutes\022!.tr" +
+      "enical.train.ListRoutesRequest\032\".trenica" +
+      "l.train.ListRoutesResponseB4\n\035it.unical." +
+      "trenical.grpc.trainB\021TrainServiceProtoP\001" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -163,7 +188,7 @@ public final class TrainServiceProto {
     internal_static_trenical_train_SearchTrainRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_train_SearchTrainRequest_descriptor,
-        new java.lang.String[] { "DepartureStation", "ArrivalStation", "Date", "TimeFrom", "TimeTo", });
+        new java.lang.String[] { "DepartureStation", "ArrivalStation", "Date", "TimeFrom", "TimeTo", "TrainType", });
     internal_static_trenical_train_SearchStationResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_trenical_train_SearchStationResponse_fieldAccessorTable = new
@@ -175,7 +200,7 @@ public final class TrainServiceProto {
     internal_static_trenical_train_TrainDetailsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_train_TrainDetailsRequest_descriptor,
-        new java.lang.String[] { "TrainId", });
+        new java.lang.String[] { "TrainId", "Date", });
     internal_static_trenical_train_TrainDetailsResponse_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_trenical_train_TrainDetailsResponse_fieldAccessorTable = new
@@ -218,8 +243,26 @@ public final class TrainServiceProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_train_ScheduleEntry_descriptor,
         new java.lang.String[] { "TrainId", "TrainName", "Time", "Destination", "Platform", "Status", });
-    internal_static_trenical_train_TrainResponse_descriptor =
+    internal_static_trenical_train_ListRoutesRequest_descriptor =
       getDescriptor().getMessageTypes().get(12);
+    internal_static_trenical_train_ListRoutesRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_trenical_train_ListRoutesRequest_descriptor,
+        new java.lang.String[] { });
+    internal_static_trenical_train_Route_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_trenical_train_Route_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_trenical_train_Route_descriptor,
+        new java.lang.String[] { "Id", "Name", "DepartureStationId", "ArrivalStationId", "DepartureTime", "ArrivalTime", });
+    internal_static_trenical_train_ListRoutesResponse_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_trenical_train_ListRoutesResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_trenical_train_ListRoutesResponse_descriptor,
+        new java.lang.String[] { "Routes", });
+    internal_static_trenical_train_TrainResponse_descriptor =
+      getDescriptor().getMessageTypes().get(15);
     internal_static_trenical_train_TrainResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_train_TrainResponse_descriptor,

@@ -193,4 +193,31 @@ public interface TicketOrBuilder extends
    */
   com.google.protobuf.ByteString
       getStatusBytes();
+
+  /**
+   * <pre>
+   * Orario di viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+   * @return Whether the travelTime field is set.
+   */
+  boolean hasTravelTime();
+  /**
+   * <pre>
+   * Orario di viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+   * @return The travelTime.
+   */
+  com.google.protobuf.Timestamp getTravelTime();
+  /**
+   * <pre>
+   * Orario di viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp travel_time = 11;</code>
+   */
+  com.google.protobuf.TimestampOrBuilder getTravelTimeOrBuilder();
 }

@@ -140,4 +140,31 @@ public interface ModifyTicketRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getNewArrivalStationBytes();
+
+  /**
+   * <pre>
+   * Nuovo orario di viaggio (opzionale)
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp new_travel_time = 7;</code>
+   * @return Whether the newTravelTime field is set.
+   */
+  boolean hasNewTravelTime();
+  /**
+   * <pre>
+   * Nuovo orario di viaggio (opzionale)
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp new_travel_time = 7;</code>
+   * @return The newTravelTime.
+   */
+  com.google.protobuf.Timestamp getNewTravelTime();
+  /**
+   * <pre>
+   * Nuovo orario di viaggio (opzionale)
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp new_travel_time = 7;</code>
+   */
+  com.google.protobuf.TimestampOrBuilder getNewTravelTimeOrBuilder();
 }

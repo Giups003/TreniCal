@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.unical.trenical.client.gui.controller.LoginController"
+      alignment="CENTER" spacing="18" style="-fx-padding: 32; -fx-background-color: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);">
+    <Label text="Benvenuto su TreniCal" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #22304a; -fx-padding: 10 0 18 0;"/>
+    <Label text="Inserisci il tuo nome per continuare:" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+    <TextField fx:id="usernameField" promptText="Nome utente" maxWidth="220" style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"/>
+    <Label text="Inserisci la tua email:" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+    <TextField fx:id="emailField" promptText="Email" maxWidth="220" style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"/>
+    <PasswordField fx:id="passwordField" promptText="Password" maxWidth="220" style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"/>
+    <CheckBox fx:id="rememberMeCheckBox" text="Ricorda accesso" maxWidth="220" style="-fx-font-size: 13px; -fx-text-fill: #234a7c; -fx-padding: 4 0 4 0;"/>
+    <Button text="Accedi" onAction="#onLogin" maxWidth="120" style="-fx-font-size: 16px; -fx-background-radius: 20; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 10 36;"/>
+    <Button text="Registrati" onAction="#onRegister" maxWidth="180" style="-fx-font-size: 16px; -fx-background-radius: 20; -fx-background-color: #43a047; -fx-text-fill: white; -fx-padding: 10 36;"/>
+</VBox>

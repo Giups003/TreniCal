@@ -39,4 +39,5 @@ message Ticket {
   double price = 8; // Prezzo del biglietto
   string seat = 9; // Numero del posto assegnato (ora string)
   string status = 10; // Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
+  google.protobuf.Timestamp travel_time = 11; // Orario di viaggio
 }

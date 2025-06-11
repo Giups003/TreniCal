@@ -30,6 +30,8 @@ service TrainService {
   // Ottieni le fermate di un treno specifico
   rpc GetTrainStops(GetTrainStopsRequest) returns (GetTrainStopsResponse);
 
+  // Recupera tutte le tratte
+  rpc ListRoutes(ListRoutesRequest) returns (ListRoutesResponse);
 }
 
 // Richiesta per ottenere informazioni sui treni
@@ -50,6 +52,7 @@ message SearchTrainRequest {
   google.protobuf.Timestamp date = 3; // Data del viaggio (formato: YYYY-MM-DD)
   google.protobuf.Timestamp time_from = 4; // Orario di partenza minimo (opzionale)
   google.protobuf.Timestamp time_to = 5;   // Orario di partenza massimo (opzionale)
+  string train_type = 6; // Tipologia di treno (opzionale)
 }
 
 // Risposta con le stazioni che corrispondono alla query
@@ -60,6 +63,7 @@ message SearchStationResponse {
 // Richiesta per ottenere dettagli di un treno specifico
 message TrainDetailsRequest {
   int32 train_id = 1; // ID del treno
+  google.protobuf.Timestamp date = 2; // Data del viaggio
 }
 
 // Risposta con dettagli di un treno specifico
@@ -118,6 +122,24 @@ enum TrainStatus {
   ON_TIME = 1;
   DELAYED = 2;
   CANCELLED = 3;
+}
+
+// Richiesta per ottenere tutte le tratte
+message ListRoutesRequest {}
+
+// Messaggio per una tratta
+message Route {
+  int32 id = 1;
+  string name = 2;
+  int32 departure_station_id = 3;
+  int32 arrival_station_id = 4;
+  string departure_time = 5;
+  string arrival_time = 6;
+}
+
+// Risposta con tutte le tratte
+message ListRoutesResponse {
+  repeated Route routes = 1;
 }
 
 // Risposta per i servizi di gestione treni

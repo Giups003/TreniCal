@@ -42,6 +42,7 @@ private static final long serialVersionUID = 0L;
             it.unical.trenical.grpc.train.TrainDetailsRequest.class, it.unical.trenical.grpc.train.TrainDetailsRequest.Builder.class);
   }
 
+  private int bitField0_;
   public static final int TRAIN_ID_FIELD_NUMBER = 1;
   private int trainId_ = 0;
   /**
@@ -55,6 +56,44 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public int getTrainId() {
     return trainId_;
+  }
+
+  public static final int DATE_FIELD_NUMBER = 2;
+  private com.google.protobuf.Timestamp date_;
+  /**
+   * <pre>
+   * Data del viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp date = 2;</code>
+   * @return Whether the date field is set.
+   */
+  @java.lang.Override
+  public boolean hasDate() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   * <pre>
+   * Data del viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp date = 2;</code>
+   * @return The date.
+   */
+  @java.lang.Override
+  public com.google.protobuf.Timestamp getDate() {
+    return date_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : date_;
+  }
+  /**
+   * <pre>
+   * Data del viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp date = 2;</code>
+   */
+  @java.lang.Override
+  public com.google.protobuf.TimestampOrBuilder getDateOrBuilder() {
+    return date_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : date_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -74,6 +113,9 @@ private static final long serialVersionUID = 0L;
     if (trainId_ != 0) {
       output.writeInt32(1, trainId_);
     }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeMessage(2, getDate());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -86,6 +128,10 @@ private static final long serialVersionUID = 0L;
     if (trainId_ != 0) {
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(1, trainId_);
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, getDate());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -104,6 +150,11 @@ private static final long serialVersionUID = 0L;
 
     if (getTrainId()
         != other.getTrainId()) return false;
+    if (hasDate() != other.hasDate()) return false;
+    if (hasDate()) {
+      if (!getDate()
+          .equals(other.getDate())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -117,6 +168,10 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + TRAIN_ID_FIELD_NUMBER;
     hash = (53 * hash) + getTrainId();
+    if (hasDate()) {
+      hash = (37 * hash) + DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getDate().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -240,19 +295,30 @@ private static final long serialVersionUID = 0L;
 
     // Construct using it.unical.trenical.grpc.train.TrainDetailsRequest.newBuilder()
     private Builder() {
-
+      maybeForceBuilderInitialization();
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (com.google.protobuf.GeneratedMessageV3
+              .alwaysUseFieldBuilders) {
+        getDateFieldBuilder();
+      }
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
       bitField0_ = 0;
       trainId_ = 0;
+      date_ = null;
+      if (dateBuilder_ != null) {
+        dateBuilder_.dispose();
+        dateBuilder_ = null;
+      }
       return this;
     }
 
@@ -289,6 +355,14 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.trainId_ = trainId_;
       }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.date_ = dateBuilder_ == null
+            ? date_
+            : dateBuilder_.build();
+        to_bitField0_ |= 0x00000001;
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -338,6 +412,9 @@ private static final long serialVersionUID = 0L;
       if (other.getTrainId() != 0) {
         setTrainId(other.getTrainId());
       }
+      if (other.hasDate()) {
+        mergeDate(other.getDate());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -369,6 +446,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000001;
               break;
             } // case 8
+            case 18: {
+              input.readMessage(
+                  getDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -428,6 +512,163 @@ private static final long serialVersionUID = 0L;
       trainId_ = 0;
       onChanged();
       return this;
+    }
+
+    private com.google.protobuf.Timestamp date_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> dateBuilder_;
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     * @return Whether the date field is set.
+     */
+    public boolean hasDate() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     * @return The date.
+     */
+    public com.google.protobuf.Timestamp getDate() {
+      if (dateBuilder_ == null) {
+        return date_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : date_;
+      } else {
+        return dateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     */
+    public Builder setDate(com.google.protobuf.Timestamp value) {
+      if (dateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        date_ = value;
+      } else {
+        dateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     */
+    public Builder setDate(
+        com.google.protobuf.Timestamp.Builder builderForValue) {
+      if (dateBuilder_ == null) {
+        date_ = builderForValue.build();
+      } else {
+        dateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     */
+    public Builder mergeDate(com.google.protobuf.Timestamp value) {
+      if (dateBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0) &&
+          date_ != null &&
+          date_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+          getDateBuilder().mergeFrom(value);
+        } else {
+          date_ = value;
+        }
+      } else {
+        dateBuilder_.mergeFrom(value);
+      }
+      if (date_ != null) {
+        bitField0_ |= 0x00000002;
+        onChanged();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     */
+    public Builder clearDate() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      date_ = null;
+      if (dateBuilder_ != null) {
+        dateBuilder_.dispose();
+        dateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     */
+    public com.google.protobuf.Timestamp.Builder getDateBuilder() {
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return getDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     */
+    public com.google.protobuf.TimestampOrBuilder getDateOrBuilder() {
+      if (dateBuilder_ != null) {
+        return dateBuilder_.getMessageOrBuilder();
+      } else {
+        return date_ == null ?
+            com.google.protobuf.Timestamp.getDefaultInstance() : date_;
+      }
+    }
+    /**
+     * <pre>
+     * Data del viaggio
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp date = 2;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
+        getDateFieldBuilder() {
+      if (dateBuilder_ == null) {
+        dateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
+                getDate(),
+                getParentForChildren(),
+                isClean());
+        date_ = null;
+      }
+      return dateBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

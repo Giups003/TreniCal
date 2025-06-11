@@ -13,10 +13,13 @@ public class SelectedTrainService {
     private static SelectedTrainService instance;
     private Train selectedTrain;
     private List<Stop> stops;  // Aggiungi questo campo
+    private java.time.LocalDate selectedDate;
+    private java.time.LocalTime selectedTime;
 
     // Costruttore privato per il pattern Singleton
     private SelectedTrainService() {
         // Inizializzazione privata
+
     }
 
     /**
@@ -73,5 +76,30 @@ public class SelectedTrainService {
     public void clearSelectedTrain() {
         this.selectedTrain = null;
         this.stops = null;
+    }
+
+    /**
+     * Imposta la data selezionata.
+     */
+    public void setSelectedDate(java.time.LocalDate date) {
+        this.selectedDate = date;
+    }
+    /**
+     * Restituisce la data selezionata.
+     */
+    public java.time.LocalDate getSelectedDate() {
+        return selectedDate;
+    }
+    /**
+     * Imposta l'orario selezionato.
+     */
+    public void setSelectedTime(java.time.LocalTime time) {
+        this.selectedTime = time;
+    }
+    /**
+     * Restituisce l'orario selezionato.
+     */
+    public java.time.LocalTime getSelectedTime() {
+        return selectedTime;
     }
 }

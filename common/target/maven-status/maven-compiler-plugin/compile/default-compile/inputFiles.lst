@@ -25,6 +25,8 @@ C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\pr
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\promotion\PromotionServiceProto.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\CancelTicketRequest.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\CancelTicketRequestOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\ClearAllTicketsRequest.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\ClearAllTicketsRequestOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\GetTicketRequest.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\GetTicketRequestOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\ticket\GetTicketResponse.java
@@ -46,6 +48,12 @@ C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\pr
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\GetTrainStopsRequestOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\GetTrainStopsResponse.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\GetTrainStopsResponseOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\ListRoutesRequest.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\ListRoutesRequestOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\ListRoutesResponse.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\ListRoutesResponseOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\Route.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\RouteOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\ScheduleEntry.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\ScheduleEntryOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\train\ScheduleRequest.java

@@ -12,7 +12,7 @@ public class MainWindow extends Application {
         SceneManager.getInstance().setPrimaryStage(primaryStage);
         SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
         primaryStage.setTitle("TreniCal - Gestione Treni e Biglietti");
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
     }
 
     public static void main(String[] args) {

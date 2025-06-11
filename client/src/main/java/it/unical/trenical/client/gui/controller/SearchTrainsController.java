@@ -47,6 +47,10 @@ public class SearchTrainsController {
     private TableColumn<TrainSearchResult, String> colTime;
     @FXML
     private TableColumn<TrainSearchResult, Integer> colSeats;
+    @FXML
+    private TableColumn<TrainSearchResult, String> colDate;
+    @FXML
+    private TableColumn<TrainSearchResult, Integer> colTrainId;
 
     private final ObservableList<TrainSearchResult> searchResults = FXCollections.observableArrayList();
     private TrainClient trainClient;
@@ -72,6 +76,8 @@ public class SearchTrainsController {
         colArrival.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getArrivalStation()));
         colTime.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTime().format(DateTimeFormatter.ofPattern("HH:mm"))));
         colSeats.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getAvailableSeats()).asObject());
+        colDate.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDate().toString()));
+        colTrainId.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getTrainId()).asObject());
 
         // Configura il doppio click sulla riga per selezionare un treno
         resultsTable.setRowFactory(tv -> {
@@ -108,7 +114,8 @@ public class SearchTrainsController {
 
     private void handleTrainSelection(TrainSearchResult result) {
         try {
-            TrainDetailsResponse response = trainClient.getTrainDetails(result.getTrainId());
+            // Usa la data del risultato selezionato
+            TrainDetailsResponse response = trainClient.getTrainDetails(result.getTrainId(), result.getDate());
 
             // Gestisci la risposta
             if (response != null) {
@@ -123,7 +130,9 @@ public class SearchTrainsController {
                     // Salva i dettagli del treno selezionato in un servizio condiviso
                     SelectedTrainService.getInstance().setSelectedTrain(trainDetails);
                     SelectedTrainService.getInstance().setStops(stops);
-
+                    // Salva anche la data e l'orario selezionati
+                    SelectedTrainService.getInstance().setSelectedDate(result.getDate());
+                    SelectedTrainService.getInstance().setSelectedTime(result.getTime());
                     // Passa alla schermata di acquisto biglietto
                     SceneManager.getInstance().showTicketPurchaseView();
                 } else {
@@ -157,15 +166,13 @@ public class SearchTrainsController {
         String partenza = departureField.getText();
         String arrivo = arrivalField.getText();
         LocalDate data = datePicker.getValue();
+        String tipologia = trainTypeBox.getValue(); // Legge la tipologia selezionata
 
         // Validazione input base
         if (partenza == null || partenza.isBlank() || arrivo == null || arrivo.isBlank() || data == null) {
             AlertUtils.showError("Errore", "Compila tutti i campi obbligatori (partenza, arrivo, data).");
             return;
         }
-
-//        // Per ora: mock di risultati
-//        searchResults.setAll(mockTrainSearch(partenza, arrivo, data));
         try {
             // Converte la data di partenza in Timestamp per gRPC
             LocalDateTime dateTime = data.atStartOfDay();
@@ -179,28 +186,27 @@ public class SearchTrainsController {
             Timestamp timeFromTimestamp = null;
             Timestamp timeToTimestamp = null;
 
-            // Utilizza il metodo searchTrains già implementato in TrainClient
+            // Passa la tipologia al metodo searchTrains (da implementare nel client)
             List<Train> trains = trainClient.searchTrains(
                     partenza,
                     arrivo,
                     dateTimestamp,
                     timeFromTimestamp,
-                    timeToTimestamp);
+                    timeToTimestamp,
+                    tipologia // nuovo parametro
+            );
 
             // Converte i risultati e aggiorna la tabella
             searchResults.clear();
             for (Train train : trains) {
                 searchResults.add(convertToTrainSearchResult(train));
             }
-
             resultsTable.setItems(searchResults);
-            resultsTable.refresh(); // Forza refresh della tabella
-
+            resultsTable.refresh();
             if (searchResults.isEmpty()) {
                 AlertUtils.showError("Nessun risultato",
                         "Non ci sono treni disponibili per questa tratta nella data selezionata.");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             AlertUtils.showError("Errore", "Si è verificato un errore durante la ricerca: " + e.getMessage());
@@ -213,24 +219,25 @@ public class SearchTrainsController {
      * Converte un oggetto Train gRPC in un oggetto TrainSearchResult per la visualizzazione.
      */
     private TrainSearchResult convertToTrainSearchResult(Train train) {
-        // Estrae i dati dal treno
         int trainId = train.getId();
         String trainName = train.getName();
-        String departureStation = departureField.getText();
-        String arrivalStation = arrivalField.getText();
-        LocalDate date = datePicker.getValue();
+        String departureStation = train.getDepartureStation();
+        String arrivalStation = train.getArrivalStation();
+        LocalDate date = null;
+        if (train.hasDepartureTime()) {
+            date = java.time.Instant.ofEpochSecond(train.getDepartureTime().getSeconds())
+                    .atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+        } else {
+            date = datePicker.getValue();
+        }
         LocalTime departureTime = convertTimestampToLocalTime(train.getDepartureTime());
-
-        // Ottiene i posti disponibili
         int availableSeats = 0;
         try {
-            TrainDetailsResponse details = trainClient.getTrainDetails(trainId);
+            TrainDetailsResponse details = trainClient.getTrainDetails(trainId, date); // Passa anche la data
             availableSeats = details.getSeatsAvailable();
         } catch (Exception e) {
-            availableSeats = 0; // fallback
+            availableSeats = 0;
         }
-
-        // Crea e restituisce un oggetto TrainSearchResult
         return new TrainSearchResult(
                 trainId,
                 trainName,

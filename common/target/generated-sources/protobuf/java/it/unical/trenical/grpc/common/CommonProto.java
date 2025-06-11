@@ -46,14 +46,16 @@ public final class CommonProto {
       "tamp\0220\n\014arrival_time\030\006 \001(\0132\032.google.prot" +
       "obuf.Timestamp\"U\n\007Station\022\n\n\002id\030\001 \001(\005\022\014\n" +
       "\004name\030\002 \001(\t\022\014\n\004city\030\003 \001(\t\022\017\n\007address\030\004 \001" +
-      "(\t\022\021\n\tplatforms\030\005 \001(\005\"\347\001\n\006Ticket\022\n\n\002id\030\001" +
+      "(\t\022\021\n\tplatforms\030\005 \001(\005\"\230\002\n\006Ticket\022\n\n\002id\030\001" +
       " \001(\t\022\020\n\010train_id\030\002 \001(\005\022\026\n\016passenger_name" +
       "\030\003 \001(\t\022\031\n\021departure_station\030\004 \001(\t\022\027\n\017arr" +
       "ival_station\030\005 \001(\t\022/\n\013travel_date\030\006 \001(\0132" +
       "\032.google.protobuf.Timestamp\022\025\n\rservice_c" +
       "lass\030\007 \001(\t\022\r\n\005price\030\010 \001(\001\022\014\n\004seat\030\t \001(\t\022" +
-      "\016\n\006status\030\n \001(\tB/\n\036it.unical.trenical.gr" +
-      "pc.commonB\013CommonProtoP\001b\006proto3"
+      "\016\n\006status\030\n \001(\t\022/\n\013travel_time\030\013 \001(\0132\032.g" +
+      "oogle.protobuf.TimestampB/\n\036it.unical.tr" +
+      "enical.grpc.commonB\013CommonProtoP\001b\006proto" +
+      "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -77,7 +79,7 @@ public final class CommonProto {
     internal_static_trenical_common_Ticket_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_common_Ticket_descriptor,
-        new java.lang.String[] { "Id", "TrainId", "PassengerName", "DepartureStation", "ArrivalStation", "TravelDate", "ServiceClass", "Price", "Seat", "Status", });
+        new java.lang.String[] { "Id", "TrainId", "PassengerName", "DepartureStation", "ArrivalStation", "TravelDate", "ServiceClass", "Price", "Seat", "Status", "TravelTime", });
     com.google.protobuf.TimestampProto.getDescriptor();
   }
 

@@ -127,4 +127,24 @@ public interface SearchTrainRequestOrBuilder extends
    * <code>.google.protobuf.Timestamp time_to = 5;</code>
    */
   com.google.protobuf.TimestampOrBuilder getTimeToOrBuilder();
+
+  /**
+   * <pre>
+   * Tipologia di treno (opzionale)
+   * </pre>
+   *
+   * <code>string train_type = 6;</code>
+   * @return The trainType.
+   */
+  java.lang.String getTrainType();
+  /**
+   * <pre>
+   * Tipologia di treno (opzionale)
+   * </pre>
+   *
+   * <code>string train_type = 6;</code>
+   * @return The bytes for trainType.
+   */
+  com.google.protobuf.ByteString
+      getTrainTypeBytes();
 }

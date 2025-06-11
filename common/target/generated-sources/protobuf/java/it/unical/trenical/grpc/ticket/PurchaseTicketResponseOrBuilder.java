@@ -15,7 +15,7 @@ public interface PurchaseTicketResponseOrBuilder extends
 
   /**
    * <pre>
-   * ID univoco del biglietto acquistato
+   * ID univoco del biglietto acquistato (primo biglietto)
    * </pre>
    *
    * <code>string ticket_id = 2;</code>
@@ -24,7 +24,7 @@ public interface PurchaseTicketResponseOrBuilder extends
   java.lang.String getTicketId();
   /**
    * <pre>
-   * ID univoco del biglietto acquistato
+   * ID univoco del biglietto acquistato (primo biglietto)
    * </pre>
    *
    * <code>string ticket_id = 2;</code>
@@ -65,7 +65,7 @@ public interface PurchaseTicketResponseOrBuilder extends
 
   /**
    * <pre>
-   * Dettagli del biglietto acquistato
+   * Dettagli del primo biglietto acquistato
    * </pre>
    *
    * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -74,7 +74,7 @@ public interface PurchaseTicketResponseOrBuilder extends
   boolean hasTicket();
   /**
    * <pre>
-   * Dettagli del biglietto acquistato
+   * Dettagli del primo biglietto acquistato
    * </pre>
    *
    * <code>.trenical.common.Ticket ticket = 5;</code>
@@ -83,10 +83,54 @@ public interface PurchaseTicketResponseOrBuilder extends
   it.unical.trenical.grpc.common.Ticket getTicket();
   /**
    * <pre>
-   * Dettagli del biglietto acquistato
+   * Dettagli del primo biglietto acquistato
    * </pre>
    *
    * <code>.trenical.common.Ticket ticket = 5;</code>
    */
   it.unical.trenical.grpc.common.TicketOrBuilder getTicketOrBuilder();
+
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  java.util.List<it.unical.trenical.grpc.common.Ticket> 
+      getTicketsList();
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  it.unical.trenical.grpc.common.Ticket getTickets(int index);
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  int getTicketsCount();
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  java.util.List<? extends it.unical.trenical.grpc.common.TicketOrBuilder> 
+      getTicketsOrBuilderList();
+  /**
+   * <pre>
+   * Tutti i biglietti acquistati
+   * </pre>
+   *
+   * <code>repeated .trenical.common.Ticket tickets = 6;</code>
+   */
+  it.unical.trenical.grpc.common.TicketOrBuilder getTicketsOrBuilder(
+      int index);
 }

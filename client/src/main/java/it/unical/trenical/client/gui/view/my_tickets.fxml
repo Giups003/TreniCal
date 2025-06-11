@@ -3,23 +3,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="it.unical.trenical.client.gui.controller.MyTicketsController"
-      alignment="CENTER" spacing="16" style="-fx-padding: 16;">
-    <Label text="I miei biglietti" style="-fx-font-size: 20px;"/>
-    <TableView fx:id="ticketsTable" prefHeight="320" minHeight="220" maxHeight="400" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn text="Treno" fx:id="colTrain"/>
-            <TableColumn text="Data" fx:id="colDate"/>
-            <TableColumn text="Orario" fx:id="colTime"/>
-            <TableColumn text="Classe" fx:id="colClass"/>
-            <TableColumn text="Posti" fx:id="colSeat"/>
-            <TableColumn text="Stato" fx:id="colStatus"/>
-        </columns>
-    </TableView>
-    <HBox spacing="12" alignment="CENTER">
-        <Button text="Modifica" onAction="#onModify"/>
-        <Button text="Annulla" onAction="#onCancel"/>
-        <Button text="Torna al menu" onAction="#onBack"/>
-    </HBox>
-</VBox>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.unical.trenical.client.gui.controller.MyTicketsController"
+            minWidth="800" minHeight="600" prefWidth="1000" prefHeight="700" maxWidth="1920" maxHeight="1080"
+            style="-fx-background-color: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);">
+    <center>
+        <VBox alignment="CENTER" spacing="16" style="-fx-padding: 16;">
+            <Label text="I miei biglietti" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #22304a; -fx-padding: 10 0 18 0;"/>
+            <TableView fx:id="ticketsTable" prefHeight="320" minHeight="220" maxHeight="400" VBox.vgrow="ALWAYS"
+                       style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12;">
+                <columns>
+                    <TableColumn text="Treno" fx:id="colTrain" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Partenza" fx:id="colDeparture" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Orario partenza" fx:id="colDepartureTime" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Arrivo" fx:id="colArrival" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Ora" fx:id="colTime" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Data" fx:id="colDate" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Classe" fx:id="colClass" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Posto" fx:id="colSeat" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Stato" fx:id="colStatus" style="-fx-alignment: CENTER;"/>
+                </columns>
+            </TableView>
+            <HBox spacing="12" alignment="CENTER">
+                <Button text="Modifica" onAction="#onModify" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #ffa000; -fx-text-fill: #22304a; -fx-padding: 8 30;"/>
+                <Button text="Annulla" onAction="#onCancel" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #d0021b; -fx-text-fill: white; -fx-padding: 8 30;"/>
+                <Button text="Torna al menu" onAction="#onBack" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 8 30;"/>
+                <Button fx:id="clearAllButton" text="Elimina tutti i biglietti" onAction="#onClearAll" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #b71c1c; -fx-text-fill: white; -fx-padding: 8 30;" visible="false"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

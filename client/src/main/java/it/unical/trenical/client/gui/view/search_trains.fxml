@@ -4,45 +4,50 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.unical.trenical.client.gui.controller.SearchTrainsController">
+            fx:controller="it.unical.trenical.client.gui.controller.SearchTrainsController"
+            minWidth="800" minHeight="600" prefWidth="1000" prefHeight="700" maxWidth="1920" maxHeight="1080"
+            style="-fx-background-color: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);">
     <top>
-        <Label text="Ricerca treni" style="-fx-font-size: 20px; -fx-padding: 10px;"/>
+        <Label text="Ricerca treni" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #22304a; -fx-padding: 18px;"/>
     </top>
     <center>
-        <VBox alignment="CENTER" spacing="12">
+        <VBox alignment="CENTER" spacing="16">
             <HBox spacing="10" alignment="CENTER">
-                <Label text="Stazione partenza:"/>
+                <Label text="Stazione partenza:" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
                 <StackPane prefHeight="30" maxWidth="250">
-                    <TextField fx:id="departureField" promptText="Inserisci stazione di partenza"/>
+                    <TextField fx:id="departureField" promptText="Inserisci stazione di partenza" style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"/>
                 </StackPane>
             </HBox>
             <HBox spacing="10" alignment="CENTER">
-                <Label text="Stazione arrivo:"/>
+                <Label text="Stazione arrivo:" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
                 <StackPane prefHeight="30" maxWidth="250">
-                    <TextField fx:id="arrivalField" promptText="Inserisci stazione di arrivo"/>
+                    <TextField fx:id="arrivalField" promptText="Inserisci stazione di arrivo" style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"/>
                 </StackPane>
             </HBox>
             <HBox spacing="10" alignment="CENTER">
-                <Label text="Data:"/>
-                <DatePicker fx:id="datePicker"/>
+                <Label text="Data:" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+                <DatePicker fx:id="datePicker" style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"/>
             </HBox>
             <HBox spacing="10" alignment="CENTER">
-                <Label text="Preferenze:"/>
-                <ComboBox fx:id="trainTypeBox" promptText="Tipo treno"/>
-                <ComboBox fx:id="classBox" promptText="Classe"/>
+                <Label text="Preferenze:" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+                <ComboBox fx:id="trainTypeBox" promptText="Tipo treno" style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"/>
+                <ComboBox fx:id="classBox" promptText="Classe" style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"/>
             </HBox>
-            <Button text="Cerca" onAction="#onSearch"/>
+            <Button text="Cerca" onAction="#onSearch" style="-fx-font-size: 16px; -fx-background-radius: 20; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 10 36;"/>
         </VBox>
     </center>
     <bottom>
         <VBox alignment="CENTER" spacing="8" style="-fx-padding: 10;">
-            <TableView fx:id="resultsTable" prefHeight="320" minHeight="220" maxHeight="400" VBox.vgrow="ALWAYS">
+            <TableView fx:id="resultsTable" prefHeight="320" minHeight="220" maxHeight="400" VBox.vgrow="ALWAYS"
+                       style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12;">
                 <columns>
-                    <TableColumn text="Treno" fx:id="colTrain"/>
-                    <TableColumn text="Partenza" fx:id="colDeparture"/>
-                    <TableColumn text="Arrivo" fx:id="colArrival"/>
-                    <TableColumn text="Ora" fx:id="colTime"/>
-                    <TableColumn text="Posti disp." fx:id="colSeats"/>
+                    <TableColumn text="ID" fx:id="colTrainId" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Treno" fx:id="colTrain" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Partenza" fx:id="colDeparture" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Arrivo" fx:id="colArrival" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Ora" fx:id="colTime" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Data" fx:id="colDate" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Posti disp." fx:id="colSeats" style="-fx-alignment: CENTER;"/>
                 </columns>
             </TableView>
             <Button text="Torna al menu" onAction="#onBackToDashboard"/>

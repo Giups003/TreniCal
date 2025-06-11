@@ -173,6 +173,37 @@ public final class TicketServiceGrpc {
     return getListTicketsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.ticket.ClearAllTicketsRequest,
+      it.unical.trenical.grpc.ticket.OperationResponse> getClearAllTicketsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ClearAllTickets",
+      requestType = it.unical.trenical.grpc.ticket.ClearAllTicketsRequest.class,
+      responseType = it.unical.trenical.grpc.ticket.OperationResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.ticket.ClearAllTicketsRequest,
+      it.unical.trenical.grpc.ticket.OperationResponse> getClearAllTicketsMethod() {
+    io.grpc.MethodDescriptor<it.unical.trenical.grpc.ticket.ClearAllTicketsRequest, it.unical.trenical.grpc.ticket.OperationResponse> getClearAllTicketsMethod;
+    if ((getClearAllTicketsMethod = TicketServiceGrpc.getClearAllTicketsMethod) == null) {
+      synchronized (TicketServiceGrpc.class) {
+        if ((getClearAllTicketsMethod = TicketServiceGrpc.getClearAllTicketsMethod) == null) {
+          TicketServiceGrpc.getClearAllTicketsMethod = getClearAllTicketsMethod =
+              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.ticket.ClearAllTicketsRequest, it.unical.trenical.grpc.ticket.OperationResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ClearAllTickets"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  it.unical.trenical.grpc.ticket.ClearAllTicketsRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  it.unical.trenical.grpc.ticket.OperationResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TicketServiceMethodDescriptorSupplier("ClearAllTickets"))
+              .build();
+        }
+      }
+    }
+    return getClearAllTicketsMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -273,6 +304,16 @@ public final class TicketServiceGrpc {
         io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.ListTicketsResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListTicketsMethod(), responseObserver);
     }
+
+    /**
+     * <pre>
+     * Elimina tutti i biglietti (solo admin)
+     * </pre>
+     */
+    default void clearAllTickets(it.unical.trenical.grpc.ticket.ClearAllTicketsRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.OperationResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getClearAllTicketsMethod(), responseObserver);
+    }
   }
 
   /**
@@ -362,6 +403,17 @@ public final class TicketServiceGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getListTicketsMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Elimina tutti i biglietti (solo admin)
+     * </pre>
+     */
+    public void clearAllTickets(it.unical.trenical.grpc.ticket.ClearAllTicketsRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.OperationResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getClearAllTicketsMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -431,6 +483,16 @@ public final class TicketServiceGrpc {
     public it.unical.trenical.grpc.ticket.ListTicketsResponse listTickets(it.unical.trenical.grpc.ticket.ListTicketsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListTicketsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Elimina tutti i biglietti (solo admin)
+     * </pre>
+     */
+    public it.unical.trenical.grpc.ticket.OperationResponse clearAllTickets(it.unical.trenical.grpc.ticket.ClearAllTicketsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getClearAllTicketsMethod(), getCallOptions(), request);
     }
   }
 
@@ -507,6 +569,17 @@ public final class TicketServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getListTicketsMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Elimina tutti i biglietti (solo admin)
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.ticket.OperationResponse> clearAllTickets(
+        it.unical.trenical.grpc.ticket.ClearAllTicketsRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getClearAllTicketsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_PURCHASE_TICKET = 0;
@@ -514,6 +587,7 @@ public final class TicketServiceGrpc {
   private static final int METHODID_CANCEL_TICKET = 2;
   private static final int METHODID_GET_TICKET = 3;
   private static final int METHODID_LIST_TICKETS = 4;
+  private static final int METHODID_CLEAR_ALL_TICKETS = 5;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -551,6 +625,10 @@ public final class TicketServiceGrpc {
         case METHODID_LIST_TICKETS:
           serviceImpl.listTickets((it.unical.trenical.grpc.ticket.ListTicketsRequest) request,
               (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.ListTicketsResponse>) responseObserver);
+          break;
+        case METHODID_CLEAR_ALL_TICKETS:
+          serviceImpl.clearAllTickets((it.unical.trenical.grpc.ticket.ClearAllTicketsRequest) request,
+              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.OperationResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -605,6 +683,13 @@ public final class TicketServiceGrpc {
               it.unical.trenical.grpc.ticket.ListTicketsRequest,
               it.unical.trenical.grpc.ticket.ListTicketsResponse>(
                 service, METHODID_LIST_TICKETS)))
+        .addMethod(
+          getClearAllTicketsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              it.unical.trenical.grpc.ticket.ClearAllTicketsRequest,
+              it.unical.trenical.grpc.ticket.OperationResponse>(
+                service, METHODID_CLEAR_ALL_TICKETS)))
         .build();
   }
 
@@ -658,6 +743,7 @@ public final class TicketServiceGrpc {
               .addMethod(getCancelTicketMethod())
               .addMethod(getGetTicketMethod())
               .addMethod(getListTicketsMethod())
+              .addMethod(getClearAllTicketsMethod())
               .build();
         }
       }

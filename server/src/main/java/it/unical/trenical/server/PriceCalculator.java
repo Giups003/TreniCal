@@ -88,19 +88,39 @@ public class PriceCalculator {
         // Applicare i moltiplicatori e sconti
         double finalPrice = basePrice * classMultiplier * weekdayMultiplier * advanceBookingDiscount;
 
-        // Sconto da codice promozionale
-        if (promoCode != null && isValidPromoCode(promoCode)) {
-            double promoDiscount = promoCodeDiscounts.getOrDefault(promoCode, 1.0);
-            finalPrice *= promoDiscount;
-        }
-
-        // Applicazione promozione da DataStore
         LocalDate travelLocalDate = travelDateTime.toLocalDate();
         String routeName = departureStation + "-" + arrivalStation;
         var dataStore = DataStore.getInstance();
-        var promo = dataStore.findBestPromotion(routeName, serviceClass, travelLocalDate);
-        if (promo != null) {
-            finalPrice = promo.applyDiscount(finalPrice);
+
+        // --- PROMOZIONE AUTOMATICA: trova la migliore se non è stato inserito un codice promo ---
+        if (promoCode == null || promoCode.isBlank()) {
+            var promo = dataStore.findBestPromotion(routeName, serviceClass, travelLocalDate);
+            if (promo != null && promo.getDiscountPercent() > 0) {
+                finalPrice = finalPrice * (1.0 - promo.getDiscountPercent() / 100.0);
+            }
+        } else {
+            // Se promoCode è presente, cerca una promozione admin con quel nome
+            boolean promoAdminApplied = false;
+            var allPromos = dataStore.getAllPromotions();
+            for (var promo : allPromos) {
+                if (promo.getName().equalsIgnoreCase(promoCode)) {
+                    boolean routeOk = (promo.getRouteNamesList().isEmpty() || promo.getRouteNamesList().contains(routeName));
+                    boolean classOk = (promo.getServiceClassesList().isEmpty() || promo.getServiceClassesList().contains(serviceClass));
+                    boolean fromOk = (!promo.hasValidFrom() || !travelLocalDate.isBefore(java.time.Instant.ofEpochSecond(promo.getValidFrom().getSeconds()).atZone(java.time.ZoneOffset.UTC).toLocalDate()));
+                    boolean toOk = (!promo.hasValidTo() || !travelLocalDate.isAfter(java.time.Instant.ofEpochSecond(promo.getValidTo().getSeconds()).atZone(java.time.ZoneOffset.UTC).toLocalDate()));
+                    boolean typeOk = true;
+                    if (routeOk && classOk && fromOk && toOk && typeOk) {
+                        finalPrice = finalPrice * (1.0 - promo.getDiscountPercent() / 100.0);
+                        promoAdminApplied = true;
+                        break;
+                    }
+                }
+            }
+            // Se non è stata applicata una promo admin, usa la logica classica
+            if (!promoAdminApplied && isValidPromoCode(promoCode)) {
+                double promoDiscount = promoCodeDiscounts.getOrDefault(promoCode, 1.0);
+                finalPrice *= promoDiscount;
+            }
         }
 
         // Assicurarsi che il prezzo non sia mai inferiore al prezzo minimo

@@ -59,6 +59,11 @@ public final class TicketServiceProto {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_trenical_ticket_OperationResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_trenical_ticket_ClearAllTicketsRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_trenical_ticket_ClearAllTicketsRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -70,44 +75,50 @@ public final class TicketServiceProto {
     java.lang.String[] descriptorData = {
       "\n\024ticket_service.proto\022\017trenical.ticket\032" +
       "\014common.proto\032\037google/protobuf/timestamp" +
-      ".proto\"\370\001\n\025PurchaseTicketRequest\022\020\n\010trai" +
+      ".proto\"\251\002\n\025PurchaseTicketRequest\022\020\n\010trai" +
       "n_id\030\001 \001(\005\022\026\n\016passenger_name\030\002 \001(\t\022\031\n\021de" +
       "parture_station\030\003 \001(\t\022\027\n\017arrival_station" +
       "\030\004 \001(\t\022/\n\013travel_date\030\005 \001(\0132\032.google.pro" +
       "tobuf.Timestamp\022\025\n\rservice_class\030\006 \001(\t\022\022" +
       "\n\npromo_code\030\007 \001(\t\022\026\n\016payment_method\030\010 \001" +
-      "(\t\022\r\n\005seats\030\t \001(\005\"\205\001\n\026PurchaseTicketResp" +
-      "onse\022\017\n\007success\030\001 \001(\010\022\021\n\tticket_id\030\002 \001(\t" +
-      "\022\017\n\007message\030\003 \001(\t\022\r\n\005price\030\004 \001(\001\022\'\n\006tick" +
-      "et\030\005 \001(\0132\027.trenical.common.Ticket\"\333\001\n\023Mo" +
-      "difyTicketRequest\022\021\n\tticket_id\030\001 \001(\t\022,\n\010" +
-      "new_date\030\002 \001(\0132\032.google.protobuf.Timesta" +
-      "mp\022,\n\010new_time\030\003 \001(\0132\032.google.protobuf.T" +
-      "imestamp\022\031\n\021new_service_class\030\004 \001(\t\022\035\n\025n" +
-      "ew_departure_station\030\005 \001(\t\022\033\n\023new_arriva" +
-      "l_station\030\006 \001(\t\"(\n\023CancelTicketRequest\022\021" +
-      "\n\tticket_id\030\001 \001(\t\"%\n\020GetTicketRequest\022\021\n" +
-      "\tticket_id\030\001 \001(\t\"^\n\021GetTicketResponse\022\017\n" +
-      "\007success\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\022\'\n\006ticke" +
-      "t\030\003 \001(\0132\027.trenical.common.Ticket\",\n\022List" +
-      "TicketsRequest\022\026\n\016passenger_name\030\001 \001(\t\"?" +
-      "\n\023ListTicketsResponse\022(\n\007tickets\030\001 \003(\0132\027" +
-      ".trenical.common.Ticket\"5\n\021OperationResp" +
-      "onse\022\017\n\007success\030\001 \001(\010\022\017\n\007message\030\002 \001(\t2\324" +
-      "\003\n\rTicketService\022a\n\016PurchaseTicket\022&.tre" +
-      "nical.ticket.PurchaseTicketRequest\032\'.tre" +
-      "nical.ticket.PurchaseTicketResponse\022X\n\014M" +
-      "odifyTicket\022$.trenical.ticket.ModifyTick" +
-      "etRequest\032\".trenical.ticket.OperationRes" +
-      "ponse\022X\n\014CancelTicket\022$.trenical.ticket." +
-      "CancelTicketRequest\032\".trenical.ticket.Op" +
-      "erationResponse\022R\n\tGetTicket\022!.trenical." +
-      "ticket.GetTicketRequest\032\".trenical.ticke" +
-      "t.GetTicketResponse\022X\n\013ListTickets\022#.tre" +
-      "nical.ticket.ListTicketsRequest\032$.trenic" +
-      "al.ticket.ListTicketsResponseB6\n\036it.unic" +
-      "al.trenical.grpc.ticketB\022TicketServicePr" +
-      "otoP\001b\006proto3"
+      "(\t\022\r\n\005seats\030\t \001(\005\022/\n\013travel_time\030\n \001(\0132\032" +
+      ".google.protobuf.Timestamp\"\257\001\n\026PurchaseT" +
+      "icketResponse\022\017\n\007success\030\001 \001(\010\022\021\n\tticket" +
+      "_id\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\022\r\n\005price\030\004 \001(" +
+      "\001\022\'\n\006ticket\030\005 \001(\0132\027.trenical.common.Tick" +
+      "et\022(\n\007tickets\030\006 \003(\0132\027.trenical.common.Ti" +
+      "cket\"\220\002\n\023ModifyTicketRequest\022\021\n\tticket_i" +
+      "d\030\001 \001(\t\022,\n\010new_date\030\002 \001(\0132\032.google.proto" +
+      "buf.Timestamp\022,\n\010new_time\030\003 \001(\0132\032.google" +
+      ".protobuf.Timestamp\022\031\n\021new_service_class" +
+      "\030\004 \001(\t\022\035\n\025new_departure_station\030\005 \001(\t\022\033\n" +
+      "\023new_arrival_station\030\006 \001(\t\0223\n\017new_travel" +
+      "_time\030\007 \001(\0132\032.google.protobuf.Timestamp\"" +
+      "(\n\023CancelTicketRequest\022\021\n\tticket_id\030\001 \001(" +
+      "\t\"%\n\020GetTicketRequest\022\021\n\tticket_id\030\001 \001(\t" +
+      "\"^\n\021GetTicketResponse\022\017\n\007success\030\001 \001(\010\022\017" +
+      "\n\007message\030\002 \001(\t\022\'\n\006ticket\030\003 \001(\0132\027.trenic" +
+      "al.common.Ticket\",\n\022ListTicketsRequest\022\026" +
+      "\n\016passenger_name\030\001 \001(\t\"?\n\023ListTicketsRes" +
+      "ponse\022(\n\007tickets\030\001 \003(\0132\027.trenical.common" +
+      ".Ticket\"5\n\021OperationResponse\022\017\n\007success\030" +
+      "\001 \001(\010\022\017\n\007message\030\002 \001(\t\"\030\n\026ClearAllTicket" +
+      "sRequest2\264\004\n\rTicketService\022a\n\016PurchaseTi" +
+      "cket\022&.trenical.ticket.PurchaseTicketReq" +
+      "uest\032\'.trenical.ticket.PurchaseTicketRes" +
+      "ponse\022X\n\014ModifyTicket\022$.trenical.ticket." +
+      "ModifyTicketRequest\032\".trenical.ticket.Op" +
+      "erationResponse\022X\n\014CancelTicket\022$.trenic" +
+      "al.ticket.CancelTicketRequest\032\".trenical" +
+      ".ticket.OperationResponse\022R\n\tGetTicket\022!" +
+      ".trenical.ticket.GetTicketRequest\032\".tren" +
+      "ical.ticket.GetTicketResponse\022X\n\013ListTic" +
+      "kets\022#.trenical.ticket.ListTicketsReques" +
+      "t\032$.trenical.ticket.ListTicketsResponse\022" +
+      "^\n\017ClearAllTickets\022\'.trenical.ticket.Cle" +
+      "arAllTicketsRequest\032\".trenical.ticket.Op" +
+      "erationResponseB6\n\036it.unical.trenical.gr" +
+      "pc.ticketB\022TicketServiceProtoP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -120,19 +131,19 @@ public final class TicketServiceProto {
     internal_static_trenical_ticket_PurchaseTicketRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_ticket_PurchaseTicketRequest_descriptor,
-        new java.lang.String[] { "TrainId", "PassengerName", "DepartureStation", "ArrivalStation", "TravelDate", "ServiceClass", "PromoCode", "PaymentMethod", "Seats", });
+        new java.lang.String[] { "TrainId", "PassengerName", "DepartureStation", "ArrivalStation", "TravelDate", "ServiceClass", "PromoCode", "PaymentMethod", "Seats", "TravelTime", });
     internal_static_trenical_ticket_PurchaseTicketResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_trenical_ticket_PurchaseTicketResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_ticket_PurchaseTicketResponse_descriptor,
-        new java.lang.String[] { "Success", "TicketId", "Message", "Price", "Ticket", });
+        new java.lang.String[] { "Success", "TicketId", "Message", "Price", "Ticket", "Tickets", });
     internal_static_trenical_ticket_ModifyTicketRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_trenical_ticket_ModifyTicketRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_ticket_ModifyTicketRequest_descriptor,
-        new java.lang.String[] { "TicketId", "NewDate", "NewTime", "NewServiceClass", "NewDepartureStation", "NewArrivalStation", });
+        new java.lang.String[] { "TicketId", "NewDate", "NewTime", "NewServiceClass", "NewDepartureStation", "NewArrivalStation", "NewTravelTime", });
     internal_static_trenical_ticket_CancelTicketRequest_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_trenical_ticket_CancelTicketRequest_fieldAccessorTable = new
@@ -169,6 +180,12 @@ public final class TicketServiceProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_ticket_OperationResponse_descriptor,
         new java.lang.String[] { "Success", "Message", });
+    internal_static_trenical_ticket_ClearAllTicketsRequest_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_trenical_ticket_ClearAllTicketsRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_trenical_ticket_ClearAllTicketsRequest_descriptor,
+        new java.lang.String[] { });
     it.unical.trenical.grpc.common.CommonProto.getDescriptor();
     com.google.protobuf.TimestampProto.getDescriptor();
   }

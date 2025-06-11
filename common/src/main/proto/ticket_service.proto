@@ -25,6 +25,9 @@ service TicketService {
 
   // Lista biglietti per utente
   rpc ListTickets(ListTicketsRequest) returns (ListTicketsResponse);
+
+  // Elimina tutti i biglietti (solo admin)
+  rpc ClearAllTickets(ClearAllTicketsRequest) returns (OperationResponse);
 }
 
 // Utilizziamo il messaggio Ticket definito in common.proto
@@ -40,15 +43,17 @@ message PurchaseTicketRequest {
   string promo_code = 7; // Codice promozionale opzionale
   string payment_method = 8; // Es: "Carta di Credito", "PayPal"
   int32 seats = 9;
+  google.protobuf.Timestamp travel_time = 10; // Orario di viaggio
 }
 
 // Risposta per l'acquisto di un biglietto
 message PurchaseTicketResponse {
   bool success = 1;
-  string ticket_id = 2; // ID univoco del biglietto acquistato
+  string ticket_id = 2; // ID univoco del biglietto acquistato (primo biglietto)
   string message = 3; // Messaggio di conferma o errore
   double price = 4; // Prezzo calcolato del biglietto
-  trenical.common.Ticket ticket = 5; // Dettagli del biglietto acquistato
+  trenical.common.Ticket ticket = 5; // Dettagli del primo biglietto acquistato
+  repeated trenical.common.Ticket tickets = 6; // Tutti i biglietti acquistati
 }
 
 // Richiesta per la modifica di un biglietto
@@ -59,6 +64,7 @@ message ModifyTicketRequest {
   string new_service_class = 4; // Nuova classe di servizio (opzionale)
   string new_departure_station = 5; // Nuova stazione di partenza (opzionale)
   string new_arrival_station = 6; // Nuova stazione di arrivo (opzionale)
+  google.protobuf.Timestamp new_travel_time = 7; // Nuovo orario di viaggio (opzionale)
 }
 
 // Richiesta per annullare un biglietto
@@ -93,3 +99,6 @@ message OperationResponse {
   bool success = 1; // Indica se l'operazione è andata a buon fine
   string message = 2; // Messaggio di conferma o errore
 }
+
+// Richiesta per eliminare tutti i biglietti
+message ClearAllTicketsRequest {}

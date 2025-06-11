@@ -86,6 +86,7 @@ public class TrainClient {
      * @param date Data del viaggio (formato YYYY-MM-DD)
      * @param timeFrom Orario minimo di partenza (opzionale)
      * @param timeTo Orario massimo di partenza (opzionale)
+     * @param trainType Tipo di treno (opzionale)
      * @return Lista di treni che soddisfano i criteri
      */
     public List<Train> searchTrains(
@@ -93,9 +94,10 @@ public class TrainClient {
             String arrivalStation, 
             Timestamp date,
             Timestamp timeFrom,
-            Timestamp timeTo) {
+            Timestamp timeTo,
+            String trainType) {
 
-        logger.info("Ricerca treni da " + departureStation + " a " + arrivalStation + " il " + date);
+        logger.info("Ricerca treni da " + departureStation + " a " + arrivalStation + " il " + date + " tipo: " + trainType);
 
         SearchTrainRequest.Builder requestBuilder = SearchTrainRequest.newBuilder()
                 .setDepartureStation(departureStation)
@@ -108,6 +110,9 @@ public class TrainClient {
 
         if (timeTo != null && (timeTo.getSeconds() != 0 || timeTo.getNanos() != 0)) {
             requestBuilder.setTimeTo(timeTo);
+        }
+        if (trainType != null && !trainType.equalsIgnoreCase("Tutti")) {
+            requestBuilder.setTrainType(trainType);
         }
 
         TrainResponse response;
@@ -137,6 +142,40 @@ public class TrainClient {
         TrainDetailsResponse response;
         try {
             response = blockingStub.getTrainDetails(request);
+            logger.info("Ricevuti dettagli del treno con " + response.getStopsCount() + " fermate");
+            return response;
+        } catch (StatusRuntimeException e) {
+            logger.log(Level.WARNING, "Errore RPC: {0}", e.getStatus());
+            throw e;
+        }
+    }
+
+    /**
+     * Ottiene i dettagli di un treno specifico per data.
+     *
+     * @param trainId ID del treno
+     * @param date Data del viaggio (LocalDate)
+     * @return Dettagli del treno
+     */
+    public TrainDetailsResponse getTrainDetails(int trainId, java.time.LocalDate date) {
+        logger.info("Richiesta dettagli del treno (ID: " + trainId + ", data: " + date + ")");
+        com.google.protobuf.Timestamp dateTimestamp = null;
+        if (date != null) {
+            java.time.LocalDateTime dateTime = date.atStartOfDay();
+            java.time.Instant instant = dateTime.toInstant(java.time.ZoneOffset.UTC);
+            dateTimestamp = com.google.protobuf.Timestamp.newBuilder()
+                    .setSeconds(instant.getEpochSecond())
+                    .setNanos(instant.getNano())
+                    .build();
+        }
+        TrainDetailsRequest.Builder requestBuilder = TrainDetailsRequest.newBuilder()
+                .setTrainId(trainId);
+        if (dateTimestamp != null) {
+            requestBuilder.setDate(dateTimestamp);
+        }
+        TrainDetailsResponse response;
+        try {
+            response = blockingStub.getTrainDetails(requestBuilder.build());
             logger.info("Ricevuti dettagli del treno con " + response.getStopsCount() + " fermate");
             return response;
         } catch (StatusRuntimeException e) {

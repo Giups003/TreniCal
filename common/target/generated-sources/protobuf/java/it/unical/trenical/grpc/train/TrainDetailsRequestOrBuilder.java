@@ -16,4 +16,31 @@ public interface TrainDetailsRequestOrBuilder extends
    * @return The trainId.
    */
   int getTrainId();
+
+  /**
+   * <pre>
+   * Data del viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp date = 2;</code>
+   * @return Whether the date field is set.
+   */
+  boolean hasDate();
+  /**
+   * <pre>
+   * Data del viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp date = 2;</code>
+   * @return The date.
+   */
+  com.google.protobuf.Timestamp getDate();
+  /**
+   * <pre>
+   * Data del viaggio
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp date = 2;</code>
+   */
+  com.google.protobuf.TimestampOrBuilder getDateOrBuilder();
 }

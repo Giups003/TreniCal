@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package trenical.promotion;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "it.unical.trenical.grpc.promotion";
+option java_outer_classname = "PromotionServiceProto";
+
+// Messaggio promozione
+message Promotion {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  double discount_percent = 4;
+  repeated string route_names = 5;
+  repeated string service_classes = 6;
+  google.protobuf.Timestamp valid_from = 7;
+  google.protobuf.Timestamp valid_to = 8;
+  bool only_for_loyalty_members = 9;
+  string train_type = 10;
+}
+
+// Lista promozioni
+message PromotionList {
+  repeated Promotion promotions = 1;
+}
+
+// Richiesta per aggiungere una promozione
+message AddPromotionRequest {
+  Promotion promotion = 1;
+}
+
+// Richiesta per eliminare una promozione
+message DeletePromotionRequest {
+  int32 id = 1;
+}
+
+// Risposta generica
+message PromotionOperationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Servizio promozioni
+service PromotionService {
+  rpc ListPromotions(google.protobuf.Empty) returns (PromotionList);
+  rpc AddPromotion(AddPromotionRequest) returns (PromotionOperationResponse);
+  rpc DeletePromotion(DeletePromotionRequest) returns (PromotionOperationResponse);
+  //rpc UpdatePromotion(AddPromotionRequest) returns (PromotionOperationResponse);
+}

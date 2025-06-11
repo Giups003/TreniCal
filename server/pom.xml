@@ -75,6 +75,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JSON processing -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20250517</version>
+        </dependency>
+
         <!-- Data persistence -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
