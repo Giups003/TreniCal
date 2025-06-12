@@ -203,21 +203,22 @@ public class BuyTicketController {
         timeBox.getItems().clear();
         String dep = departureStationField.getText();
         String arr = arrivalStationField.getText();
-        var date = datePicker.getValue();
+        LocalDate date = datePicker.getValue();
         if (dep == null || dep.isBlank() || arr == null || arr.isBlank() || date == null) return;
         try {
-            ScheduleRequest req = ScheduleRequest.newBuilder()
-                    .setStation(dep)
-                    .setDate(Timestamp.newBuilder().setSeconds(date.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()).build())
+            Timestamp ts = Timestamp.newBuilder().setSeconds(date.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()).build();
+            SearchTrainRequest req = SearchTrainRequest.newBuilder()
+                    .setDepartureStation(dep)
+                    .setArrivalStation(arr)
+                    .setDate(ts)
                     .build();
-            ScheduleResponse resp = trainService.getTrainSchedule(req);
-            LocalDateTime now = LocalDateTime.now();
-            List<String> availableTimes = resp.getDeparturesList().stream()
-                    .filter(entry -> entry.getDestination().equalsIgnoreCase(arr))
-                    .map(entry -> {
-                        Instant instant = Instant.ofEpochSecond(entry.getTime().getSeconds());
-                        LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                        return ldt.toLocalTime().toString();
+            TrainResponse resp = trainService.searchTrains(req);
+            List<String> availableTimes = resp.getTrainsList().stream()
+                    .filter(t -> t.hasDepartureTime())
+                    .map(t -> {
+                        Instant instant = Instant.ofEpochSecond(t.getDepartureTime().getSeconds());
+                        LocalTime time = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalTime();
+                        return time.toString();
                     })
                     .distinct()
                     .sorted()
@@ -227,9 +228,8 @@ public class BuyTicketController {
                 timeBox.setValue(availableTimes.get(0));
             }
         } catch (Exception e) {
-            // fallback: orari fissi
-            for (int h = 6; h <= 22; h++) timeBox.getItems().add(String.format("%02d:00", h));
-            timeBox.setValue("06:00");
+            timeBox.getItems().clear();
+            timeBox.setValue(null);
         }
     }
 
@@ -582,9 +582,16 @@ public class BuyTicketController {
             updatePrice();
             return;
         }
+        // Validazione lato client: il codice deve essere tra quelli caricati dal server
+        if (!promoCodesFromServer.contains(promoCode)) {
+            promoValidationLabel.setText("Codice non valido.");
+            promoValid = false;
+            promoPrice = 0.0;
+            updatePrice();
+            return;
+        }
         double oldPrice = getCurrentBasePrice();
         double newPrice = getPromoPrice(promoCode);
-        // Se la promo non cambia il prezzo o il prezzo promo è zero/negativo, la promo non è valida
         if (newPrice > 0 && newPrice < oldPrice) {
             promoValidationLabel.setText("Codice valido! Sconto applicato: " + String.format("%.2f", oldPrice - newPrice) + " €");
             promoValid = true;
@@ -672,7 +679,7 @@ public class BuyTicketController {
             }
         } catch (Exception e) {
             // In caso di errore lascia la lista vuota
-
         }
     }
 }
+
