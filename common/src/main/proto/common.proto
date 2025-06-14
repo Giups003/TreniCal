@@ -40,4 +40,5 @@ message Ticket {
   string seat = 9; // Numero del posto assegnato (ora string)
   string status = 10; // Stato del biglietto (es: "Prenotato", "Annullato", "Utilizzato")
   google.protobuf.Timestamp travel_time = 11; // Orario di viaggio
+  google.protobuf.Timestamp purchase_date = 12; // Data e ora di acquisto del biglietto
 }

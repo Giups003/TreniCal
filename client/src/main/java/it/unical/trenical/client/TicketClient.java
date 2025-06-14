@@ -154,10 +154,10 @@ public class TicketClient {
 
         // Aggiunge i campi opzionali se specificati
         if (newDate != null && !newDate.equals(Timestamp.getDefaultInstance())) {
-            requestBuilder.setNewDate(newDate);
+            requestBuilder.setNewTravelDate(newDate);
         }
         if (newTime != null && !newTime.equals(Timestamp.getDefaultInstance())) {
-            requestBuilder.setNewTime(newTime);
+            requestBuilder.setNewTravelTime(newTime);
         }
         if (newServiceClass != null && !newServiceClass.isEmpty()) {
             requestBuilder.setNewServiceClass(newServiceClass);

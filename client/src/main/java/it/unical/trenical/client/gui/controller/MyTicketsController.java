@@ -1,33 +1,25 @@
 package it.unical.trenical.client.gui.controller;
 
-import com.google.protobuf.Timestamp;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import it.unical.trenical.client.gui.SceneManager;
 import it.unical.trenical.client.gui.util.AlertUtils;
 import it.unical.trenical.client.session.UserSession;
 import it.unical.trenical.grpc.common.Ticket;
-import it.unical.trenical.grpc.ticket.ClearAllTicketsRequest;
-import it.unical.trenical.grpc.ticket.ListTicketsRequest;
-import it.unical.trenical.grpc.ticket.ListTicketsResponse;
-import it.unical.trenical.grpc.ticket.TicketServiceGrpc;
+import it.unical.trenical.grpc.ticket.*;
 import it.unical.trenical.grpc.train.TrainServiceGrpc;
-import it.unical.trenical.grpc.train.ScheduleRequest;
-import it.unical.trenical.grpc.train.ScheduleResponse;
-import it.unical.trenical.grpc.train.ScheduleEntry;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.time.ZoneOffset;
+
 
 /**
  * Controller per la schermata di visualizzazione biglietti acquistati.
@@ -38,40 +30,31 @@ public class MyTicketsController {
     @FXML private TableColumn<TicketViewModel, String> colDeparture;
     @FXML private TableColumn<TicketViewModel, String> colDepartureTime;
     @FXML private TableColumn<TicketViewModel, String> colArrival;
-    @FXML private TableColumn<TicketViewModel, String> colDate;
-    @FXML private TableColumn<TicketViewModel, String> colTime;
     @FXML private TableColumn<TicketViewModel, String> colClass;
     @FXML private TableColumn<TicketViewModel, String> colSeat;
     @FXML private TableColumn<TicketViewModel, String> colStatus;
+    @FXML private TableColumn<TicketViewModel, String> colPurchaseDate;
     @FXML private Button clearAllButton;
+    @FXML private Button toggleViewButton;
 
+    private boolean showAllTickets = true;
     private final ObservableList<TicketViewModel> tickets = FXCollections.observableArrayList();
     private TicketServiceGrpc.TicketServiceBlockingStub ticketService;
     private TrainServiceGrpc.TrainServiceBlockingStub trainService;
     private ManagedChannel channel;
 
+    private static final double PENALTY_PERCENTAGE = 0.10; // 10% penale annullamento
+
     @FXML
     public void initialize() {
-        String username = UserSession.getUsername();
-        if (username == null || username.isEmpty()) {
-            AlertUtils.showError("Errore", "Utente non loggato. Effettua il login.");
-            SceneManager.getInstance().showLogin();
-            // Nasconde la finestra corrente se presente
-            if (ticketsTable != null && ticketsTable.getScene() != null && ticketsTable.getScene().getWindow() != null) {
-                ticketsTable.getScene().getWindow().hide();
-            }
-            // Blocca la visualizzazione della schermata
-            return;
-        }
         colTrain.setCellValueFactory(data -> data.getValue().trainProperty());
         colDeparture.setCellValueFactory(data -> data.getValue().departureProperty());
         colDepartureTime.setCellValueFactory(data -> data.getValue().departureDateTimeProperty());
         colArrival.setCellValueFactory(data -> data.getValue().arrivalProperty());
-        colDate.setCellValueFactory(data -> data.getValue().dateProperty());
-        colTime.setCellValueFactory(data -> data.getValue().timeProperty());
         colClass.setCellValueFactory(data -> data.getValue().serviceClassProperty());
         colSeat.setCellValueFactory(data -> data.getValue().seatProperty());
         colStatus.setCellValueFactory(data -> data.getValue().statusProperty());
+        colPurchaseDate.setCellValueFactory(data -> data.getValue().purchaseDateProperty());
         ticketsTable.setItems(tickets);
 
         // --- Doppio click per modifica biglietto ---
@@ -92,22 +75,39 @@ public class MyTicketsController {
         ticketService = TicketServiceGrpc.newBlockingStub(channel);
         trainService = TrainServiceGrpc.newBlockingStub(channel);
         loadTicketsFromServer();
+
+        // Imposta la visibilità dei pulsanti per l'amministratore
+        boolean isAdmin = UserSession.isAdmin();
         if (clearAllButton != null) {
-            clearAllButton.setVisible(UserSession.isAdmin());
+            clearAllButton.setVisible(isAdmin);
+        }
+        if (toggleViewButton != null) {
+            toggleViewButton.setVisible(isAdmin);
+            toggleViewButton.setText("Mostra solo i miei biglietti");
         }
     }
 
     private void loadTicketsFromServer() {
+        loadTicketsFromServer(false);
+    }
+
+    /**
+     * Carica i biglietti dal server.
+     * @param onlyPersonal Se true, anche l'admin vedrà solo i propri biglietti personali
+     */
+    private void loadTicketsFromServer(boolean onlyPersonal) {
         try {
             String username = UserSession.getUsername();
             if (username == null || username.isEmpty()) {
                 AlertUtils.showError("Errore", "Utente non loggato. Effettua il login.");
                 return;
             }
-            ListTicketsRequest req = ListTicketsRequest.newBuilder()
-                .setPassengerName(username)
-                .build();
-            ListTicketsResponse resp = ticketService.listTickets(req);
+            ListTicketsRequest.Builder reqBuilder = ListTicketsRequest.newBuilder();
+            // Se admin e non richiede solo i propri biglietti personali, carica tutti i biglietti
+            if (!UserSession.isAdmin() || onlyPersonal) {
+                reqBuilder.setPassengerName(username);
+            }
+            ListTicketsResponse resp = ticketService.listTickets(reqBuilder.build());
             tickets.clear();
             for (Ticket t : resp.getTicketsList()) {
                 tickets.add(new TicketViewModel(t));
@@ -143,145 +143,23 @@ public class MyTicketsController {
             AlertUtils.showError("Errore", "Seleziona un biglietto da modificare.");
             return;
         }
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Modifica Biglietto");
-        dialog.setHeaderText(null);
-        dialog.initOwner(ticketsTable.getScene().getWindow());
-        DatePicker datePicker = new DatePicker(java.time.LocalDate.parse(selected.dateProperty().get()));
-        datePicker.setDayCellFactory(picker -> new DateCell() {
-            @Override
-            public void updateItem(java.time.LocalDate item, boolean empty) {
-                super.updateItem(item, empty);
-                setDisable(empty || item.isBefore(java.time.LocalDate.now()));
-            }
-        });
-        ComboBox<String> classBox = new ComboBox<>();
-        classBox.getItems().addAll("Economy", "Prima Classe");
-        classBox.setValue(selected.serviceClassProperty().get());
-        ComboBox<String> timeBox = new ComboBox<>();
-        // --- Carica solo orari disponibili e futuri ---
-        Runnable updateTimeBox = () -> {
-            timeBox.getItems().clear();
-            List<String> availableTimes = getAvailableTimes(
-                selected.departureProperty().get(),
-                selected.arrivalProperty().get(),
-                datePicker.getValue()
-            );
-            timeBox.getItems().addAll(availableTimes);
-            // Se l'orario attuale è ancora valido, selezionalo, altrimenti seleziona il primo disponibile
-            String currentTime = selected.departureTimeProperty().get();
-            if (currentTime != null && availableTimes.contains(currentTime)) {
-                timeBox.setValue(currentTime);
-            } else if (!availableTimes.isEmpty()) {
-                timeBox.setValue(availableTimes.get(0));
-            }
-        };
-        datePicker.valueProperty().addListener((obs, o, n) -> updateTimeBox.run());
-        updateTimeBox.run();
-        Label priceLabel = new Label("Prezzo: -");
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.addRow(0, new Label("Data:"), datePicker);
-        grid.addRow(1, new Label("Orario:"), timeBox);
-        grid.addRow(2, new Label("Classe:"), classBox);
-        grid.addRow(3, priceLabel);
-        dialog.getDialogPane().setContent(grid);
-        ButtonType conferma = new ButtonType("Conferma", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(conferma, ButtonType.CANCEL);
-        Runnable updatePrice = () -> updateDialogPrice(selected, datePicker, timeBox, classBox, priceLabel);
-        classBox.valueProperty().addListener((obs, o, n) -> updatePrice.run());
-        datePicker.valueProperty().addListener((obs, o, n) -> updatePrice.run());
-        timeBox.valueProperty().addListener((obs, o, n) -> updatePrice.run());
-        updatePrice.run();
-        dialog.setResultConverter(button -> button);
-        dialog.showAndWait().ifPresent(result -> {
-            if (result == conferma) {
-                try {
-                    var reqBuilder = it.unical.trenical.grpc.ticket.ModifyTicketRequest.newBuilder()
-                            .setTicketId(selected.getTicketId())
-                            .setNewServiceClass(classBox.getValue());
-                    java.time.LocalDate date = datePicker.getValue();
-                    String time = timeBox.getValue();
-                    if (date != null) {
-                        java.time.LocalTime localTime = java.time.LocalTime.parse(time);
-                        java.time.LocalDateTime ldt = java.time.LocalDateTime.of(date, localTime);
-                        reqBuilder.setNewDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(ldt.toEpochSecond(java.time.ZoneOffset.UTC)).build());
-                        reqBuilder.setNewTravelTime(com.google.protobuf.Timestamp.newBuilder().setSeconds(localTime.toSecondOfDay()).build());
-                    }
-                    var resp = ticketService.modifyTicket(reqBuilder.build());
-                    if (resp.getSuccess()) {
-                        AlertUtils.showInfo("Successo", "Biglietto modificato con successo!");
-                        loadTicketsFromServer();
-                    } else {
-                        AlertUtils.showError("Errore", resp.getMessage());
-                    }
-                } catch (Exception ex) {
-                    AlertUtils.showError("Errore", "Impossibile modificare il biglietto: " + ex.getMessage());
-                }
-            }
-        });
-    }
-
-    /**
-     * Restituisce la lista degli orari disponibili per la tratta e la data selezionata, solo futuri.
-     */
-    private List<String> getAvailableTimes(String departure, String arrival, java.time.LocalDate date) {
-        try {
-            // Chiamata gRPC al servizio treni per ottenere le partenze dalla stazione di partenza
-            ScheduleRequest req = ScheduleRequest.newBuilder()
-                    .setStation(departure)
-                    .setDate(Timestamp.newBuilder().setSeconds(date.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()).build())
-                    .build();
-            ScheduleResponse resp = trainService.getTrainSchedule(req);
-            java.time.LocalDateTime now = java.time.LocalDateTime.now();
-            return resp.getDeparturesList().stream()
-                    // Filtra solo le partenze verso la stazione di arrivo desiderata
-                    .filter(entry -> entry.getDestination().equalsIgnoreCase(arrival))
-                    // Solo orari futuri
-                    .filter(entry -> {
-                        Instant instant = Instant.ofEpochSecond(entry.getTime().getSeconds());
-                        LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                        return ldt.isAfter(now);
-                    })
-                    .map(entry -> {
-                        Instant instant = Instant.ofEpochSecond(entry.getTime().getSeconds());
-                        LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                        return ldt.toLocalTime().toString();
-                    })
-                    .distinct()
-                    .sorted()
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            // In caso di errore, fallback a lista vuota
-            return Collections.emptyList();
+        // Non permettere la modifica se il biglietto è annullato o scaduto
+        String status = selected.statusProperty().get();
+        if (status.equalsIgnoreCase("Annullato") || status.equalsIgnoreCase("Scaduto")) {
+            AlertUtils.showError("Non modificabile", "Non puoi modificare un biglietto annullato o scaduto.");
+            return;
         }
-    }
-
-    /**
-     * Aggiorna dinamicamente il prezzo nella dialog di modifica biglietto.
-     */
-    private void updateDialogPrice(TicketViewModel selected, DatePicker datePicker, ComboBox<String> timeBox, ComboBox<String> classBox, Label priceLabel) {
-        try {
-            java.time.LocalDate date = datePicker.getValue();
-            String time = timeBox.getValue();
-            java.time.LocalTime localTime = java.time.LocalTime.parse(time);
-            java.time.LocalDateTime ldt = java.time.LocalDateTime.of(date, localTime);
-            var req = it.unical.trenical.grpc.ticket.PurchaseTicketRequest.newBuilder()
-                    .setTrainId(1)
-                    .setDepartureStation(selected.departureProperty().get())
-                    .setArrivalStation(selected.arrivalProperty().get())
-                    .setServiceClass(classBox.getValue())
-                    .setSeats(1)
-                    .setPassengerName(UserSession.getUsername())
-                    .setTravelDate(Timestamp.newBuilder().setSeconds(ldt.toEpochSecond(java.time.ZoneOffset.UTC)).build())
-                    .setTravelTime(Timestamp.newBuilder().setSeconds(localTime.toSecondOfDay()).build())
-                    .build();
-            var resp = ticketService.purchaseTicket(req);
-            priceLabel.setText("Prezzo: " + String.format("%.2f", resp.getPrice()) + " €");
-        } catch (Exception e) {
-            priceLabel.setText("Prezzo: errore");
-        }
+        // Passa i dati del biglietto selezionato a SceneManager
+        SceneManager.getInstance().showModifyTicketDialog(
+            selected.getTicketId(),
+            selected.departureProperty().get(),
+            selected.arrivalProperty().get(),
+            java.time.LocalDate.parse(selected.dateProperty().get()),
+            selected.departureTimeProperty().get(),
+            selected.serviceClassProperty().get(),
+            selected.getTrainId(), // Passa il trainId del biglietto selezionato
+            () -> loadTicketsFromServer()
+        );
     }
 
     /**
@@ -294,6 +172,18 @@ public class MyTicketsController {
             AlertUtils.showError("Errore", "Seleziona un biglietto da annullare.");
             return;
         }
+        // Recupera il prezzo del biglietto (se disponibile)
+        double price = selected.getPrice();
+        double penalty = price * PENALTY_PERCENTAGE;
+        double refund = price - penalty;
+        String msg;
+        if (price > 0.0) {
+            msg = String.format("Il prezzo pagato per il biglietto è di %.2f €.\nVerrà applicata una penale del %.0f%% (%.2f €).\nCredito rimborsato: %.2f €.\n\nVuoi procedere con l'annullamento?", price, PENALTY_PERCENTAGE*100, penalty, refund);
+        } else {
+            msg = "Vuoi davvero annullare il biglietto selezionato?";
+        }
+        boolean conferma = AlertUtils.showConfirm("Conferma annullamento", msg);
+        if (!conferma) return;
         // Chiamata gRPC per annullare il biglietto dal server
         try {
             var req = it.unical.trenical.grpc.ticket.CancelTicketRequest.newBuilder()
@@ -316,7 +206,7 @@ public class MyTicketsController {
      */
     @FXML
     private void onBack() {
-        SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
+        SceneManager.getInstance().showDashboard();
     }
 
     /**
@@ -326,7 +216,7 @@ public class MyTicketsController {
     private void onClearAll() {
         // Solo admin può svuotare la lista
         if (!UserSession.isAdmin()) {
-            AlertUtils.showError("Permesso negato", "Solo un amministratore può svuotere tutti i biglietti.");
+            AlertUtils.showError("Permesso negato", "Solo un amministratore può svuotare tutti i biglietti.");
             return;
         }
         if (AlertUtils.showConfirm("Conferma", "Sei sicuro di voler eliminare tutti i biglietti?")) {
@@ -341,6 +231,16 @@ public class MyTicketsController {
     }
 
     /**
+     * Gestisce il toggle per visualizzare solo i biglietti personali o tutti i biglietti.
+     */
+    @FXML
+    private void onToggleView() {
+        showAllTickets = !showAllTickets;
+        toggleViewButton.setText(showAllTickets ? "Mostra solo i miei biglietti" : "Mostra tutti i biglietti");
+        loadTicketsFromServer(!showAllTickets);
+    }
+
+    /**
      * ViewModel per la visualizzazione dei biglietti nella tabella.
      */
     public static class TicketViewModel {
@@ -349,12 +249,14 @@ public class MyTicketsController {
         private final StringProperty departureTime;
         private final StringProperty arrival;
         private final StringProperty date;
-        private final StringProperty time;
         private final StringProperty serviceClass;
         private final StringProperty seat;
         private final StringProperty status;
         private final String ticketId;
         private final StringProperty departureDateTime;
+        private final StringProperty purchaseDate;
+        private final double price;
+        private final int trainId;
 
         public TicketViewModel(Ticket ticket) {
             this.train = new SimpleStringProperty("Treno " + ticket.getTrainId());
@@ -371,7 +273,6 @@ public class MyTicketsController {
                 departureDateTimeStr = ldt.toString();
             }
             this.date = new SimpleStringProperty(dateStr);
-            this.time = new SimpleStringProperty(timeStr);
             this.serviceClass = new SimpleStringProperty(ticket.getServiceClass());
             this.seat = new SimpleStringProperty(ticket.getSeat());
             // Stato: "Annullato" se il biglietto non esiste più sul server, altrimenti "Attivo"
@@ -383,6 +284,17 @@ public class MyTicketsController {
             this.ticketId = ticket.getId();
             this.departureDateTime = new SimpleStringProperty(departureDateTimeStr);
             this.departureTime = new SimpleStringProperty(timeStr);
+
+            // Data di acquisto: usa quella fornita dal server se disponibile
+            String purchaseDateStr = "";
+            if (ticket.hasPurchaseDate()) {
+                Instant purchaseInstant = Instant.ofEpochSecond(ticket.getPurchaseDate().getSeconds());
+                LocalDateTime purchaseLdt = LocalDateTime.ofInstant(purchaseInstant, ZoneId.systemDefault());
+                purchaseDateStr = purchaseLdt.toString();
+            }
+            this.purchaseDate = new SimpleStringProperty(purchaseDateStr);
+            this.price = ticket.getPrice();
+            this.trainId = ticket.getTrainId();
         }
 
         public StringProperty trainProperty() { return train; }
@@ -390,11 +302,13 @@ public class MyTicketsController {
         public StringProperty departureTimeProperty() { return departureTime; }
         public StringProperty arrivalProperty() { return arrival; }
         public StringProperty dateProperty() { return date; }
-        public StringProperty timeProperty() { return time; }
         public StringProperty serviceClassProperty() { return serviceClass; }
         public StringProperty seatProperty() { return seat; }
         public StringProperty statusProperty() { return status; }
         public String getTicketId() { return ticketId; }
         public StringProperty departureDateTimeProperty() { return departureDateTime; }
+        public StringProperty purchaseDateProperty() { return purchaseDate; }
+        public double getPrice() { return price; }
+        public int getTrainId() { return trainId; }
     }
 }

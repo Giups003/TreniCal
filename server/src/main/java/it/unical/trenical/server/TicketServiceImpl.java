@@ -1,12 +1,18 @@
 package it.unical.trenical.server;
 
+import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import it.unical.trenical.grpc.common.Ticket;
 import it.unical.trenical.grpc.ticket.*;
 import it.unical.trenical.grpc.ticket.PurchaseTicketRequest;
 
+import java.time.Instant;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Implementazione del servizio gRPC per la gestione dei biglietti.
@@ -57,8 +63,11 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 return;
             }
 
-            // Se la richiesta non contiene un metodo di pagamento, è solo una simulazione di prezzo
-            if (request.getPaymentMethod() == null || request.getPaymentMethod().isEmpty()) {
+            // Se la richiesta non contiene un metodo di pagamento o è esplicitamente marcata come solo prezzo,
+            // viene trattata come simulazione per calcolo prezzo
+            if (request.getPaymentMethod() == null || request.getPaymentMethod().isEmpty() ||
+                "SOLO_PREZZO".equals(request.getPaymentMethod())) {
+
                 double price = priceCalculator.calculateTicketPrice(
                         request.getDepartureStation(),
                         request.getArrivalStation(),
@@ -100,9 +109,9 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                     request.getPromoCode()
             );
             // Crea e salva un biglietto per ogni posto richiesto
-            java.util.List<Ticket> createdTickets = new java.util.ArrayList<>();
+            List<Ticket> createdTickets = new ArrayList<>();
             // Trova tutti i posti già occupati per il treno
-            java.util.Set<Integer> occupiedSeats = new java.util.HashSet<>();
+            Set<Integer> occupiedSeats = new HashSet<>();
             for (Ticket t : dataStore.getAllTickets()) {
                 if (t.getTrainId() == trainId) {
                     try { occupiedSeats.add(Integer.parseInt(t.getSeat())); } catch (Exception ignored) {}
@@ -125,6 +134,11 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                         .setServiceClass(request.getServiceClass())
                         .setPrice(price)
                         .setSeat(String.valueOf(seatNumber))
+                        .setPurchaseDate(
+                            Timestamp.newBuilder()
+                                .setSeconds(Instant.now().getEpochSecond())
+                                .build()
+                        )
                         .build();
                 dataStore.addTicket(ticket);
                 createdTickets.add(ticket);
@@ -182,7 +196,8 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
             String newDeparture = isValidField(request.getNewDepartureStation()) ? request.getNewDepartureStation() : ticket.getDepartureStation();
             String newArrival = isValidField(request.getNewArrivalStation()) ? request.getNewArrivalStation() : ticket.getArrivalStation();
             String newServiceClass = isValidField(request.getNewServiceClass()) ? request.getNewServiceClass() : ticket.getServiceClass();
-            com.google.protobuf.Timestamp newDate = isValidField(request.getNewDate()) ? request.getNewDate() : ticket.getTravelDate();
+            Timestamp newDate = request.hasNewTravelDate() ? request.getNewTravelDate() : ticket.getTravelDate();
+            Timestamp newTime = request.hasNewTravelTime() ? request.getNewTravelTime() : ticket.getTravelTime();
 
             if (isValidField(request.getNewDepartureStation())) {
                 updatedTicket.setDepartureStation(request.getNewDepartureStation());
@@ -196,8 +211,16 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 updatedTicket.setServiceClass(request.getNewServiceClass());
                 modified = true;
             }
-            if (isValidField(request.getNewDate())) {
-                updatedTicket.setTravelDate(request.getNewDate());
+            if (request.hasNewTravelDate()) {
+                updatedTicket.setTravelDate(newDate);
+                modified = true;
+            }
+            if (request.hasNewTravelTime()) {
+                updatedTicket.setTravelTime(newTime);
+                modified = true;
+            }
+            if (request.getTrainId() != 0 && request.getTrainId() != ticket.getTrainId()) {
+                updatedTicket.setTrainId(request.getTrainId());
                 modified = true;
             }
 
@@ -294,7 +317,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
 
     /**
      * Gestisce la richiesta di elenco dei biglietti.
-     * Restituisce solo i biglietti dell'utente richiesto.
+     * Restituisce solo i biglietti dell'utente richiesto o tutti se non è specificato un passeggero.
      * @param request Richiesta contenente i criteri di ricerca (es. nome passeggero).
      * @param responseObserver Stream per inviare la risposta al client.
      */
@@ -302,15 +325,35 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
     public void listTickets(ListTicketsRequest request, StreamObserver<ListTicketsResponse> responseObserver) {
         try {
             String passengerName = request.getPassengerName();
-            java.util.List<Ticket> allTickets = dataStore.getAllTickets();
-            java.util.List<Ticket> userTickets = new java.util.ArrayList<>();
+            List<Ticket> allTickets = dataStore.getAllTickets();
+            List<Ticket> filteredTickets = new ArrayList<>();
+            List<Ticket> toUpdate = new ArrayList<>();
+            long now = System.currentTimeMillis() / 1000L;
             for (Ticket t : allTickets) {
-                if (t.getPassengerName().equals(passengerName)) {
-                    userTickets.add(t);
+                if (t.hasTravelDate() && (t.getStatus() == null || (!t.getStatus().equalsIgnoreCase("Annullato") && !t.getStatus().equalsIgnoreCase("Scaduto")))) {
+                    long travelEpoch = t.getTravelDate().getSeconds();
+                    if (travelEpoch < now) {
+                        // Aggiorna lo stato a "Scaduto"
+                        Ticket updated = t.toBuilder().setStatus("Scaduto").build();
+                        toUpdate.add(updated);
+                        t = updated;
+                    }
+                }
+                if (passengerName != null && !passengerName.isEmpty()) {
+                    if (t.getPassengerName().equals(passengerName)) {
+                        filteredTickets.add(t);
+                    }
+                } else {
+                    filteredTickets.add(t);
                 }
             }
+            // Aggiorna i biglietti scaduti nel DataStore
+            for (Ticket t : toUpdate) {
+                dataStore.deleteTicket(t.getId());
+                dataStore.addTicket(t);
+            }
             ListTicketsResponse response = ListTicketsResponse.newBuilder()
-                    .addAllTickets(userTickets)
+                    .addAllTickets(filteredTickets)
                     .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
@@ -341,6 +384,34 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
         }
     }
 
+    /**
+     * Gestisce la richiesta del prezzo di un biglietto senza acquistarlo.
+     *
+     * @param request          Richiesta contenente i dettagli del biglietto.
+     * @param responseObserver Stream per inviare la risposta al client.
+     */
+    @Override
+    public void getTicketPrice(GetTicketPriceRequest request, StreamObserver<GetTicketPriceResponse> responseObserver) {
+        try {
+            double price = priceCalculator.calculateTicketPrice(
+                request.getDepartureStation(),
+                request.getArrivalStation(),
+                request.getServiceClass(),
+                request.getTravelDate(),
+                request.getPromoCode()
+            );
+            GetTicketPriceResponse response = GetTicketPriceResponse.newBuilder()
+                .setPrice(price)
+                .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL.withDescription("Errore durante il calcolo del prezzo: " + e.getMessage()).asRuntimeException()
+            );
+        }
+    }
+
     private boolean isValidPurchaseRequest(PurchaseTicketRequest request) {
         return request != null &&
                 request.getTrainId() > 0 &&
@@ -367,3 +438,4 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
         responseObserver.onCompleted();
     }
 }
+

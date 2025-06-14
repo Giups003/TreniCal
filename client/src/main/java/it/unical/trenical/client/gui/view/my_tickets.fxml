@@ -17,8 +17,7 @@
                     <TableColumn text="Partenza" fx:id="colDeparture" style="-fx-alignment: CENTER;"/>
                     <TableColumn text="Orario partenza" fx:id="colDepartureTime" style="-fx-alignment: CENTER;"/>
                     <TableColumn text="Arrivo" fx:id="colArrival" style="-fx-alignment: CENTER;"/>
-                    <TableColumn text="Ora" fx:id="colTime" style="-fx-alignment: CENTER;"/>
-                    <TableColumn text="Data" fx:id="colDate" style="-fx-alignment: CENTER;"/>
+                    <TableColumn text="Data acquisto" fx:id="colPurchaseDate" style="-fx-alignment: CENTER;"/>
                     <TableColumn text="Classe" fx:id="colClass" style="-fx-alignment: CENTER;"/>
                     <TableColumn text="Posto" fx:id="colSeat" style="-fx-alignment: CENTER;"/>
                     <TableColumn text="Stato" fx:id="colStatus" style="-fx-alignment: CENTER;"/>
@@ -28,6 +27,7 @@
                 <Button text="Modifica" onAction="#onModify" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #ffa000; -fx-text-fill: #22304a; -fx-padding: 8 30;"/>
                 <Button text="Annulla" onAction="#onCancel" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #d0021b; -fx-text-fill: white; -fx-padding: 8 30;"/>
                 <Button text="Torna al menu" onAction="#onBack" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 8 30;"/>
+                <Button fx:id="toggleViewButton" text="Visualizza i miei biglietti" onAction="#onToggleView" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #4a8235; -fx-text-fill: white; -fx-padding: 8 30;" visible="false"/>
                 <Button fx:id="clearAllButton" text="Elimina tutti i biglietti" onAction="#onClearAll" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #b71c1c; -fx-text-fill: white; -fx-padding: 8 30;" visible="false"/>
             </HBox>
         </VBox>

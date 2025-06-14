@@ -1,14 +1,16 @@
 it\unical\trenical\client\gui\SceneManager.class
 it\unical\trenical\client\gui\StageManagerAware.class
+it\unical\trenical\client\gui\controller\NotificationsController$3.class
 it\unical\trenical\client\gui\controller\BuyTicketController.class
 it\unical\trenical\client\session\UserManager$User.class
-it\unical\trenical\client\gui\controller\MyTicketsController$1.class
 it\unical\trenical\client\gui\util\AlertUtils.class
 it\unical\trenical\client\ClientMain.class
 it\unical\trenical\client\gui\controller\PromotionDialog$2.class
 it\unical\trenical\client\gui\util\AutoCompleteUtil.class
+it\unical\trenical\client\gui\controller\NotificationsController$NotificationViewModel.class
 it\unical\trenical\client\gui\controller\PromotionDialog$3.class
 it\unical\trenical\client\gui\controller\LoginController.class
+it\unical\trenical\client\gui\controller\NotificationsController.class
 it\unical\trenical\client\gui\controller\SearchTrainsController.class
 it\unical\trenical\client\gui\controller\PromotionDialog.class
 it\unical\trenical\client\session\UserSession.class
@@ -16,6 +18,7 @@ it\unical\trenical\client\gui\controller\BuyTicketController$1.class
 it\unical\trenical\client\gui\controller\AdminPanelController.class
 it\unical\trenical\client\gui\controller\PromotionDialog$1.class
 it\unical\trenical\client\gui\controller\ModifyTicketDialogController.class
+it\unical\trenical\client\gui\controller\NotificationsController$2.class
 it\unical\trenical\client\TrainClient.class
 it\unical\trenical\client\gui\controller\PromotionsAdminController$PromotionViewModel.class
 it\unical\trenical\client\gui\util\AutoCompleteUtil$2.class
@@ -24,9 +27,11 @@ it\unical\trenical\client\gui\StageManager.class
 it\unical\trenical\client\model\TrainSearchResult.class
 it\unical\trenical\client\gui\controller\MyTicketsController.class
 it\unical\trenical\client\gui\SelectedTrainService.class
+it\unical\trenical\client\gui\controller\ModifyTicketDialogController$1.class
 it\unical\trenical\client\gui\controller\PromotionsAdminController.class
 it\unical\trenical\client\session\UserManager.class
 it\unical\trenical\client\gui\util\AutoCompleteUtil$1.class
+it\unical\trenical\client\gui\controller\NotificationsController$1.class
 it\unical\trenical\client\gui\controller\DashboardController.class
 it\unical\trenical\client\gui\controller\MyTicketsController$TicketViewModel.class
 it\unical\trenical\client\gui\controller\AdminPanelController$UserRow.class

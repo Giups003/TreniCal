@@ -21,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -78,21 +79,25 @@ public class BuyTicketController {
         departureStationField.textProperty().addListener((obs, oldVal, newVal) -> {
             updateAvailableTimes();
             updateTrainByStations();
+            updateSeatsSpinnerMax();
         });
         arrivalStationField.textProperty().addListener((obs, oldVal, newVal) -> {
             updateAvailableTimes();
             updateTrainByStations();
+            updateSeatsSpinnerMax();
         });
         if (datePicker != null) {
             datePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
                 updateAvailableTimes();
                 updateTrainByStations();
+                updateSeatsSpinnerMax();
                 updatePrice();
             });
         }
         if (timeBox != null) {
             timeBox.valueProperty().addListener((obs, oldVal, newVal) -> {
                 updateTrainByStations();
+                updateSeatsSpinnerMax();
                 updatePrice();
             });
         }
@@ -162,32 +167,49 @@ public class BuyTicketController {
         timeBox.getItems().clear();
         String dep = departureStationField.getText();
         String arr = arrivalStationField.getText();
-        var date = datePicker.getValue();
+        LocalDate date = datePicker.getValue();
         if (dep == null || dep.isBlank() || arr == null || arr.isBlank() || date == null) return;
         try {
-            ScheduleRequest req = ScheduleRequest.newBuilder()
-                    .setStation(dep)
+            // Recupera tutti i treni per la tratta e la data selezionata
+            SearchTrainRequest req = SearchTrainRequest.newBuilder()
+                    .setDepartureStation(dep)
+                    .setArrivalStation(arr)
                     .setDate(Timestamp.newBuilder().setSeconds(date.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()).build())
                     .build();
-            ScheduleResponse resp = trainService.getTrainSchedule(req);
-            List<String> availableTimes = resp.getDeparturesList().stream()
-                    .filter(entry -> entry.getDestination().equalsIgnoreCase(arr))
-                    .map(entry -> {
-                        Instant instant = Instant.ofEpochSecond(entry.getTime().getSeconds());
-                        LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                        return ldt.toLocalTime().toString();
-                    })
-                    .distinct()
-                    .sorted()
-                    .toList();
-            timeBox.getItems().addAll(availableTimes);
-            if (!availableTimes.isEmpty()) {
-                timeBox.setValue(availableTimes.get(0));
+            TrainResponse resp = trainService.searchTrains(req);
+            List<String> allTimes = new ArrayList<>();
+            Map<String, Train> timeToTrain = new HashMap<>();
+            for (Train train : resp.getTrainsList()) {
+                if (!train.hasDepartureTime()) continue;
+                Instant instant = Instant.ofEpochSecond(train.getDepartureTime().getSeconds());
+                LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                LocalTime time = ldt.toLocalTime();
+                // Se la data è oggi, mostra solo orari futuri
+                if (date.equals(LocalDate.now()) && time.isBefore(LocalTime.now())) continue;
+                String timeStr = time.format(DateTimeFormatter.ofPattern("HH:mm"));
+                if (!allTimes.contains(timeStr)) {
+                    allTimes.add(timeStr);
+                    timeToTrain.put(timeStr, train);
+                }
+            }
+            Collections.sort(allTimes);
+            timeBox.getItems().addAll(allTimes);
+            // Seleziona il primo orario valido
+            if (!allTimes.isEmpty()) {
+                timeBox.setValue(allTimes.get(0));
+                // Aggiorna il treno selezionato in base all'orario
+                selectedTrain = timeToTrain.get(allTimes.get(0));
+                trainField.setText(selectedTrain != null ? selectedTrain.getName() : "");
+            } else {
+                selectedTrain = null;
+                trainField.setText("");
             }
         } catch (Exception e) {
             // fallback: orari fissi
             for (int h = 6; h <= 22; h++) timeBox.getItems().add(String.format("%02d:00", h));
             timeBox.setValue("06:00");
+            selectedTrain = null;
+            trainField.setText("");
         }
     }
 
@@ -542,15 +564,23 @@ public class BuyTicketController {
             buyButton.setDisable(false);
             return;
         }
+        // BLOCCO ACQUISTO SE L'ORARIO È NEL PASSATO
         try {
             LocalTime localTime = LocalTime.parse(time);
+            if (date.equals(LocalDate.now()) && localTime.isBefore(LocalTime.now().minusMinutes(1))) {
+                AlertUtils.showError("Errore", "Non puoi acquistare un biglietto per un treno già partito.");
+                buyButton.setDisable(false);
+                return;
+            }
             LocalDateTime ldt = LocalDateTime.of(date, localTime);
+            // Corretto: uso il fuso orario locale per il timestamp
+            long epochSecond = ldt.atZone(ZoneId.systemDefault()).toEpochSecond();
             PurchaseTicketRequest.Builder builder = PurchaseTicketRequest.newBuilder()
                     .setTrainId(selectedTrain.getId())
                     .setPassengerName(username)
                     .setDepartureStation(departureStationField.getText())
                     .setArrivalStation(arrivalStationField.getText())
-                    .setTravelDate(Timestamp.newBuilder().setSeconds(ldt.toEpochSecond(ZoneOffset.UTC)).build())
+                    .setTravelDate(Timestamp.newBuilder().setSeconds(epochSecond).build())
                     .setServiceClass(classBox.getValue())
                     .setPaymentMethod(paymentMethod)
                     .setSeats(seatsRequested);
@@ -596,3 +626,4 @@ public class BuyTicketController {
         SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
     }
 }
+

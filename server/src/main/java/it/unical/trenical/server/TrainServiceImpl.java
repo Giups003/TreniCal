@@ -156,10 +156,35 @@ package it.unical.trenical.server;
                 List<ScheduleEntry> arrivals = new java.util.ArrayList<>();
                 // Per ogni treno, controlla se parte o arriva dalla stazione richiesta
                 for (Train train : dataStore.getAllTrains()) {
+                    // Trova la rotta che corrisponde alle stazioni di partenza e arrivo del treno
                     Route route = dataStore.getAllRoutes().stream()
-                        .filter(r -> r.getId() == train.getId())
+                        .filter(r -> {
+                            Station depStation = dataStore.getStationById(r.getDepartureStationId());
+                            Station arrStation = dataStore.getStationById(r.getArrivalStationId());
+                            return depStation != null && arrStation != null && 
+                                   depStation.getName().equalsIgnoreCase(train.getDepartureStation()) &&
+                                   arrStation.getName().equalsIgnoreCase(train.getArrivalStation());
+                        })
                         .findFirst().orElse(null);
-                    if (route == null) continue;
+                    if (route == null) {
+                        // Se non troviamo una rotta corrispondente, usiamo direttamente i dati del treno
+                        ScheduleEntry.Builder entry = ScheduleEntry.newBuilder()
+                            .setTrainId(train.getId())
+                            .setTrainName(train.getName())
+                            .setTime(train.getDepartureTime())
+                            .setDestination(train.getArrivalStation())
+                            .setStatus(TrainStatus.ON_TIME);
+
+                        if (train.getDepartureStation().equalsIgnoreCase(stationName)) {
+                            departures.add(entry.build());
+                        }
+                        if (train.getArrivalStation().equalsIgnoreCase(stationName)) {
+                            entry.setDestination(train.getDepartureStation());
+                            entry.setTime(train.getArrivalTime());
+                            arrivals.add(entry.build());
+                        }
+                        continue;
+                    }
                     Station depStation = dataStore.getStationById(route.getDepartureStationId());
                     Station arrStation = dataStore.getStationById(route.getArrivalStationId());
                     if (depStation != null && depStation.getName().equalsIgnoreCase(stationName)) {
@@ -198,11 +223,16 @@ package it.unical.trenical.server;
 
         private long parseTimeToEpoch(String time, Timestamp date) {
             // time formato HH:mm, date è la data del giorno
-            if (date == null || time == null) return 0L;
-            LocalDate localDate = Instant.ofEpochSecond(date.getSeconds()).atZone(ZoneOffset.UTC).toLocalDate();
-            LocalTime localTime = LocalTime.parse(time);
-            LocalDateTime dateTime = LocalDateTime.of(localDate, localTime);
-            return dateTime.toEpochSecond(ZoneOffset.UTC);
+            if (date == null || time == null || time.isEmpty()) return 0L;
+            try {
+                LocalDate localDate = Instant.ofEpochSecond(date.getSeconds()).atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalTime localTime = LocalTime.parse(time);
+                LocalDateTime dateTime = LocalDateTime.of(localDate, localTime);
+                return dateTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+            } catch (Exception e) {
+                System.err.println("Errore nel parsing del tempo: " + e.getMessage() + " per il valore: '" + time + "'");
+                return 0L;
+            }
         }
 
         @Override
@@ -251,11 +281,16 @@ package it.unical.trenical.server;
         }
 
         private Timestamp parseTimeToTimestamp(String time) {
-            if (time == null) return Timestamp.getDefaultInstance();
-            LocalTime localTime = LocalTime.parse(time);
-            LocalDate today = LocalDate.now();
-            LocalDateTime dateTime = LocalDateTime.of(today, localTime);
-            return Timestamp.newBuilder().setSeconds(dateTime.toEpochSecond(ZoneOffset.UTC)).build();
+            if (time == null || time.isEmpty()) return Timestamp.getDefaultInstance();
+            try {
+                LocalTime localTime = LocalTime.parse(time);
+                LocalDate today = LocalDate.now();
+                LocalDateTime dateTime = LocalDateTime.of(today, localTime);
+                return Timestamp.newBuilder().setSeconds(dateTime.toEpochSecond(ZoneOffset.UTC)).build();
+            } catch (Exception e) {
+                System.err.println("Errore nel parsing del tempo: " + e.getMessage() + " per il valore: '" + time + "'");
+                return Timestamp.getDefaultInstance();
+            }
         }
 
         @Override

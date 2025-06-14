@@ -32,54 +32,54 @@ public interface ModifyTicketRequestOrBuilder extends
    * Nuova data di viaggio (opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_date = 2;</code>
-   * @return Whether the newDate field is set.
+   * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
+   * @return Whether the newTravelDate field is set.
    */
-  boolean hasNewDate();
+  boolean hasNewTravelDate();
   /**
    * <pre>
    * Nuova data di viaggio (opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_date = 2;</code>
-   * @return The newDate.
+   * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
+   * @return The newTravelDate.
    */
-  com.google.protobuf.Timestamp getNewDate();
+  com.google.protobuf.Timestamp getNewTravelDate();
   /**
    * <pre>
    * Nuova data di viaggio (opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_date = 2;</code>
+   * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
    */
-  com.google.protobuf.TimestampOrBuilder getNewDateOrBuilder();
+  com.google.protobuf.TimestampOrBuilder getNewTravelDateOrBuilder();
 
   /**
    * <pre>
-   * Nuovo orario (opzionale)
+   * Data della modifica (server-side, opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_time = 3;</code>
-   * @return Whether the newTime field is set.
+   * <code>.google.protobuf.Timestamp modification_date = 3;</code>
+   * @return Whether the modificationDate field is set.
    */
-  boolean hasNewTime();
+  boolean hasModificationDate();
   /**
    * <pre>
-   * Nuovo orario (opzionale)
+   * Data della modifica (server-side, opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_time = 3;</code>
-   * @return The newTime.
+   * <code>.google.protobuf.Timestamp modification_date = 3;</code>
+   * @return The modificationDate.
    */
-  com.google.protobuf.Timestamp getNewTime();
+  com.google.protobuf.Timestamp getModificationDate();
   /**
    * <pre>
-   * Nuovo orario (opzionale)
+   * Data della modifica (server-side, opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_time = 3;</code>
+   * <code>.google.protobuf.Timestamp modification_date = 3;</code>
    */
-  com.google.protobuf.TimestampOrBuilder getNewTimeOrBuilder();
+  com.google.protobuf.TimestampOrBuilder getModificationDateOrBuilder();
 
   /**
    * <pre>
@@ -167,4 +167,14 @@ public interface ModifyTicketRequestOrBuilder extends
    * <code>.google.protobuf.Timestamp new_travel_time = 7;</code>
    */
   com.google.protobuf.TimestampOrBuilder getNewTravelTimeOrBuilder();
+
+  /**
+   * <pre>
+   * Nuovo ID treno (opzionale, aggiunto per supporto cambio treno)
+   * </pre>
+   *
+   * <code>int32 train_id = 8;</code>
+   * @return The trainId.
+   */
+  int getTrainId();
 }

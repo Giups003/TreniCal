@@ -32,6 +32,8 @@ public class DashboardController {
     @FXML
     private Button myTicketsButton;
     @FXML
+    private Button notificationsButton;
+    @FXML
     private Button adminPromotionsButton;
     @FXML
     private Label adminLabel;
@@ -126,6 +128,7 @@ public class DashboardController {
         searchTrainsButton.setDisable(!loggedIn);
         buyTicketButton.setDisable(!loggedIn);
         myTicketsButton.setDisable(!loggedIn);
+        notificationsButton.setDisable(!loggedIn);
         joinLoyaltyButton.setDisable(!loggedIn);
         adminPromotionsButton.setDisable(!loggedIn || !UserSession.isAdmin());
         adminLabel.setVisible(UserSession.isAdmin());
@@ -202,7 +205,18 @@ public class DashboardController {
 
     @FXML
     private void onAdminPromotions(ActionEvent event) {
-        SceneManager.getInstance().switchTo("src/main/java/it/unical/trenical/client/gui/view/promotions_admin.fxml");
+        SceneManager.getInstance().showPromotionsAdmin();
+    }
+
+    @FXML
+    private void onNotifications(ActionEvent event) {
+        if (UserSession.getUsername() == null || UserSession.getUsername().isEmpty()) {
+            // Mostra errore e non naviga
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Devi effettuare il login per visualizzare le notifiche.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+        SceneManager.getInstance().showNotifications();
     }
 
     @FXML

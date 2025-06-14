@@ -94,18 +94,18 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int NEW_DATE_FIELD_NUMBER = 2;
-  private com.google.protobuf.Timestamp newDate_;
+  public static final int NEW_TRAVEL_DATE_FIELD_NUMBER = 2;
+  private com.google.protobuf.Timestamp newTravelDate_;
   /**
    * <pre>
    * Nuova data di viaggio (opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_date = 2;</code>
-   * @return Whether the newDate field is set.
+   * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
+   * @return Whether the newTravelDate field is set.
    */
   @java.lang.Override
-  public boolean hasNewDate() {
+  public boolean hasNewTravelDate() {
     return ((bitField0_ & 0x00000001) != 0);
   }
   /**
@@ -113,61 +113,61 @@ private static final long serialVersionUID = 0L;
    * Nuova data di viaggio (opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_date = 2;</code>
-   * @return The newDate.
+   * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
+   * @return The newTravelDate.
    */
   @java.lang.Override
-  public com.google.protobuf.Timestamp getNewDate() {
-    return newDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newDate_;
+  public com.google.protobuf.Timestamp getNewTravelDate() {
+    return newTravelDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newTravelDate_;
   }
   /**
    * <pre>
    * Nuova data di viaggio (opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_date = 2;</code>
+   * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.TimestampOrBuilder getNewDateOrBuilder() {
-    return newDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newDate_;
+  public com.google.protobuf.TimestampOrBuilder getNewTravelDateOrBuilder() {
+    return newTravelDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newTravelDate_;
   }
 
-  public static final int NEW_TIME_FIELD_NUMBER = 3;
-  private com.google.protobuf.Timestamp newTime_;
+  public static final int MODIFICATION_DATE_FIELD_NUMBER = 3;
+  private com.google.protobuf.Timestamp modificationDate_;
   /**
    * <pre>
-   * Nuovo orario (opzionale)
+   * Data della modifica (server-side, opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_time = 3;</code>
-   * @return Whether the newTime field is set.
+   * <code>.google.protobuf.Timestamp modification_date = 3;</code>
+   * @return Whether the modificationDate field is set.
    */
   @java.lang.Override
-  public boolean hasNewTime() {
+  public boolean hasModificationDate() {
     return ((bitField0_ & 0x00000002) != 0);
   }
   /**
    * <pre>
-   * Nuovo orario (opzionale)
+   * Data della modifica (server-side, opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_time = 3;</code>
-   * @return The newTime.
+   * <code>.google.protobuf.Timestamp modification_date = 3;</code>
+   * @return The modificationDate.
    */
   @java.lang.Override
-  public com.google.protobuf.Timestamp getNewTime() {
-    return newTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newTime_;
+  public com.google.protobuf.Timestamp getModificationDate() {
+    return modificationDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : modificationDate_;
   }
   /**
    * <pre>
-   * Nuovo orario (opzionale)
+   * Data della modifica (server-side, opzionale)
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp new_time = 3;</code>
+   * <code>.google.protobuf.Timestamp modification_date = 3;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.TimestampOrBuilder getNewTimeOrBuilder() {
-    return newTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newTime_;
+  public com.google.protobuf.TimestampOrBuilder getModificationDateOrBuilder() {
+    return modificationDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : modificationDate_;
   }
 
   public static final int NEW_SERVICE_CLASS_FIELD_NUMBER = 4;
@@ -349,6 +349,21 @@ private static final long serialVersionUID = 0L;
     return newTravelTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newTravelTime_;
   }
 
+  public static final int TRAIN_ID_FIELD_NUMBER = 8;
+  private int trainId_ = 0;
+  /**
+   * <pre>
+   * Nuovo ID treno (opzionale, aggiunto per supporto cambio treno)
+   * </pre>
+   *
+   * <code>int32 train_id = 8;</code>
+   * @return The trainId.
+   */
+  @java.lang.Override
+  public int getTrainId() {
+    return trainId_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -367,10 +382,10 @@ private static final long serialVersionUID = 0L;
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, ticketId_);
     }
     if (((bitField0_ & 0x00000001) != 0)) {
-      output.writeMessage(2, getNewDate());
+      output.writeMessage(2, getNewTravelDate());
     }
     if (((bitField0_ & 0x00000002) != 0)) {
-      output.writeMessage(3, getNewTime());
+      output.writeMessage(3, getModificationDate());
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(newServiceClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, newServiceClass_);
@@ -383,6 +398,9 @@ private static final long serialVersionUID = 0L;
     }
     if (((bitField0_ & 0x00000004) != 0)) {
       output.writeMessage(7, getNewTravelTime());
+    }
+    if (trainId_ != 0) {
+      output.writeInt32(8, trainId_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -398,11 +416,11 @@ private static final long serialVersionUID = 0L;
     }
     if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, getNewDate());
+        .computeMessageSize(2, getNewTravelDate());
     }
     if (((bitField0_ & 0x00000002) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getNewTime());
+        .computeMessageSize(3, getModificationDate());
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(newServiceClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, newServiceClass_);
@@ -416,6 +434,10 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000004) != 0)) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(7, getNewTravelTime());
+    }
+    if (trainId_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(8, trainId_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -434,15 +456,15 @@ private static final long serialVersionUID = 0L;
 
     if (!getTicketId()
         .equals(other.getTicketId())) return false;
-    if (hasNewDate() != other.hasNewDate()) return false;
-    if (hasNewDate()) {
-      if (!getNewDate()
-          .equals(other.getNewDate())) return false;
+    if (hasNewTravelDate() != other.hasNewTravelDate()) return false;
+    if (hasNewTravelDate()) {
+      if (!getNewTravelDate()
+          .equals(other.getNewTravelDate())) return false;
     }
-    if (hasNewTime() != other.hasNewTime()) return false;
-    if (hasNewTime()) {
-      if (!getNewTime()
-          .equals(other.getNewTime())) return false;
+    if (hasModificationDate() != other.hasModificationDate()) return false;
+    if (hasModificationDate()) {
+      if (!getModificationDate()
+          .equals(other.getModificationDate())) return false;
     }
     if (!getNewServiceClass()
         .equals(other.getNewServiceClass())) return false;
@@ -455,6 +477,8 @@ private static final long serialVersionUID = 0L;
       if (!getNewTravelTime()
           .equals(other.getNewTravelTime())) return false;
     }
+    if (getTrainId()
+        != other.getTrainId()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -468,13 +492,13 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + TICKET_ID_FIELD_NUMBER;
     hash = (53 * hash) + getTicketId().hashCode();
-    if (hasNewDate()) {
-      hash = (37 * hash) + NEW_DATE_FIELD_NUMBER;
-      hash = (53 * hash) + getNewDate().hashCode();
+    if (hasNewTravelDate()) {
+      hash = (37 * hash) + NEW_TRAVEL_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getNewTravelDate().hashCode();
     }
-    if (hasNewTime()) {
-      hash = (37 * hash) + NEW_TIME_FIELD_NUMBER;
-      hash = (53 * hash) + getNewTime().hashCode();
+    if (hasModificationDate()) {
+      hash = (37 * hash) + MODIFICATION_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getModificationDate().hashCode();
     }
     hash = (37 * hash) + NEW_SERVICE_CLASS_FIELD_NUMBER;
     hash = (53 * hash) + getNewServiceClass().hashCode();
@@ -486,6 +510,8 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + NEW_TRAVEL_TIME_FIELD_NUMBER;
       hash = (53 * hash) + getNewTravelTime().hashCode();
     }
+    hash = (37 * hash) + TRAIN_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getTrainId();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -620,8 +646,8 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
-        getNewDateFieldBuilder();
-        getNewTimeFieldBuilder();
+        getNewTravelDateFieldBuilder();
+        getModificationDateFieldBuilder();
         getNewTravelTimeFieldBuilder();
       }
     }
@@ -630,15 +656,15 @@ private static final long serialVersionUID = 0L;
       super.clear();
       bitField0_ = 0;
       ticketId_ = "";
-      newDate_ = null;
-      if (newDateBuilder_ != null) {
-        newDateBuilder_.dispose();
-        newDateBuilder_ = null;
+      newTravelDate_ = null;
+      if (newTravelDateBuilder_ != null) {
+        newTravelDateBuilder_.dispose();
+        newTravelDateBuilder_ = null;
       }
-      newTime_ = null;
-      if (newTimeBuilder_ != null) {
-        newTimeBuilder_.dispose();
-        newTimeBuilder_ = null;
+      modificationDate_ = null;
+      if (modificationDateBuilder_ != null) {
+        modificationDateBuilder_.dispose();
+        modificationDateBuilder_ = null;
       }
       newServiceClass_ = "";
       newDepartureStation_ = "";
@@ -648,6 +674,7 @@ private static final long serialVersionUID = 0L;
         newTravelTimeBuilder_.dispose();
         newTravelTimeBuilder_ = null;
       }
+      trainId_ = 0;
       return this;
     }
 
@@ -686,15 +713,15 @@ private static final long serialVersionUID = 0L;
       }
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.newDate_ = newDateBuilder_ == null
-            ? newDate_
-            : newDateBuilder_.build();
+        result.newTravelDate_ = newTravelDateBuilder_ == null
+            ? newTravelDate_
+            : newTravelDateBuilder_.build();
         to_bitField0_ |= 0x00000001;
       }
       if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.newTime_ = newTimeBuilder_ == null
-            ? newTime_
-            : newTimeBuilder_.build();
+        result.modificationDate_ = modificationDateBuilder_ == null
+            ? modificationDate_
+            : modificationDateBuilder_.build();
         to_bitField0_ |= 0x00000002;
       }
       if (((from_bitField0_ & 0x00000008) != 0)) {
@@ -711,6 +738,9 @@ private static final long serialVersionUID = 0L;
             ? newTravelTime_
             : newTravelTimeBuilder_.build();
         to_bitField0_ |= 0x00000004;
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.trainId_ = trainId_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -764,11 +794,11 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000001;
         onChanged();
       }
-      if (other.hasNewDate()) {
-        mergeNewDate(other.getNewDate());
+      if (other.hasNewTravelDate()) {
+        mergeNewTravelDate(other.getNewTravelDate());
       }
-      if (other.hasNewTime()) {
-        mergeNewTime(other.getNewTime());
+      if (other.hasModificationDate()) {
+        mergeModificationDate(other.getModificationDate());
       }
       if (!other.getNewServiceClass().isEmpty()) {
         newServiceClass_ = other.newServiceClass_;
@@ -787,6 +817,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasNewTravelTime()) {
         mergeNewTravelTime(other.getNewTravelTime());
+      }
+      if (other.getTrainId() != 0) {
+        setTrainId(other.getTrainId());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -821,14 +854,14 @@ private static final long serialVersionUID = 0L;
             } // case 10
             case 18: {
               input.readMessage(
-                  getNewDateFieldBuilder().getBuilder(),
+                  getNewTravelDateFieldBuilder().getBuilder(),
                   extensionRegistry);
               bitField0_ |= 0x00000002;
               break;
             } // case 18
             case 26: {
               input.readMessage(
-                  getNewTimeFieldBuilder().getBuilder(),
+                  getModificationDateFieldBuilder().getBuilder(),
                   extensionRegistry);
               bitField0_ |= 0x00000004;
               break;
@@ -855,6 +888,11 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000040;
               break;
             } // case 58
+            case 64: {
+              trainId_ = input.readInt32();
+              bitField0_ |= 0x00000080;
+              break;
+            } // case 64
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -964,18 +1002,18 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private com.google.protobuf.Timestamp newDate_;
+    private com.google.protobuf.Timestamp newTravelDate_;
     private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> newDateBuilder_;
+        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> newTravelDateBuilder_;
     /**
      * <pre>
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
-     * @return Whether the newDate field is set.
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
+     * @return Whether the newTravelDate field is set.
      */
-    public boolean hasNewDate() {
+    public boolean hasNewTravelDate() {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
@@ -983,14 +1021,14 @@ private static final long serialVersionUID = 0L;
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
-     * @return The newDate.
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
+     * @return The newTravelDate.
      */
-    public com.google.protobuf.Timestamp getNewDate() {
-      if (newDateBuilder_ == null) {
-        return newDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newDate_;
+    public com.google.protobuf.Timestamp getNewTravelDate() {
+      if (newTravelDateBuilder_ == null) {
+        return newTravelDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newTravelDate_;
       } else {
-        return newDateBuilder_.getMessage();
+        return newTravelDateBuilder_.getMessage();
       }
     }
     /**
@@ -998,16 +1036,16 @@ private static final long serialVersionUID = 0L;
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
      */
-    public Builder setNewDate(com.google.protobuf.Timestamp value) {
-      if (newDateBuilder_ == null) {
+    public Builder setNewTravelDate(com.google.protobuf.Timestamp value) {
+      if (newTravelDateBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        newDate_ = value;
+        newTravelDate_ = value;
       } else {
-        newDateBuilder_.setMessage(value);
+        newTravelDateBuilder_.setMessage(value);
       }
       bitField0_ |= 0x00000002;
       onChanged();
@@ -1018,14 +1056,14 @@ private static final long serialVersionUID = 0L;
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
      */
-    public Builder setNewDate(
+    public Builder setNewTravelDate(
         com.google.protobuf.Timestamp.Builder builderForValue) {
-      if (newDateBuilder_ == null) {
-        newDate_ = builderForValue.build();
+      if (newTravelDateBuilder_ == null) {
+        newTravelDate_ = builderForValue.build();
       } else {
-        newDateBuilder_.setMessage(builderForValue.build());
+        newTravelDateBuilder_.setMessage(builderForValue.build());
       }
       bitField0_ |= 0x00000002;
       onChanged();
@@ -1036,21 +1074,21 @@ private static final long serialVersionUID = 0L;
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
      */
-    public Builder mergeNewDate(com.google.protobuf.Timestamp value) {
-      if (newDateBuilder_ == null) {
+    public Builder mergeNewTravelDate(com.google.protobuf.Timestamp value) {
+      if (newTravelDateBuilder_ == null) {
         if (((bitField0_ & 0x00000002) != 0) &&
-          newDate_ != null &&
-          newDate_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
-          getNewDateBuilder().mergeFrom(value);
+          newTravelDate_ != null &&
+          newTravelDate_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+          getNewTravelDateBuilder().mergeFrom(value);
         } else {
-          newDate_ = value;
+          newTravelDate_ = value;
         }
       } else {
-        newDateBuilder_.mergeFrom(value);
+        newTravelDateBuilder_.mergeFrom(value);
       }
-      if (newDate_ != null) {
+      if (newTravelDate_ != null) {
         bitField0_ |= 0x00000002;
         onChanged();
       }
@@ -1061,14 +1099,14 @@ private static final long serialVersionUID = 0L;
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
      */
-    public Builder clearNewDate() {
+    public Builder clearNewTravelDate() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      newDate_ = null;
-      if (newDateBuilder_ != null) {
-        newDateBuilder_.dispose();
-        newDateBuilder_ = null;
+      newTravelDate_ = null;
+      if (newTravelDateBuilder_ != null) {
+        newTravelDateBuilder_.dispose();
+        newTravelDateBuilder_ = null;
       }
       onChanged();
       return this;
@@ -1078,26 +1116,26 @@ private static final long serialVersionUID = 0L;
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
      */
-    public com.google.protobuf.Timestamp.Builder getNewDateBuilder() {
+    public com.google.protobuf.Timestamp.Builder getNewTravelDateBuilder() {
       bitField0_ |= 0x00000002;
       onChanged();
-      return getNewDateFieldBuilder().getBuilder();
+      return getNewTravelDateFieldBuilder().getBuilder();
     }
     /**
      * <pre>
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
      */
-    public com.google.protobuf.TimestampOrBuilder getNewDateOrBuilder() {
-      if (newDateBuilder_ != null) {
-        return newDateBuilder_.getMessageOrBuilder();
+    public com.google.protobuf.TimestampOrBuilder getNewTravelDateOrBuilder() {
+      if (newTravelDateBuilder_ != null) {
+        return newTravelDateBuilder_.getMessageOrBuilder();
       } else {
-        return newDate_ == null ?
-            com.google.protobuf.Timestamp.getDefaultInstance() : newDate_;
+        return newTravelDate_ == null ?
+            com.google.protobuf.Timestamp.getDefaultInstance() : newTravelDate_;
       }
     }
     /**
@@ -1105,66 +1143,66 @@ private static final long serialVersionUID = 0L;
      * Nuova data di viaggio (opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_date = 2;</code>
+     * <code>.google.protobuf.Timestamp new_travel_date = 2;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
-        getNewDateFieldBuilder() {
-      if (newDateBuilder_ == null) {
-        newDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+        getNewTravelDateFieldBuilder() {
+      if (newTravelDateBuilder_ == null) {
+        newTravelDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
             com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
-                getNewDate(),
+                getNewTravelDate(),
                 getParentForChildren(),
                 isClean());
-        newDate_ = null;
+        newTravelDate_ = null;
       }
-      return newDateBuilder_;
+      return newTravelDateBuilder_;
     }
 
-    private com.google.protobuf.Timestamp newTime_;
+    private com.google.protobuf.Timestamp modificationDate_;
     private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> newTimeBuilder_;
+        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> modificationDateBuilder_;
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
-     * @return Whether the newTime field is set.
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
+     * @return Whether the modificationDate field is set.
      */
-    public boolean hasNewTime() {
+    public boolean hasModificationDate() {
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
-     * @return The newTime.
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
+     * @return The modificationDate.
      */
-    public com.google.protobuf.Timestamp getNewTime() {
-      if (newTimeBuilder_ == null) {
-        return newTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : newTime_;
+    public com.google.protobuf.Timestamp getModificationDate() {
+      if (modificationDateBuilder_ == null) {
+        return modificationDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : modificationDate_;
       } else {
-        return newTimeBuilder_.getMessage();
+        return modificationDateBuilder_.getMessage();
       }
     }
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
      */
-    public Builder setNewTime(com.google.protobuf.Timestamp value) {
-      if (newTimeBuilder_ == null) {
+    public Builder setModificationDate(com.google.protobuf.Timestamp value) {
+      if (modificationDateBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        newTime_ = value;
+        modificationDate_ = value;
       } else {
-        newTimeBuilder_.setMessage(value);
+        modificationDateBuilder_.setMessage(value);
       }
       bitField0_ |= 0x00000004;
       onChanged();
@@ -1172,17 +1210,17 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
      */
-    public Builder setNewTime(
+    public Builder setModificationDate(
         com.google.protobuf.Timestamp.Builder builderForValue) {
-      if (newTimeBuilder_ == null) {
-        newTime_ = builderForValue.build();
+      if (modificationDateBuilder_ == null) {
+        modificationDate_ = builderForValue.build();
       } else {
-        newTimeBuilder_.setMessage(builderForValue.build());
+        modificationDateBuilder_.setMessage(builderForValue.build());
       }
       bitField0_ |= 0x00000004;
       onChanged();
@@ -1190,24 +1228,24 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
      */
-    public Builder mergeNewTime(com.google.protobuf.Timestamp value) {
-      if (newTimeBuilder_ == null) {
+    public Builder mergeModificationDate(com.google.protobuf.Timestamp value) {
+      if (modificationDateBuilder_ == null) {
         if (((bitField0_ & 0x00000004) != 0) &&
-          newTime_ != null &&
-          newTime_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
-          getNewTimeBuilder().mergeFrom(value);
+          modificationDate_ != null &&
+          modificationDate_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+          getModificationDateBuilder().mergeFrom(value);
         } else {
-          newTime_ = value;
+          modificationDate_ = value;
         }
       } else {
-        newTimeBuilder_.mergeFrom(value);
+        modificationDateBuilder_.mergeFrom(value);
       }
-      if (newTime_ != null) {
+      if (modificationDate_ != null) {
         bitField0_ |= 0x00000004;
         onChanged();
       }
@@ -1215,67 +1253,67 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
      */
-    public Builder clearNewTime() {
+    public Builder clearModificationDate() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      newTime_ = null;
-      if (newTimeBuilder_ != null) {
-        newTimeBuilder_.dispose();
-        newTimeBuilder_ = null;
+      modificationDate_ = null;
+      if (modificationDateBuilder_ != null) {
+        modificationDateBuilder_.dispose();
+        modificationDateBuilder_ = null;
       }
       onChanged();
       return this;
     }
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
      */
-    public com.google.protobuf.Timestamp.Builder getNewTimeBuilder() {
+    public com.google.protobuf.Timestamp.Builder getModificationDateBuilder() {
       bitField0_ |= 0x00000004;
       onChanged();
-      return getNewTimeFieldBuilder().getBuilder();
+      return getModificationDateFieldBuilder().getBuilder();
     }
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
      */
-    public com.google.protobuf.TimestampOrBuilder getNewTimeOrBuilder() {
-      if (newTimeBuilder_ != null) {
-        return newTimeBuilder_.getMessageOrBuilder();
+    public com.google.protobuf.TimestampOrBuilder getModificationDateOrBuilder() {
+      if (modificationDateBuilder_ != null) {
+        return modificationDateBuilder_.getMessageOrBuilder();
       } else {
-        return newTime_ == null ?
-            com.google.protobuf.Timestamp.getDefaultInstance() : newTime_;
+        return modificationDate_ == null ?
+            com.google.protobuf.Timestamp.getDefaultInstance() : modificationDate_;
       }
     }
     /**
      * <pre>
-     * Nuovo orario (opzionale)
+     * Data della modifica (server-side, opzionale)
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp new_time = 3;</code>
+     * <code>.google.protobuf.Timestamp modification_date = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
-        getNewTimeFieldBuilder() {
-      if (newTimeBuilder_ == null) {
-        newTimeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+        getModificationDateFieldBuilder() {
+      if (modificationDateBuilder_ == null) {
+        modificationDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
             com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
-                getNewTime(),
+                getModificationDate(),
                 getParentForChildren(),
                 isClean());
-        newTime_ = null;
+        modificationDate_ = null;
       }
-      return newTimeBuilder_;
+      return modificationDateBuilder_;
     }
 
     private java.lang.Object newServiceClass_ = "";
@@ -1709,6 +1747,50 @@ private static final long serialVersionUID = 0L;
         newTravelTime_ = null;
       }
       return newTravelTimeBuilder_;
+    }
+
+    private int trainId_ ;
+    /**
+     * <pre>
+     * Nuovo ID treno (opzionale, aggiunto per supporto cambio treno)
+     * </pre>
+     *
+     * <code>int32 train_id = 8;</code>
+     * @return The trainId.
+     */
+    @java.lang.Override
+    public int getTrainId() {
+      return trainId_;
+    }
+    /**
+     * <pre>
+     * Nuovo ID treno (opzionale, aggiunto per supporto cambio treno)
+     * </pre>
+     *
+     * <code>int32 train_id = 8;</code>
+     * @param value The trainId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTrainId(int value) {
+
+      trainId_ = value;
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Nuovo ID treno (opzionale, aggiunto per supporto cambio treno)
+     * </pre>
+     *
+     * <code>int32 train_id = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTrainId() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      trainId_ = 0;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

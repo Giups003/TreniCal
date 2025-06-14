@@ -113,40 +113,50 @@ public class SearchTrainsController {
     }
 
     private void handleTrainSelection(TrainSearchResult result) {
-        try {
-            // Usa la data del risultato selezionato
-            TrainDetailsResponse response = trainClient.getTrainDetails(result.getTrainId(), result.getDate());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Conferma selezione treno");
+        alert.setHeaderText("Vuoi davvero selezionare questo treno?");
+        alert.setContentText("Treno: " + result.getTrainName() + "\nPartenza: " + result.getDepartureStation() + "\nArrivo: " + result.getArrivalStation() + "\nOrario: " + result.getTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+        ButtonType conferma = new ButtonType("Conferma", ButtonBar.ButtonData.OK_DONE);
+        ButtonType annulla = new ButtonType("Annulla", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(conferma, annulla);
+        alert.showAndWait().ifPresent(response -> {
+            if (response == conferma) {
+                try {
+                    // Usa la data del risultato selezionato
+                    TrainDetailsResponse responseDetails = trainClient.getTrainDetails(result.getTrainId(), result.getDate());
 
-            // Gestisci la risposta
-            if (response != null) {
-                // Estrai le informazioni dal treno
-                Train trainDetails = response.getTrain();
-                List<Stop> stops = response.getStopsList();
-                boolean isAvailable = response.getAvailable();
-                int seatsAvailable = response.getSeatsAvailable();
+                    // Gestisci la risposta
+                    if (responseDetails != null) {
+                        // Estrai le informazioni dal treno
+                        Train trainDetails = responseDetails.getTrain();
+                        List<Stop> stops = responseDetails.getStopsList();
+                        boolean isAvailable = responseDetails.getAvailable();
+                        int seatsAvailable = responseDetails.getSeatsAvailable();
 
-                // Se il treno è disponibile, si procede con la visualizzazione dei dettagli
-                if (isAvailable && seatsAvailable > 0) {
-                    // Salva i dettagli del treno selezionato in un servizio condiviso
-                    SelectedTrainService.getInstance().setSelectedTrain(trainDetails);
-                    SelectedTrainService.getInstance().setStops(stops);
-                    // Salva anche la data e l'orario selezionati
-                    SelectedTrainService.getInstance().setSelectedDate(result.getDate());
-                    SelectedTrainService.getInstance().setSelectedTime(result.getTime());
-                    // Passa alla schermata di acquisto biglietto
-                    SceneManager.getInstance().showTicketPurchaseView();
-                } else {
-                    // Mostra un messaggio se il treno non è disponibile
-                    AlertUtils.showError("Treno non disponibile",
-                            "Ci dispiace, questo treno non è più disponibile per la prenotazione o non ha posti liberi.");
+                        // Se il treno è disponibile, si procede con la visualizzazione dei dettagli
+                        if (isAvailable && seatsAvailable > 0) {
+                            // Salva i dettagli del treno selezionato in un servizio condiviso
+                            SelectedTrainService.getInstance().setSelectedTrain(trainDetails);
+                            SelectedTrainService.getInstance().setStops(stops);
+                            // Salva anche la data e l'orario selezionati
+                            SelectedTrainService.getInstance().setSelectedDate(result.getDate());
+                            SelectedTrainService.getInstance().setSelectedTime(result.getTime());
+                            // Passa alla schermata di acquisto biglietto
+                            SceneManager.getInstance().showTicketPurchaseView();
+                        } else {
+                            // Mostra un messaggio se il treno non è disponibile
+                            AlertUtils.showError("Treno non disponibile",
+                                    "Ci dispiace, questo treno non è più disponibile per la prenotazione o non ha posti liberi.");
+                        }
+                    } else {
+                        AlertUtils.showError("Errore", "Impossibile recuperare i dettagli del treno: risposta nulla");
+                    }
+                } catch (Exception e) {
+                    AlertUtils.showError("Errore", "Impossibile recuperare i dettagli del treno: " + e.getMessage());
                 }
-            } else {
-                AlertUtils.showError("Errore", "Impossibile recuperare i dettagli del treno: risposta nulla");
             }
-        } catch (Exception e) {
-            AlertUtils.showError("Errore", "Impossibile recuperare i dettagli del treno: " + e.getMessage());
-        }
-
+        });
     }
 
 
@@ -163,6 +173,7 @@ public class SearchTrainsController {
      */
     @FXML
     private void onSearch() {
+
         String partenza = departureField.getText();
         String arrivo = arrivalField.getText();
         LocalDate data = datePicker.getValue();
@@ -198,11 +209,20 @@ public class SearchTrainsController {
 
             // Converte i risultati e aggiorna la tabella
             searchResults.clear();
+            TrainSearchResult firstResult = null;
             for (Train train : trains) {
-                searchResults.add(convertToTrainSearchResult(train));
+                TrainSearchResult result = convertToTrainSearchResult(train);
+                // Filtro: mostra solo treni futuri se la data è oggi
+                if (!data.isEqual(LocalDate.now()) || (result.getTime() != null && result.getTime().isAfter(LocalTime.now()))) {
+                    searchResults.add(result);
+                    if (firstResult == null) firstResult = result;
+                }
             }
             resultsTable.setItems(searchResults);
             resultsTable.refresh();
+            // NON selezionare nessun treno automaticamente dopo la ricerca
+            resultsTable.getSelectionModel().clearSelection();
+            // La selezione avviene solo manualmente tramite click sulla tabella
             if (searchResults.isEmpty()) {
                 AlertUtils.showError("Nessun risultato",
                         "Non ci sono treni disponibili per questa tratta nella data selezionata.");
@@ -214,7 +234,6 @@ public class SearchTrainsController {
 
     }
 
-
     /**
      * Converte un oggetto Train gRPC in un oggetto TrainSearchResult per la visualizzazione.
      */
@@ -225,8 +244,8 @@ public class SearchTrainsController {
         String arrivalStation = train.getArrivalStation();
         LocalDate date = null;
         if (train.hasDepartureTime()) {
-            date = java.time.Instant.ofEpochSecond(train.getDepartureTime().getSeconds())
-                    .atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+            date = Instant.ofEpochSecond(train.getDepartureTime().getSeconds())
+                    .atZone(ZoneId.systemDefault()).toLocalDate();
         } else {
             date = datePicker.getValue();
         }

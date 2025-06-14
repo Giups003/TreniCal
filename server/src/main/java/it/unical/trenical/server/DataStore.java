@@ -92,13 +92,8 @@ public class DataStore {
             stations = new ArrayList<>();
         }
 
-        try {
-            trains = loadTrainsFromFile(TRAINS_FILE);
-        } catch (Exception e) {
-            System.out.println("Impossibile caricare i treni: " + e.getMessage());
-            trains = new ArrayList<>();
-        }
-
+        // Pulisci i treni prima di rigenerarli
+        trains.clear();
         try {
             tickets = loadTicketsFromFile(TICKETS_FILE);
         } catch (Exception e) {
@@ -120,14 +115,10 @@ public class DataStore {
             promotions = new ArrayList<>();
         }
 
-        int oldTrainSize = trains.size();
-        generateTrainsForWeeks(2); // 2 settimane, treni ogni ora
-        if (trains.size() > oldTrainSize) {
-            saveData();
-        }
+        generateTrainsForWeeks(2); // 2 settimane, treni ogni 2 ore
+        saveData();
 
         for (Train t : trains) {
-            // Se il treno è già presente nella mappa, non sovrascrivere il valore (così i posti già prenotati restano validi)
             trainSeatsAvailable.putIfAbsent(t.getId(), DEFAULT_SEATS_PER_TRAIN);
         }
     }
@@ -141,14 +132,15 @@ public class DataStore {
         int maxId = trains.stream().mapToInt(Train::getId).max().orElse(0);
         var today = java.time.LocalDate.now();
         var rand = new java.util.Random();
-        int firstHour = 6;
-        int lastHour = 22;
+        int firstHour = 7;
+        int lastHour = 19;
+        int step = 2;
         Set<String> uniqueTrainKeys = new HashSet<>();
         for (Route route : routes) {
             for (int w = 0; w < weeks; w++) {
                 for (int d = 0; d < 7; d++) {
                     var date = today.plusDays(w * 7 + d);
-                    for (int hour = firstHour; hour <= lastHour; hour++) {
+                    for (int hour = firstHour; hour <= lastHour; hour += step) {
                         var departure = date.atTime(hour, 0);
                         var arrival = departure.plusMinutes(60 + rand.nextInt(60));
                         String routeKey = route.getName() + "_" +

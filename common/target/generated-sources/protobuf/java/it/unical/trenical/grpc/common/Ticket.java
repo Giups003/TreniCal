@@ -485,6 +485,44 @@ private static final long serialVersionUID = 0L;
     return travelTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : travelTime_;
   }
 
+  public static final int PURCHASE_DATE_FIELD_NUMBER = 12;
+  private com.google.protobuf.Timestamp purchaseDate_;
+  /**
+   * <pre>
+   * Data e ora di acquisto del biglietto
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+   * @return Whether the purchaseDate field is set.
+   */
+  @java.lang.Override
+  public boolean hasPurchaseDate() {
+    return ((bitField0_ & 0x00000004) != 0);
+  }
+  /**
+   * <pre>
+   * Data e ora di acquisto del biglietto
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+   * @return The purchaseDate.
+   */
+  @java.lang.Override
+  public com.google.protobuf.Timestamp getPurchaseDate() {
+    return purchaseDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : purchaseDate_;
+  }
+  /**
+   * <pre>
+   * Data e ora di acquisto del biglietto
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+   */
+  @java.lang.Override
+  public com.google.protobuf.TimestampOrBuilder getPurchaseDateOrBuilder() {
+    return purchaseDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : purchaseDate_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -532,6 +570,9 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000002) != 0)) {
       output.writeMessage(11, getTravelTime());
     }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      output.writeMessage(12, getPurchaseDate());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -578,6 +619,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(11, getTravelTime());
     }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(12, getPurchaseDate());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -622,6 +667,11 @@ private static final long serialVersionUID = 0L;
       if (!getTravelTime()
           .equals(other.getTravelTime())) return false;
     }
+    if (hasPurchaseDate() != other.hasPurchaseDate()) return false;
+    if (hasPurchaseDate()) {
+      if (!getPurchaseDate()
+          .equals(other.getPurchaseDate())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -659,6 +709,10 @@ private static final long serialVersionUID = 0L;
     if (hasTravelTime()) {
       hash = (37 * hash) + TRAVEL_TIME_FIELD_NUMBER;
       hash = (53 * hash) + getTravelTime().hashCode();
+    }
+    if (hasPurchaseDate()) {
+      hash = (37 * hash) + PURCHASE_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getPurchaseDate().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -796,6 +850,7 @@ private static final long serialVersionUID = 0L;
               .alwaysUseFieldBuilders) {
         getTravelDateFieldBuilder();
         getTravelTimeFieldBuilder();
+        getPurchaseDateFieldBuilder();
       }
     }
     @java.lang.Override
@@ -820,6 +875,11 @@ private static final long serialVersionUID = 0L;
       if (travelTimeBuilder_ != null) {
         travelTimeBuilder_.dispose();
         travelTimeBuilder_ = null;
+      }
+      purchaseDate_ = null;
+      if (purchaseDateBuilder_ != null) {
+        purchaseDateBuilder_.dispose();
+        purchaseDateBuilder_ = null;
       }
       return this;
     }
@@ -893,6 +953,12 @@ private static final long serialVersionUID = 0L;
             ? travelTime_
             : travelTimeBuilder_.build();
         to_bitField0_ |= 0x00000002;
+      }
+      if (((from_bitField0_ & 0x00000800) != 0)) {
+        result.purchaseDate_ = purchaseDateBuilder_ == null
+            ? purchaseDate_
+            : purchaseDateBuilder_.build();
+        to_bitField0_ |= 0x00000004;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -988,6 +1054,9 @@ private static final long serialVersionUID = 0L;
       if (other.hasTravelTime()) {
         mergeTravelTime(other.getTravelTime());
       }
+      if (other.hasPurchaseDate()) {
+        mergePurchaseDate(other.getPurchaseDate());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -1073,6 +1142,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000400;
               break;
             } // case 90
+            case 98: {
+              input.readMessage(
+                  getPurchaseDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000800;
+              break;
+            } // case 98
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -2134,6 +2210,163 @@ private static final long serialVersionUID = 0L;
         travelTime_ = null;
       }
       return travelTimeBuilder_;
+    }
+
+    private com.google.protobuf.Timestamp purchaseDate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> purchaseDateBuilder_;
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     * @return Whether the purchaseDate field is set.
+     */
+    public boolean hasPurchaseDate() {
+      return ((bitField0_ & 0x00000800) != 0);
+    }
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     * @return The purchaseDate.
+     */
+    public com.google.protobuf.Timestamp getPurchaseDate() {
+      if (purchaseDateBuilder_ == null) {
+        return purchaseDate_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : purchaseDate_;
+      } else {
+        return purchaseDateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     */
+    public Builder setPurchaseDate(com.google.protobuf.Timestamp value) {
+      if (purchaseDateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        purchaseDate_ = value;
+      } else {
+        purchaseDateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000800;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     */
+    public Builder setPurchaseDate(
+        com.google.protobuf.Timestamp.Builder builderForValue) {
+      if (purchaseDateBuilder_ == null) {
+        purchaseDate_ = builderForValue.build();
+      } else {
+        purchaseDateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000800;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     */
+    public Builder mergePurchaseDate(com.google.protobuf.Timestamp value) {
+      if (purchaseDateBuilder_ == null) {
+        if (((bitField0_ & 0x00000800) != 0) &&
+          purchaseDate_ != null &&
+          purchaseDate_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+          getPurchaseDateBuilder().mergeFrom(value);
+        } else {
+          purchaseDate_ = value;
+        }
+      } else {
+        purchaseDateBuilder_.mergeFrom(value);
+      }
+      if (purchaseDate_ != null) {
+        bitField0_ |= 0x00000800;
+        onChanged();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     */
+    public Builder clearPurchaseDate() {
+      bitField0_ = (bitField0_ & ~0x00000800);
+      purchaseDate_ = null;
+      if (purchaseDateBuilder_ != null) {
+        purchaseDateBuilder_.dispose();
+        purchaseDateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     */
+    public com.google.protobuf.Timestamp.Builder getPurchaseDateBuilder() {
+      bitField0_ |= 0x00000800;
+      onChanged();
+      return getPurchaseDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     */
+    public com.google.protobuf.TimestampOrBuilder getPurchaseDateOrBuilder() {
+      if (purchaseDateBuilder_ != null) {
+        return purchaseDateBuilder_.getMessageOrBuilder();
+      } else {
+        return purchaseDate_ == null ?
+            com.google.protobuf.Timestamp.getDefaultInstance() : purchaseDate_;
+      }
+    }
+    /**
+     * <pre>
+     * Data e ora di acquisto del biglietto
+     * </pre>
+     *
+     * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
+        getPurchaseDateFieldBuilder() {
+      if (purchaseDateBuilder_ == null) {
+        purchaseDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
+                getPurchaseDate(),
+                getParentForChildren(),
+                isClean());
+        purchaseDate_ = null;
+      }
+      return purchaseDateBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

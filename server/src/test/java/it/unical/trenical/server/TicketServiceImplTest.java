@@ -141,7 +141,7 @@ public class TicketServiceImplTest {
         // Crea una richiesta di modifica
         ModifyTicketRequest modifyRequest = ModifyTicketRequest.newBuilder()
                 .setTicketId(ticketId)
-                .setNewDate(Timestamp.newBuilder().setSeconds(1684588800).build()) // 2025-06-01
+                .setNewTravelDate(Timestamp.newBuilder().setSeconds(1684588800).build()) // 2025-06-01
                 .setNewServiceClass("Prima Classe")
                 .build();
 
@@ -168,7 +168,7 @@ public class TicketServiceImplTest {
         // Crea una richiesta di modifica con ID non valido
         ModifyTicketRequest request = ModifyTicketRequest.newBuilder()
                 .setTicketId("non-esistente")
-                .setNewDate(Timestamp.newBuilder().setSeconds(1684588800).build()) // 2025-06-01
+                .setNewTravelDate(Timestamp.newBuilder().setSeconds(1684588800).build()) // 2025-06-01
                 .build();
 
         // Esegui il metodo

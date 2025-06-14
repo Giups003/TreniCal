@@ -220,4 +220,31 @@ public interface TicketOrBuilder extends
    * <code>.google.protobuf.Timestamp travel_time = 11;</code>
    */
   com.google.protobuf.TimestampOrBuilder getTravelTimeOrBuilder();
+
+  /**
+   * <pre>
+   * Data e ora di acquisto del biglietto
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+   * @return Whether the purchaseDate field is set.
+   */
+  boolean hasPurchaseDate();
+  /**
+   * <pre>
+   * Data e ora di acquisto del biglietto
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+   * @return The purchaseDate.
+   */
+  com.google.protobuf.Timestamp getPurchaseDate();
+  /**
+   * <pre>
+   * Data e ora di acquisto del biglietto
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp purchase_date = 12;</code>
+   */
+  com.google.protobuf.TimestampOrBuilder getPurchaseDateOrBuilder();
 }

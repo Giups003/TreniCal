@@ -118,7 +118,7 @@ public class ClientMain {
         java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd:MM:yyyy");
         java.time.LocalDate localDate = java.time.LocalDate.parse(travelDateString, formatter);
         Timestamp travelDate = Timestamp.newBuilder()
-                .setSeconds(localDate.atStartOfDay(java.time.ZoneId.systemDefault()).toEpochSecond())
+                .setSeconds(localDate.atStartOfDay(java.time.ZoneOffset.UTC).toEpochSecond())
                 .build();
 
         System.out.print("Classe di Servizio (Economy, Standard, Prima Classe, Business): ");
@@ -173,7 +173,7 @@ public class ClientMain {
         java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd:MM:yyyy");
         java.time.LocalDate localDate = java.time.LocalDate.parse(newDateString, formatter);
         Timestamp newDate = Timestamp.newBuilder()
-                .setSeconds(localDate.atStartOfDay(java.time.ZoneId.systemDefault()).toEpochSecond())
+                .setSeconds(localDate.atStartOfDay(java.time.ZoneOffset.UTC).toEpochSecond())
                 .build();
 
         System.out.print("Nuovo Orario (HH:MM, lascia vuoto per non modificare): ");

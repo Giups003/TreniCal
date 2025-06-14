@@ -23,4 +23,54 @@
   "name": "Regionale Lamezia-Cosenza",
   "departureStationId": 11,
   "arrivalStationId": 15
+},{
+  "id": 6,
+  "name": "Regionale Cosenza-Catanzaro",
+  "departureStationId": 30,
+  "arrivalStationId": 12
+},{
+  "id": 7,
+  "name": "Regionale Bari-Venezia",
+  "departureStationId": 9,
+  "arrivalStationId": 6
+},{
+  "id": 8,
+  "name": "Regionale Torino-Genova",
+  "departureStationId": 4,
+  "arrivalStationId": 8
+},{
+  "id": 9,
+  "name": "Regionale Firenze-Bologna",
+  "departureStationId": 5,
+  "arrivalStationId": 7
+},{
+  "id": 10,
+  "name": "Regionale Napoli-Paola",
+  "departureStationId": 3,
+  "arrivalStationId": 15
+},{
+  "id": 11,
+  "name": "Regionale Cosenza-Reggio Calabria",
+  "departureStationId": 30,
+  "arrivalStationId": 10
+},{
+  "id": 12,
+  "name": "Regionale Lamezia-Catanzaro",
+  "departureStationId": 11,
+  "arrivalStationId": 12
+},{
+  "id": 13,
+  "name": "Regionale Crotone-Catanzaro",
+  "departureStationId": 13,
+  "arrivalStationId": 12
+},{
+  "id": 14,
+  "name": "Regionale Paola-Cosenza",
+  "departureStationId": 15,
+  "arrivalStationId": 30
+},{
+  "id": 15,
+  "name": "Regionale Lamezia-Crotone",
+  "departureStationId": 11,
+  "arrivalStationId": 13
 }]

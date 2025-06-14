@@ -1,5 +1,6 @@
 package it.unical.trenical.client.gui;
 
+import it.unical.trenical.client.gui.controller.LoginController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -7,6 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.prefs.Preferences;
 
 /**
  * Gestisce il cambio centralizzato delle schermate principali dell'applicazione.
@@ -23,8 +25,12 @@ public class SceneManager {
     public static final String MY_TICKETS = "src/main/java/it/unical/trenical/client/gui/view/my_tickets.fxml";
     public static final String LOGIN = "src/main/java/it/unical/trenical/client/gui/view/login.fxml";
     public static final String ADMIN_PANEL = "src/main/java/it/unical/trenical/client/gui/view/admin_panel.fxml";
+    public static final String ADMIN_PROMOTIONS = "src/main/java/it/unical/trenical/client/gui/view/promotions_admin.fxml";
+    public static final String MODIFY_TICKET_DIALOG = "src/main/java/it/unical/trenical/client/gui/view/modify_ticket_dialog.fxml";
+    public static final String NOTIFICATIONS = "src/main/java/it/unical/trenical/client/gui/view/notifications.fxml";
 
-    private SceneManager() {}
+    private SceneManager() {
+    }
 
     public static SceneManager getInstance() {
         if (instance == null) {
@@ -35,18 +41,21 @@ public class SceneManager {
 
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
-        // Mostra la schermata di login solo se non c'è un utente salvato
-        String savedUsername = java.util.prefs.Preferences.userNodeForPackage(it.unical.trenical.client.gui.controller.LoginController.class)
-                .get("trenical_username", "");
-        if (savedUsername == null || savedUsername.isEmpty()) {
-            showLogin();
-        } else {
+        // Se l'utente ha scelto "ricorda accesso" e c'è un username salvato, vai direttamente alla dashboard
+        Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+        String savedUsername = prefs.get("trenical_username", "");
+        boolean rememberMe = prefs.getBoolean("trenical_remember_me", false);
+        if (rememberMe && savedUsername != null && !savedUsername.isEmpty()) {
+            it.unical.trenical.client.session.UserSession.setUsername(savedUsername);
             switchTo(DASHBOARD);
+        } else {
+            showLogin();
         }
     }
 
     /**
      * Carica e mostra una schermata FXML.
+     *
      * @param fxmlPath percorso della risorsa FXML
      */
     public void switchTo(String fxmlPath) {
@@ -78,6 +87,13 @@ public class SceneManager {
             System.err.println("ERRORE durante il caricamento della schermata: " + e.getMessage());
         }
     }
+
+    /**
+     * Mostra la schermata della dashboard.
+     */
+    public void showDashboard() {
+        switchTo(DASHBOARD);
+    }
     /**
      * Mostra la schermata di acquisto biglietti.
      */
@@ -97,5 +113,49 @@ public class SceneManager {
      */
     public void showAdminPanel() {
         switchTo(ADMIN_PANEL);
+    }
+
+    /**
+     * Mostra la schermata admin promotions.
+     */
+    public void showPromotionsAdmin() {
+        switchTo(ADMIN_PROMOTIONS);
+    }
+
+    /**
+     * Mostra la dialog di modifica biglietto con i dati precompilati.
+     */
+    public void showModifyTicketDialog(String ticketId, String departure, String arrival, java.time.LocalDate date, String time, String serviceClass, int trainId, Runnable onSuccess) {
+        try {
+            FXMLLoader loader = new FXMLLoader(new File(MODIFY_TICKET_DIALOG).toURI().toURL());
+            Parent root = loader.load();
+            it.unical.trenical.client.gui.controller.ModifyTicketDialogController controller = loader.getController();
+            controller.setTicketId(ticketId);
+            controller.setFields(departure, arrival, date, time, serviceClass, trainId);
+            controller.setOnSuccess(onSuccess);
+            Stage stage = new Stage();
+            stage.setTitle("Modifica Biglietto");
+            stage.setScene(new Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("ERRORE durante l'apertura della dialog di modifica biglietto: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Mostra la schermata di modifica biglietto (vecchio metodo, deprecato).
+     */
+    @Deprecated
+    public void showModifyTicketDialog() {
+        switchTo(MODIFY_TICKET_DIALOG);
+    }
+
+    /**
+     * Mostra la schermata delle notifiche.
+     */
+    public void showNotifications() {
+        switchTo(NOTIFICATIONS);
     }
 }

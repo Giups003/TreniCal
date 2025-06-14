@@ -204,6 +204,37 @@ public final class TicketServiceGrpc {
     return getClearAllTicketsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<it.unical.trenical.grpc.ticket.GetTicketPriceRequest,
+      it.unical.trenical.grpc.ticket.GetTicketPriceResponse> getGetTicketPriceMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetTicketPrice",
+      requestType = it.unical.trenical.grpc.ticket.GetTicketPriceRequest.class,
+      responseType = it.unical.trenical.grpc.ticket.GetTicketPriceResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<it.unical.trenical.grpc.ticket.GetTicketPriceRequest,
+      it.unical.trenical.grpc.ticket.GetTicketPriceResponse> getGetTicketPriceMethod() {
+    io.grpc.MethodDescriptor<it.unical.trenical.grpc.ticket.GetTicketPriceRequest, it.unical.trenical.grpc.ticket.GetTicketPriceResponse> getGetTicketPriceMethod;
+    if ((getGetTicketPriceMethod = TicketServiceGrpc.getGetTicketPriceMethod) == null) {
+      synchronized (TicketServiceGrpc.class) {
+        if ((getGetTicketPriceMethod = TicketServiceGrpc.getGetTicketPriceMethod) == null) {
+          TicketServiceGrpc.getGetTicketPriceMethod = getGetTicketPriceMethod =
+              io.grpc.MethodDescriptor.<it.unical.trenical.grpc.ticket.GetTicketPriceRequest, it.unical.trenical.grpc.ticket.GetTicketPriceResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTicketPrice"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  it.unical.trenical.grpc.ticket.GetTicketPriceRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  it.unical.trenical.grpc.ticket.GetTicketPriceResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TicketServiceMethodDescriptorSupplier("GetTicketPrice"))
+              .build();
+        }
+      }
+    }
+    return getGetTicketPriceMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -314,6 +345,16 @@ public final class TicketServiceGrpc {
         io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.OperationResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getClearAllTicketsMethod(), responseObserver);
     }
+
+    /**
+     * <pre>
+     * Calcola il prezzo di un biglietto senza acquistarlo
+     * </pre>
+     */
+    default void getTicketPrice(it.unical.trenical.grpc.ticket.GetTicketPriceRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.GetTicketPriceResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTicketPriceMethod(), responseObserver);
+    }
   }
 
   /**
@@ -414,6 +455,17 @@ public final class TicketServiceGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getClearAllTicketsMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Calcola il prezzo di un biglietto senza acquistarlo
+     * </pre>
+     */
+    public void getTicketPrice(it.unical.trenical.grpc.ticket.GetTicketPriceRequest request,
+        io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.GetTicketPriceResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetTicketPriceMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -493,6 +545,16 @@ public final class TicketServiceGrpc {
     public it.unical.trenical.grpc.ticket.OperationResponse clearAllTickets(it.unical.trenical.grpc.ticket.ClearAllTicketsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getClearAllTicketsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Calcola il prezzo di un biglietto senza acquistarlo
+     * </pre>
+     */
+    public it.unical.trenical.grpc.ticket.GetTicketPriceResponse getTicketPrice(it.unical.trenical.grpc.ticket.GetTicketPriceRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetTicketPriceMethod(), getCallOptions(), request);
     }
   }
 
@@ -580,6 +642,17 @@ public final class TicketServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getClearAllTicketsMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Calcola il prezzo di un biglietto senza acquistarlo
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<it.unical.trenical.grpc.ticket.GetTicketPriceResponse> getTicketPrice(
+        it.unical.trenical.grpc.ticket.GetTicketPriceRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetTicketPriceMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_PURCHASE_TICKET = 0;
@@ -588,6 +661,7 @@ public final class TicketServiceGrpc {
   private static final int METHODID_GET_TICKET = 3;
   private static final int METHODID_LIST_TICKETS = 4;
   private static final int METHODID_CLEAR_ALL_TICKETS = 5;
+  private static final int METHODID_GET_TICKET_PRICE = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -629,6 +703,10 @@ public final class TicketServiceGrpc {
         case METHODID_CLEAR_ALL_TICKETS:
           serviceImpl.clearAllTickets((it.unical.trenical.grpc.ticket.ClearAllTicketsRequest) request,
               (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.OperationResponse>) responseObserver);
+          break;
+        case METHODID_GET_TICKET_PRICE:
+          serviceImpl.getTicketPrice((it.unical.trenical.grpc.ticket.GetTicketPriceRequest) request,
+              (io.grpc.stub.StreamObserver<it.unical.trenical.grpc.ticket.GetTicketPriceResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -690,6 +768,13 @@ public final class TicketServiceGrpc {
               it.unical.trenical.grpc.ticket.ClearAllTicketsRequest,
               it.unical.trenical.grpc.ticket.OperationResponse>(
                 service, METHODID_CLEAR_ALL_TICKETS)))
+        .addMethod(
+          getGetTicketPriceMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              it.unical.trenical.grpc.ticket.GetTicketPriceRequest,
+              it.unical.trenical.grpc.ticket.GetTicketPriceResponse>(
+                service, METHODID_GET_TICKET_PRICE)))
         .build();
   }
 
@@ -744,6 +829,7 @@ public final class TicketServiceGrpc {
               .addMethod(getGetTicketMethod())
               .addMethod(getListTicketsMethod())
               .addMethod(getClearAllTicketsMethod())
+              .addMethod(getGetTicketPriceMethod())
               .build();
         }
       }
