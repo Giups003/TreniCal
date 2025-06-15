@@ -66,6 +66,9 @@ it\unical\trenical\grpc\notification\UnregisterRequest.class
 it\unical\trenical\grpc\notification\UpdateTrainStatusRequest.class
 it\unical\trenical\grpc\train\ScheduleEntryOrBuilder.class
 it\unical\trenical\grpc\ticket\GetTicketPriceRequestOrBuilder.class
+it\unical\trenical\grpc\notification\PromotionalPreferenceRequest$1.class
+it\unical\trenical\grpc\notification\SetPromotionalPreferenceRequest.class
+it\unical\trenical\grpc\notification\SetPromotionalPreferenceRequestOrBuilder.class
 it\unical\trenical\grpc\notification\NotificationType$1.class
 it\unical\trenical\grpc\ticket\CancelTicketRequest.class
 it\unical\trenical\grpc\notification\NotificationServiceGrpc$NotificationServiceImplBase.class
@@ -83,6 +86,7 @@ it\unical\trenical\grpc\ticket\ListTicketsResponse.class
 it\unical\trenical\grpc\common\TicketOrBuilder.class
 it\unical\trenical\grpc\promotion\PromotionServiceGrpc.class
 it\unical\trenical\grpc\ticket\ModifyTicketRequest$1.class
+it\unical\trenical\grpc\notification\SetPromotionalPreferenceRequest$1.class
 it\unical\trenical\grpc\notification\NotificationServiceGrpc$2.class
 it\unical\trenical\grpc\notification\MarkNotificationRequestOrBuilder.class
 it\unical\trenical\grpc\ticket\GetTicketResponseOrBuilder.class
@@ -94,6 +98,7 @@ it\unical\trenical\grpc\promotion\PromotionListOrBuilder.class
 it\unical\trenical\grpc\notification\GetTrainStatusRequest$1.class
 it\unical\trenical\grpc\notification\NotificationType.class
 it\unical\trenical\grpc\train\TrainServiceGrpc$MethodHandlers.class
+it\unical\trenical\grpc\notification\PromotionalPreferenceResponse.class
 it\unical\trenical\grpc\common\Station$Builder.class
 it\unical\trenical\grpc\ticket\GetTicketPriceResponseOrBuilder.class
 it\unical\trenical\common\ProtoHelper.class
@@ -125,6 +130,7 @@ it\unical\trenical\grpc\notification\OperationResponse.class
 it\unical\trenical\grpc\notification\TrainStatusResponse$Builder.class
 it\unical\trenical\grpc\train\SearchStationResponse$Builder.class
 it\unical\trenical\grpc\promotion\PromotionList.class
+it\unical\trenical\grpc\notification\PromotionalPreferenceResponse$1.class
 it\unical\trenical\grpc\ticket\GetTicketPriceRequest$Builder.class
 it\unical\trenical\grpc\ticket\PurchaseTicketRequest$1.class
 it\unical\trenical\grpc\train\ListRoutesRequest$1.class
@@ -140,7 +146,9 @@ it\unical\trenical\grpc\ticket\PurchaseTicketRequest.class
 it\unical\trenical\grpc\train\Route.class
 it\unical\trenical\grpc\promotion\PromotionServiceGrpc$MethodHandlers.class
 it\unical\trenical\grpc\train\GetTrainStopsRequest$Builder.class
+it\unical\trenical\grpc\notification\PromotionalPreferenceResponse$Builder.class
 it\unical\trenical\grpc\promotion\PromotionServiceGrpc$AsyncService.class
+it\unical\trenical\grpc\notification\PromotionalPreferenceRequest$Builder.class
 it\unical\trenical\grpc\common\Ticket$Builder.class
 it\unical\trenical\grpc\notification\RegisterForTrainRequest$Builder.class
 it\unical\trenical\grpc\train\RouteOrBuilder.class
@@ -179,6 +187,7 @@ it\unical\trenical\grpc\ticket\TicketServiceGrpc$TicketServiceBaseDescriptorSupp
 it\unical\trenical\grpc\ticket\ListTicketsRequest$1.class
 it\unical\trenical\grpc\train\TrainServiceGrpc$TrainServiceFileDescriptorSupplier.class
 it\unical\trenical\grpc\notification\MarkNotificationRequest$Builder.class
+it\unical\trenical\grpc\notification\PromotionalPreferenceRequest.class
 it\unical\trenical\grpc\promotion\PromotionServiceGrpc$PromotionServiceBaseDescriptorSupplier.class
 it\unical\trenical\grpc\promotion\PromotionServiceGrpc$PromotionServiceBlockingStub.class
 it\unical\trenical\grpc\notification\UpdateTrainStatusRequest$Builder.class
@@ -191,8 +200,10 @@ it\unical\trenical\grpc\train\TrainServiceGrpc$TrainServiceImplBase.class
 it\unical\trenical\grpc\notification\NotificationServiceGrpc$NotificationServiceStub.class
 it\unical\trenical\grpc\promotion\PromotionServiceGrpc$PromotionServiceMethodDescriptorSupplier.class
 it\unical\trenical\grpc\promotion\PromotionServiceGrpc$PromotionServiceStub.class
+it\unical\trenical\grpc\notification\PromotionalPreferenceResponseOrBuilder.class
 it\unical\trenical\grpc\promotion\PromotionOperationResponse$1.class
 it\unical\trenical\grpc\promotion\PromotionServiceGrpc$3.class
+it\unical\trenical\grpc\notification\PromotionalPreferenceRequestOrBuilder.class
 it\unical\trenical\grpc\train\Stop$1.class
 it\unical\trenical\grpc\train\TrainDetailsResponse$1.class
 it\unical\trenical\grpc\ticket\TicketServiceGrpc$TicketServiceBlockingStub.class
@@ -226,6 +237,7 @@ it\unical\trenical\grpc\promotion\PromotionOperationResponse.class
 it\unical\trenical\grpc\ticket\TicketServiceGrpc.class
 it\unical\trenical\grpc\common\StationOrBuilder.class
 it\unical\trenical\grpc\notification\OperationResponseOrBuilder.class
+it\unical\trenical\grpc\notification\SetPromotionalPreferenceRequest$Builder.class
 it\unical\trenical\grpc\ticket\GetTicketRequest.class
 it\unical\trenical\grpc\train\ScheduleRequest$1.class
 it\unical\trenical\grpc\common\Station$1.class

@@ -19,6 +19,11 @@ public class TicketServer {
             TrainServiceImpl trainService = new TrainServiceImpl();
             PromotionServiceImpl promotionService = new PromotionServiceImpl();
             NotificationServiceImpl notificationService = new NotificationServiceImpl();
+            // [MODALITÀ DEMO] Avvia un task che aggiorna randomicamente lo stato dei treni e genera notifiche automatiche.
+            // Questa funzione è pensata per scopo di test: permette di simulare eventi reali (ritardi, cancellazioni, cambi binario)
+            // e di verificare che la pipeline delle notifiche funzioni correttamente lato client/server.
+            // In un sistema reale, questi eventi sarebbero generati da operatori o sistemi esterni.
+            notificationService.startRandomTrainStatusUpdater();
 
             // Configura e avvia il server gRPC
             Server server = ServerBuilder.forPort(SERVER_PORT)

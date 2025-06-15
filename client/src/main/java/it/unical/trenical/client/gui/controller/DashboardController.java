@@ -2,12 +2,34 @@ package it.unical.trenical.client.gui.controller;
 
 import it.unical.trenical.client.gui.SceneManager;
 import it.unical.trenical.client.session.UserSession;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import it.unical.trenical.grpc.notification.NotificationServiceGrpc;
+import it.unical.trenical.grpc.notification.RegisterForTrainRequest;
+import it.unical.trenical.grpc.notification.OperationResponse;
+import it.unical.trenical.grpc.ticket.TicketServiceGrpc;
+import it.unical.trenical.grpc.ticket.ListTicketsRequest;
+import it.unical.trenical.grpc.ticket.ListTicketsResponse;
+import it.unical.trenical.grpc.common.Ticket;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.CheckBox;
+import javafx.scene.layout.VBox;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Controller della schermata dashboard.
@@ -41,6 +63,10 @@ public class DashboardController {
     private Button loginButton;
     @FXML
     private Button adminPanelButton;
+    @FXML
+    private Button activateNotificationsButton;
+    @FXML
+    private CheckBox promotionsCheckBox;
 
     @FXML
     public void initialize() {
@@ -107,6 +133,54 @@ public class DashboardController {
             loyaltyLabel.setText("Non sei ancora membro FedeltàTreno");
             joinLoyaltyButton.setVisible(true);
             joinLoyaltyButton.setManaged(true);
+        }
+        if (isLogged && isLoyal && promotionsCheckBox != null) {
+            promotionsCheckBox.setVisible(true);
+            promotionsCheckBox.setDisable(false);
+            promotionsCheckBox.setText("Ricevi promozioni FedeltàTreno");
+            // Recupera la preferenza dal server
+            javafx.concurrent.Task<Boolean> task = new javafx.concurrent.Task<>() {
+                @Override
+                protected Boolean call() {
+                    try {
+                        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+                        NotificationServiceGrpc.NotificationServiceBlockingStub stub = NotificationServiceGrpc.newBlockingStub(channel);
+                        var req = it.unical.trenical.grpc.notification.PromotionalPreferenceRequest.newBuilder()
+                                .setUsername(UserSession.getUsername())
+                                .build();
+                        var resp = stub.getPromotionalPreference(req);
+                        channel.shutdown();
+                        return resp.getWantsPromotions();
+                    } catch (Exception e) {
+                        return true; // fallback: attivo
+                    }
+                }
+            };
+            task.setOnSucceeded(ev -> promotionsCheckBox.setSelected(task.getValue()));
+            new Thread(task).start();
+            promotionsCheckBox.setOnAction(e -> {
+                boolean value = promotionsCheckBox.isSelected();
+                javafx.concurrent.Task<Void> updateTask = new javafx.concurrent.Task<>() {
+                    @Override
+                    protected Void call() {
+                        try {
+                            ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+                            NotificationServiceGrpc.NotificationServiceBlockingStub stub = NotificationServiceGrpc.newBlockingStub(channel);
+                            var req = it.unical.trenical.grpc.notification.SetPromotionalPreferenceRequest.newBuilder()
+                                    .setUsername(UserSession.getUsername())
+                                    .setWantsPromotions(value)
+                                    .build();
+                            stub.setPromotionalPreference(req);
+                            channel.shutdown();
+                        } catch (Exception ignored) {}
+                        return null;
+                    }
+                };
+                new Thread(updateTask).start();
+            });
+        } else if (promotionsCheckBox != null) {
+            promotionsCheckBox.setVisible(false);
+            promotionsCheckBox.setDisable(true);
         }
         updateStageMinSize();
     }
@@ -252,5 +326,86 @@ public class DashboardController {
             it.unical.trenical.client.session.UserSession.setAdmin(false);
             it.unical.trenical.client.gui.SceneManager.getInstance().switchTo(it.unical.trenical.client.gui.SceneManager.LOGIN);
         }
+    }
+
+    @FXML
+    private void onActivateNotifications() {
+        String username = UserSession.getUsername();
+        if (username == null || username.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Devi effettuare il login per attivare le notifiche.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+        // Recupera i biglietti dell'utente
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        TicketServiceGrpc.TicketServiceBlockingStub ticketStub = TicketServiceGrpc.newBlockingStub(channel);
+        ListTicketsRequest req = ListTicketsRequest.newBuilder().setPassengerName(username).build();
+        ListTicketsResponse resp = ticketStub.listTickets(req);
+        List<Ticket> tickets = resp.getTicketsList();
+        if (tickets.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Non hai biglietti attivi per nessun treno.", ButtonType.OK);
+            alert.showAndWait();
+            channel.shutdown();
+            return;
+        }
+        // Dialog personalizzata con selezione multipla
+        Dialog<List<Ticket>> dialog = new Dialog<>();
+        dialog.setTitle("Attiva notifiche treno");
+        dialog.setHeaderText("Seleziona uno o più treni per cui ricevere notifiche");
+        ButtonType okButtonType = new ButtonType("Attiva notifiche", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+        ObservableList<Ticket> observableTickets = FXCollections.observableArrayList(tickets);
+        ListView<CheckBox> listView = new ListView<>();
+        ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
+        for (Ticket t : tickets) {
+            String label = "Treno " + t.getTrainId() + " - " + t.getDepartureStation() + " → " + t.getArrivalStation();
+            CheckBox cb = new CheckBox(label);
+            cb.setUserData(t);
+            checkBoxes.add(cb);
+        }
+        listView.setItems(checkBoxes);
+        listView.setPrefHeight(Math.min(300, tickets.size() * 40 + 20));
+        // Pulsante seleziona tutti
+        Button selectAllBtn = new Button("Seleziona tutti");
+        selectAllBtn.setOnAction(e -> checkBoxes.forEach(cb -> cb.setSelected(true)));
+        VBox vbox = new VBox(10, selectAllBtn, listView);
+        dialog.getDialogPane().setContent(vbox);
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == okButtonType) {
+                return checkBoxes.stream()
+                        .filter(CheckBox::isSelected)
+                        .map(cb -> (Ticket) cb.getUserData())
+                        .collect(Collectors.toList());
+            }
+            return null;
+        });
+        Optional<List<Ticket>> result = dialog.showAndWait();
+        if (result.isPresent() && !result.get().isEmpty()) {
+            NotificationServiceGrpc.NotificationServiceBlockingStub notifStub = NotificationServiceGrpc.newBlockingStub(channel);
+            int successCount = 0;
+            int failCount = 0;
+            StringBuilder failMsg = new StringBuilder();
+            for (Ticket t : result.get()) {
+                RegisterForTrainRequest regReq = RegisterForTrainRequest.newBuilder()
+                        .setUsername(username)
+                        .setTrainId(t.getTrainId())
+                        .build();
+                OperationResponse opResp = notifStub.registerForTrainUpdates(regReq);
+                if (opResp.getSuccess()) {
+                    successCount++;
+                } else {
+                    failCount++;
+                    failMsg.append("\nTreno ").append(t.getTrainId()).append(": ").append(opResp.getMessage());
+                }
+            }
+            if (successCount > 0) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Notifiche attivate per " + successCount + " treni selezionati!" + (failCount > 0 ? "\nAlcuni errori:" + failMsg : ""), ButtonType.OK);
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Errore: nessuna notifica attivata." + (failCount > 0 ? failMsg.toString() : ""), ButtonType.OK);
+                alert.showAndWait();
+            }
+        }
+        channel.shutdown();
     }
 }

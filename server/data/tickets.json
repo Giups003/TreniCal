@@ -67,28 +67,6 @@
   "seat": "4",
   "purchaseDate": "2025-06-15T14:13:22Z"
 },{
-  "id": "0aec6bdf-85b1-4b22-82b1-ad916ad6011c",
-  "trainId": 392,
-  "passengerName": "admin",
-  "departureStation": "Reggio Calabria Centrale",
-  "arrivalStation": "Lamezia Terme Centrale",
-  "travelDate": "2025-06-28T19:00:00Z",
-  "serviceClass": "Prima Classe",
-  "price": 30.779999999999998,
-  "seat": "1",
-  "purchaseDate": "2025-06-15T14:54:45Z"
-},{
-  "id": "90223fd4-db32-4ba9-8025-0cd06a5d903a",
-  "trainId": 392,
-  "passengerName": "admin",
-  "departureStation": "Reggio Calabria Centrale",
-  "arrivalStation": "Lamezia Terme Centrale",
-  "travelDate": "2025-06-28T19:00:00Z",
-  "serviceClass": "Prima Classe",
-  "price": 30.779999999999998,
-  "seat": "2",
-  "purchaseDate": "2025-06-15T14:54:46Z"
-},{
   "id": "62c3cb06-c1d6-48b0-aeb9-4ef0bbf1b07b",
   "trainId": 392,
   "passengerName": "admin",
@@ -237,4 +215,51 @@
   "seat": "7",
   "travelTime": "1970-01-01T17:00:00Z",
   "purchaseDate": "2025-06-15T14:54:46Z"
+},{
+  "id": "90223fd4-db32-4ba9-8025-0cd06a5d903a",
+  "trainId": 392,
+  "passengerName": "admin",
+  "departureStation": "Reggio Calabria Centrale",
+  "arrivalStation": "Lamezia Terme Centrale",
+  "travelDate": "2025-06-28T07:00:00Z",
+  "serviceClass": "Prima Classe",
+  "price": 32.318999999999996,
+  "seat": "2",
+  "travelTime": "1970-01-01T09:00:00Z",
+  "purchaseDate": "2025-06-15T14:54:46Z"
+},{
+  "id": "0aec6bdf-85b1-4b22-82b1-ad916ad6011c",
+  "trainId": 392,
+  "passengerName": "admin",
+  "departureStation": "Reggio Calabria Centrale",
+  "arrivalStation": "Lamezia Terme Centrale",
+  "travelDate": "2025-06-28T09:00:00Z",
+  "serviceClass": "Prima Classe",
+  "price": 32.318999999999996,
+  "seat": "1",
+  "travelTime": "1970-01-01T11:00:00Z",
+  "purchaseDate": "2025-06-15T14:54:45Z"
+},{
+  "id": "acb19675-214f-4338-87b1-7ef5cef50807",
+  "trainId": 320,
+  "passengerName": "giu",
+  "departureStation": "Reggio Calabria Centrale",
+  "arrivalStation": "Lamezia Terme Centrale",
+  "travelDate": "2025-06-18T15:00:00Z",
+  "serviceClass": "Prima Classe",
+  "price": 27.0,
+  "seat": "1",
+  "travelTime": "1970-01-01T17:00:00Z",
+  "purchaseDate": "2025-06-15T21:51:29Z"
+},{
+  "id": "0b1dbd90-3f90-4ee6-aa6e-78e63f98ba9f",
+  "trainId": 33,
+  "passengerName": "giu",
+  "departureStation": "Roma Termini",
+  "arrivalStation": "Milano Centrale",
+  "travelDate": "2025-06-20T15:00:00Z",
+  "serviceClass": "Prima Classe",
+  "price": 27.0,
+  "seat": "1",
+  "purchaseDate": "2025-06-15T22:45:02Z"
 }]

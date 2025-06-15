@@ -27,10 +27,16 @@ C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\pr
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\NotificationType.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\OperationResponse.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\OperationResponseOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\PromotionalPreferenceRequest.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\PromotionalPreferenceRequestOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\PromotionalPreferenceResponse.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\PromotionalPreferenceResponseOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\RegisterForTrainRequest.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\RegisterForTrainRequestOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\SendPromotionalRequest.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\SendPromotionalRequestOrBuilder.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\SetPromotionalPreferenceRequest.java
+C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\SetPromotionalPreferenceRequestOrBuilder.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\TrainStatus.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\TrainStatusResponse.java
 C:\Users\Giuseppe\Documents\TreniCal\TreniCal\common\target\generated-sources\protobuf\java\it\unical\trenical\grpc\notification\TrainStatusResponseOrBuilder.java

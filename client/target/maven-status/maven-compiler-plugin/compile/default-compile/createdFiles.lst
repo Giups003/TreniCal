@@ -3,6 +3,7 @@ it\unical\trenical\client\gui\StageManagerAware.class
 it\unical\trenical\client\gui\controller\NotificationsController$3.class
 it\unical\trenical\client\gui\controller\BuyTicketController.class
 it\unical\trenical\client\session\UserManager$User.class
+it\unical\trenical\client\gui\controller\DashboardController$2.class
 it\unical\trenical\client\gui\util\AlertUtils.class
 it\unical\trenical\client\ClientMain.class
 it\unical\trenical\client\gui\controller\PromotionDialog$2.class
@@ -13,6 +14,7 @@ it\unical\trenical\client\gui\controller\LoginController.class
 it\unical\trenical\client\gui\controller\NotificationsController.class
 it\unical\trenical\client\gui\controller\SearchTrainsController.class
 it\unical\trenical\client\gui\controller\PromotionDialog.class
+it\unical\trenical\client\gui\controller\DashboardController$1.class
 it\unical\trenical\client\session\UserSession.class
 it\unical\trenical\client\gui\controller\BuyTicketController$1.class
 it\unical\trenical\client\gui\controller\AdminPanelController.class

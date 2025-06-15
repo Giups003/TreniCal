@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package trenical.train;
+
+option java_multiple_files = true;
+option java_package = "it.unical.trenical.grpc.train";
+option java_outer_classname = "TrainServiceProto";
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+
+// Servizio per la gestione dei treni
+service TrainService {
+  // Ottiene informazioni sui treni
+  rpc SearchStations(SearchStationRequest) returns (SearchStationResponse);
+
+  // Ottiene informazioni sui treni
+  rpc GetTrains(TrainRequest) returns (TrainResponse);
+
+  // Cerca treni in base a criteri specifici
+  rpc SearchTrains(SearchTrainRequest) returns (TrainResponse);
+
+  // Ottiene dettagli di un treno specifico
+  rpc GetTrainDetails(TrainDetailsRequest) returns (TrainDetailsResponse);
+
+  // Ottiene gli orari dei treni per una specifica tratta
+  rpc GetTrainSchedule(ScheduleRequest) returns (ScheduleResponse);
+
+  // Ottieni le fermate di un treno specifico
+  rpc GetTrainStops(GetTrainStopsRequest) returns (GetTrainStopsResponse);
+
+  // Recupera tutte le tratte
+  rpc ListRoutes(ListRoutesRequest) returns (ListRoutesResponse);
+}
+
+// Richiesta per ottenere informazioni sui treni
+message TrainRequest {
+  int32 id = 1; // ID del treno (opzionale per ricerca generica)
+}
+
+// Richiesta per cercare stazioni in base a una query di testo
+message SearchStationRequest {
+  string query = 1;    // Testo di ricerca per la stazione
+  int32 limit = 2;     // Numero massimo di risultati da restituire
+}
+
+// Richiesta per cercare treni in base a criteri specifici
+message SearchTrainRequest {
+  string departure_station = 1; // Stazione di partenza
+  string arrival_station = 2; // Stazione di arrivo
+  google.protobuf.Timestamp date = 3; // Data del viaggio (formato: YYYY-MM-DD)
+  google.protobuf.Timestamp time_from = 4; // Orario di partenza minimo (opzionale)
+  google.protobuf.Timestamp time_to = 5;   // Orario di partenza massimo (opzionale)
+  string train_type = 6; // Tipologia di treno (opzionale)
+}
+
+// Risposta con le stazioni che corrispondono alla query
+message SearchStationResponse {
+  repeated trenical.common.Station stations = 1;  // Lista delle stazioni trovate
+}
+
+// Richiesta per ottenere dettagli di un treno specifico
+message TrainDetailsRequest {
+  int32 train_id = 1; // ID del treno
+  google.protobuf.Timestamp date = 2; // Data del viaggio
+}
+
+// Risposta con dettagli di un treno specifico
+message TrainDetailsResponse {
+  trenical.common.Train train = 1; // Dettagli del treno
+  repeated Stop stops = 2; // Fermate del treno
+  bool available = 3; // Disponibilità del treno
+  int32 seats_available = 4; // Numero di posti disponibili
+}
+
+// Richiesta per ottenere gli orari dei treni
+message ScheduleRequest {
+  string station = 1; // Stazione di interesse
+  google.protobuf.Timestamp date = 2; // Data (formato: YYYY-MM-DD)
+}
+
+// Risposta con gli orari dei treni
+message ScheduleResponse {
+  repeated ScheduleEntry departures = 1; // Partenze
+  repeated ScheduleEntry arrivals = 2; // Arrivi
+}
+
+// Richiesta per ottenere le fermate di un treno specifico
+message GetTrainStopsRequest {
+  int32 train_id = 1;
+}
+
+// Risposta con le fermate di un treno specifico
+message GetTrainStopsResponse {
+  repeated Stop stops = 1;
+}
+
+// Messaggio per le fermate intermedie dei treni
+message Stop {
+  int32 id = 1;              // ID univoco della fermata
+  int32 train_id = 2;        // ID del treno
+  int32 station_id = 3;      // ID della stazione
+  google.protobuf.Timestamp arrival_time = 4;    // Orario di arrivo
+  google.protobuf.Timestamp departure_time = 5;  // Orario di partenza
+  int32 platform = 6;        // Numero del binario
+  string note = 7;           // Note aggiuntive (ritardi, ecc.)
+}
+
+// Voce dell'orario dei treni
+message ScheduleEntry {
+  int32 train_id = 1; // ID del treno
+  string train_name = 2; // Nome del treno
+  google.protobuf.Timestamp time = 3; // Orario
+  string destination = 4; // Destinazione (per partenze) o origine (per arrivi)
+  int32 platform = 5; // Numero del binario
+  TrainStatus status = 6; // Stato (in orario, in ritardo, ecc.)
+}
+
+enum TrainStatus {
+  UNKNOWN = 0;
+  ON_TIME = 1;
+  DELAYED = 2;
+  CANCELLED = 3;
+}
+
+// Richiesta per ottenere tutte le tratte
+message ListRoutesRequest {}
+
+// Messaggio per una tratta
+message Route {
+  int32 id = 1;
+  string name = 2;
+  int32 departure_station_id = 3;
+  int32 arrival_station_id = 4;
+  string departure_time = 5;
+  string arrival_time = 6;
+}
+
+// Risposta con tutte le tratte
+message ListRoutesResponse {
+  repeated Route routes = 1;
+}
+
+// Risposta per i servizi di gestione treni
+message TrainResponse {
+  repeated trenical.common.Train trains = 1; // Lista di treni
+}

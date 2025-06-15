@@ -28,15 +28,19 @@
                     style="-fx-font-size: 16px; -fx-background-radius: 20; -fx-background-color: #234a7c; -fx-text-fill: white; -fx-padding: 10 36;"/>
             <Button text="Logout" fx:id="logoutButton" onAction="#onLogout"
                     style="-fx-font-size: 16px; -fx-background-radius: 20; -fx-background-color: #d0021b; -fx-text-fill: white; -fx-padding: 10 36;"/>
-            <Label fx:id="loyaltyLabel" text="Non sei ancora membro FedeltàTreno" style="-fx-font-size: 15px; -fx-text-fill: #1976d2;" visible="true" managed="true"/>
-            <Button text="Iscriviti a FedeltàTreno" fx:id="joinLoyaltyButton" onAction="#onJoinLoyalty" style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 8 30;"/>
-            <Label fx:id="emailLabel" text="" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;" visible="false" managed="false"/>
+            <Label fx:id="loyaltyLabel" text="Non sei ancora membro FedeltàTreno"
+                   style="-fx-font-size: 15px; -fx-text-fill: #1976d2;" visible="true" managed="true"/>
+            <CheckBox fx:id="promotionsCheckBox" text="Ricevi promozioni FedeltàTreno" visible="false" disable="true"/>
+            <Button text="Iscriviti a FedeltàTreno" fx:id="joinLoyaltyButton" onAction="#onJoinLoyalty"
+                    style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 8 30;"/>
+            <Label fx:id="emailLabel" text="" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;" visible="false"
+                   managed="false"/>
             <Button text="Login" fx:id="loginButton" onAction="#onLogin"
                     style="-fx-font-size: 16px; -fx-background-radius: 20; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 10 36;"/>
             <Button text="Pannello Admin" fx:id="adminPanelButton" onAction="#onAdminPanel"
                     style="-fx-font-size: 16px; -fx-background-radius: 20; -fx-background-color: #234a7c; -fx-text-fill: white; -fx-padding: 10 36;"
                     visible="false" managed="false"/>
-            <Region minHeight="0" VBox.vgrow="ALWAYS" />
+            <Region minHeight="0" VBox.vgrow="ALWAYS"/>
         </VBox>
     </center>
 </BorderPane>

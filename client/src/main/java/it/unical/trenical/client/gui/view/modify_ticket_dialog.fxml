@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.unical.trenical.client.gui.controller.ModifyTicketDialogController"
+            style="-fx-background-color: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);"
+            minWidth="600" minHeight="400" prefWidth="650" prefHeight="500">
+    <top>
+        <Label text="Modifica Biglietto" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #22304a; -fx-padding: 18px;" alignment="CENTER"/>
+    </top>
+    <center>
+        <GridPane hgap="18" vgap="14" alignment="CENTER" style="-fx-padding: 10 20;">
+            <columnConstraints>
+                <ColumnConstraints minWidth="160" halignment="RIGHT"/>
+                <ColumnConstraints minWidth="280" halignment="LEFT"/>
+            </columnConstraints>
+
+            <!-- Stazione partenza -->
+            <Label text="Stazione partenza:" GridPane.rowIndex="0" GridPane.columnIndex="0"
+                   style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+            <TextField fx:id="departureField" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                       style="-fx-background-radius: 12; -fx-background-color: #f5f5f5; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"
+                       editable="false">
+                <tooltip><Tooltip text="Stazione di partenza (non modificabile)"/></tooltip>
+            </TextField>
+
+            <!-- Stazione arrivo -->
+            <Label text="Stazione arrivo:" GridPane.rowIndex="1" GridPane.columnIndex="0"
+                   style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+            <TextField fx:id="arrivalField" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                       style="-fx-background-radius: 12; -fx-background-color: #f5f5f5; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;"
+                       editable="false">
+                <tooltip><Tooltip text="Stazione di arrivo (non modificabile)"/></tooltip>
+            </TextField>
+
+            <!-- Data -->
+            <Label text="Data:" GridPane.rowIndex="2" GridPane.columnIndex="0"
+                   style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+            <DatePicker fx:id="datePicker" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                        style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;">
+                <tooltip><Tooltip text="Seleziona la nuova data di viaggio"/></tooltip>
+            </DatePicker>
+
+            <!-- Orario -->
+            <Label text="Orario:" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                   style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+            <ComboBox fx:id="timeBox" promptText="Seleziona orario" GridPane.rowIndex="3"
+                      GridPane.columnIndex="1"
+                      style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;">
+                <tooltip><Tooltip text="Seleziona il nuovo orario di partenza"/></tooltip>
+            </ComboBox>
+
+            <!-- Posti disponibili -->
+            <Label fx:id="seatsAvailableLabel" text="Disponibili: -" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                   style="-fx-font-size: 13px; -fx-text-fill: #388e3c; -fx-padding: 0 0 8 0;"/>
+
+            <!-- Classe -->
+            <Label text="Classe:" GridPane.rowIndex="5" GridPane.columnIndex="0"
+                   style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
+            <ComboBox fx:id="classBox" GridPane.rowIndex="5" GridPane.columnIndex="1"
+                      style="-fx-background-radius: 12; -fx-background-color: #fff; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;">
+                <tooltip><Tooltip text="Seleziona la nuova classe di servizio"/></tooltip>
+            </ComboBox>
+
+            <!-- Prezzo -->
+            <Label fx:id="priceLabel" text="Prezzo: -" GridPane.rowIndex="6" GridPane.columnIndex="1"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976d2; -fx-padding: 8 0 0 0;"/>
+        </GridPane>
+    </center>
+    <bottom>
+        <HBox spacing="18" alignment="CENTER" minHeight="60" style="-fx-padding: 18 0 18 0;">
+            <Button fx:id="confirmButton" text="Conferma Modifiche" onAction="#onConfirmClicked"
+                    style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 8 30;">
+                <tooltip><Tooltip text="Conferma e salva le modifiche al biglietto"/></tooltip>
+            </Button>
+            <Button fx:id="cancelButton" text="Annulla" onAction="#onCancelClicked"
+                    style="-fx-font-size: 15px; -fx-background-radius: 20; -fx-background-color: #d0021b; -fx-text-fill: white; -fx-padding: 8 30;">
+                <tooltip><Tooltip text="Chiudi senza salvare le modifiche"/></tooltip>
+            </Button>
+        </HBox>
+    </bottom>
+</BorderPane>

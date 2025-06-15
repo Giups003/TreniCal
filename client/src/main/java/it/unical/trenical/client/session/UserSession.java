@@ -85,3 +85,4 @@ public class UserSession {
         prefs.remove(LOYALTY_KEY);
     }
 }
+
