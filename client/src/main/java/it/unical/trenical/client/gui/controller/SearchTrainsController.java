@@ -123,8 +123,9 @@ public class SearchTrainsController {
         alert.showAndWait().ifPresent(response -> {
             if (response == conferma) {
                 try {
-                    // Usa la data del risultato selezionato
-                    TrainDetailsResponse responseDetails = trainClient.getTrainDetails(result.getTrainId(), result.getDate());
+                    // Usa la data e l'orario del risultato selezionato
+                    LocalDateTime dateTime = LocalDateTime.of(result.getDate(), result.getTime());
+                    TrainDetailsResponse responseDetails = trainClient.getTrainDetails(result.getTrainId(), dateTime);
 
                     // Gestisci la risposta
                     if (responseDetails != null) {
@@ -197,7 +198,6 @@ public class SearchTrainsController {
             Timestamp timeFromTimestamp = null;
             Timestamp timeToTimestamp = null;
 
-            // Passa la tipologia al metodo searchTrains (da implementare nel client)
             List<Train> trains = trainClient.searchTrains(
                     partenza,
                     arrivo,
@@ -242,7 +242,7 @@ public class SearchTrainsController {
         String trainName = train.getName();
         String departureStation = train.getDepartureStation();
         String arrivalStation = train.getArrivalStation();
-        LocalDate date = null;
+        LocalDate date;
         if (train.hasDepartureTime()) {
             date = Instant.ofEpochSecond(train.getDepartureTime().getSeconds())
                     .atZone(ZoneId.systemDefault()).toLocalDate();
@@ -252,8 +252,16 @@ public class SearchTrainsController {
         LocalTime departureTime = convertTimestampToLocalTime(train.getDepartureTime());
         int availableSeats = 0;
         try {
-            TrainDetailsResponse details = trainClient.getTrainDetails(trainId, date); // Passa anche la data
-            availableSeats = details.getSeatsAvailable();
+            // Usa sempre la data e l'orario esatti del treno
+            if (date != null && departureTime != null) {
+                LocalDateTime dateTime = LocalDateTime.of(date, departureTime);
+                TrainDetailsResponse details = trainClient.getTrainDetails(trainId, dateTime);
+                if (details != null) {
+                    availableSeats = details.getSeatsAvailable();
+                } else {
+                    availableSeats = 0;
+                }
+            }
         } catch (Exception e) {
             availableSeats = 0;
         }
@@ -312,12 +320,12 @@ public class SearchTrainsController {
     /**
      * Converte un Timestamp gRPC in LocalTime.
      */
-    private LocalTime convertTimestampToLocalTime(com.google.protobuf.Timestamp timestamp) {
+    private LocalTime convertTimestampToLocalTime(Timestamp timestamp) {
         if (timestamp == null) {
             return null;
         }
         Instant instant = Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
-        return LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalTime();
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalTime();
     }
 
     /**
@@ -328,3 +336,4 @@ public class SearchTrainsController {
         SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
     }
 }
+

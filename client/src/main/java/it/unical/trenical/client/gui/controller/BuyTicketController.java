@@ -106,9 +106,9 @@ public class BuyTicketController {
         if (datePicker != null) {
             datePicker.setDayCellFactory(picker -> new DateCell() {
                 @Override
-                public void updateItem(java.time.LocalDate item, boolean empty) {
+                public void updateItem(LocalDate item, boolean empty) {
                     super.updateItem(item, empty);
-                    setDisable(empty || item.isBefore(java.time.LocalDate.now()));
+                    setDisable(empty || item.isBefore(LocalDate.now()));
                 }
             });
         }
@@ -296,6 +296,8 @@ public class BuyTicketController {
             double total;
             LocalTime localTime = LocalTime.parse(time);
             LocalDateTime ldt = LocalDateTime.of(date, localTime);
+            // Conversione coerente con il server: ZoneId.systemDefault()
+            Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
             if (promoValid && promoCode != null && !promoCode.isBlank()) {
                 total = promoPrice * seats;
             } else {
@@ -306,7 +308,7 @@ public class BuyTicketController {
                         .setServiceClass(classBox.getValue())
                         .setSeats(1)
                         .setPassengerName(username)
-                        .setTravelDate(Timestamp.newBuilder().setSeconds(ldt.toEpochSecond(ZoneOffset.UTC)).build())
+                        .setTravelDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build())
                         .setPromoCode("")
                         .build();
                 PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
@@ -327,8 +329,21 @@ public class BuyTicketController {
         }
         try {
             int trainId = selectedTrain.getId();
-            TrainDetailsRequest req = TrainDetailsRequest.newBuilder().setTrainId(trainId).build();
-            TrainDetailsResponse resp = trainService.getTrainDetails(req);
+            LocalDate date = datePicker != null ? datePicker.getValue() : null;
+            String time = timeBox != null ? timeBox.getValue() : null;
+            TrainDetailsRequest.Builder reqBuilder = TrainDetailsRequest.newBuilder().setTrainId(trainId);
+            if (date != null && time != null && !time.isBlank()) {
+                LocalTime localTime = LocalTime.parse(time);
+                LocalDateTime ldt = LocalDateTime.of(date, localTime);
+                // Conversione coerente con il server: ZoneId.systemDefault()
+                Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
+                reqBuilder.setDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build());
+            } else if (date != null) {
+                LocalDateTime ldt = date.atStartOfDay();
+                Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
+                reqBuilder.setDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build());
+            }
+            TrainDetailsResponse resp = trainService.getTrainDetails(reqBuilder.build());
             int available = resp.getSeatsAvailable();
             if (available < 1) available = 1;
             seatsSpinnerMax = available;
@@ -398,6 +413,7 @@ public class BuyTicketController {
             if (date == null || time == null) return 0.0;
             LocalTime localTime = LocalTime.parse(time);
             LocalDateTime ldt = LocalDateTime.of(date, localTime);
+            Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
             PurchaseTicketRequest req = PurchaseTicketRequest.newBuilder()
                     .setTrainId(selectedTrain.getId())
                     .setDepartureStation(partenza)
@@ -405,7 +421,7 @@ public class BuyTicketController {
                     .setServiceClass(classBox.getValue())
                     .setSeats(1)
                     .setPassengerName(username)
-                    .setTravelDate(Timestamp.newBuilder().setSeconds(ldt.toEpochSecond(ZoneOffset.UTC)).build())
+                    .setTravelDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build())
                     .setPromoCode("")
                     .build();
             PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
@@ -427,7 +443,7 @@ public class BuyTicketController {
             if (date == null || time == null) return 0.0;
             LocalTime localTime = LocalTime.parse(time);
             LocalDateTime ldt = LocalDateTime.of(date, localTime);
-
+            Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
             PurchaseTicketRequest req = PurchaseTicketRequest.newBuilder()
                     .setTrainId(selectedTrain.getId())
                     .setDepartureStation(partenza)
@@ -435,7 +451,7 @@ public class BuyTicketController {
                     .setServiceClass(classBox.getValue())
                     .setSeats(1)
                     .setPassengerName(username)
-                    .setTravelDate(Timestamp.newBuilder().setSeconds(ldt.toEpochSecond(ZoneOffset.UTC)).build())
+                    .setTravelDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build())
                     .setPromoCode(promoCode)
                     .build();
             PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
@@ -514,6 +530,14 @@ public class BuyTicketController {
             selectedTrain = trainNameToTrain.get(newVal);
             buyButton.setDisable(selectedTrain == null);
             updateSeatsSpinnerMax();
+        });
+    }
+
+    // Forza update posti disponibili anche quando cambia solo il numero di posti richiesti
+    private void setupSeatsSpinnerListener() {
+        seatsSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
+            updateSeatsSpinnerMax();
+            updatePrice();
         });
     }
 

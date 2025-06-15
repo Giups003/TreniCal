@@ -157,7 +157,7 @@ public class MyTicketsController {
             java.time.LocalDate.parse(selected.dateProperty().get()),
             selected.departureTimeProperty().get(),
             selected.serviceClassProperty().get(),
-            selected.getTrainId(), // Passa il trainId del biglietto selezionato
+            selected.getTrainId(),
             () -> loadTicketsFromServer()
         );
     }
@@ -312,3 +312,4 @@ public class MyTicketsController {
         public int getTrainId() { return trainId; }
     }
 }
+

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -33,7 +34,7 @@ public class DataStore {
     private List<Route> routes = new ArrayList<>();
     private List<Promotion> promotions = new ArrayList<>();
     private final Map<Integer, Integer> trainSeatsAvailable = new ConcurrentHashMap<>();
-    private static final int DEFAULT_SEATS_PER_TRAIN = 50;
+    private static final int DEFAULT_SEATS_PER_TRAIN = 150;
 
     private DataStore() {
         File dataDir = new File(DATA_DIR);
@@ -125,6 +126,7 @@ public class DataStore {
 
     /**
      * Genera treni per tutte le tratte, per un certo numero di settimane e corse ogni ora tra 6:00 e 22:00
+     *
      * @param weeks numero di settimane
      */
     private void generateTrainsForWeeks(int weeks) {
@@ -179,7 +181,8 @@ public class DataStore {
         } catch (Exception e) {
             try {
                 Files.writeString(Paths.get(filename), "[]");
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
@@ -336,6 +339,7 @@ public class DataStore {
             }
         }
     }
+
     public synchronized void updateTrain(Train updated) {
         if (updated == null || updated.getId() <= 0) return;
         for (int i = 0; i < trains.size(); i++) {
@@ -346,6 +350,7 @@ public class DataStore {
             }
         }
     }
+
     public synchronized void updateTicket(Ticket updated) {
         if (updated == null || updated.getId() == null) return;
         for (int i = 0; i < tickets.size(); i++) {
@@ -356,6 +361,7 @@ public class DataStore {
             }
         }
     }
+
     public synchronized void updateRoute(Route updated) {
         if (updated == null || updated.getId() <= 0) return;
         for (int i = 0; i < routes.size(); i++) {
@@ -366,6 +372,7 @@ public class DataStore {
             }
         }
     }
+
     public synchronized void updatePromotion(Promotion updated) {
         if (updated == null || updated.getId() <= 0) return;
         for (int i = 0; i < promotions.size(); i++) {
@@ -376,15 +383,29 @@ public class DataStore {
             }
         }
     }
+
     // --- GESTIONE ID CENTRALIZZATA ---
     private synchronized int generateNextId(List<?> list, java.util.function.ToIntFunction<Object> idGetter) {
         return list.stream().mapToInt(idGetter).max().orElse(0) + 1;
     }
-    public synchronized int generateNextStationId() { return generateNextId(stations, s -> ((Station)s).getId()); }
-    public synchronized int generateNextTrainId() { return generateNextId(trains, t -> ((Train)t).getId()); }
-    public synchronized int generateNextRouteId() { return generateNextId(routes, r -> ((Route)r).getId()); }
-    public synchronized int generateNextPromotionId() { return generateNextId(promotions, p -> ((Promotion)p).getId()); }
+
+    public synchronized int generateNextStationId() {
+        return generateNextId(stations, s -> ((Station) s).getId());
+    }
+
+    public synchronized int generateNextTrainId() {
+        return generateNextId(trains, t -> ((Train) t).getId());
+    }
+
+    public synchronized int generateNextRouteId() {
+        return generateNextId(routes, r -> ((Route) r).getId());
+    }
+
+    public synchronized int generateNextPromotionId() {
+        return generateNextId(promotions, p -> ((Promotion) p).getId());
+    }
     // --- BACKUP/RESTORE ---
+
     /**
      * Esporta tutti i dati in una stringa JSON.
      */
@@ -397,18 +418,25 @@ public class DataStore {
         obj.put("promotions", promotions);
         return obj.toString();
     }
+
     /**
      * Importa tutti i dati da una stringa JSON.
      */
     public synchronized void importAllData(String json) {
         // Placeholder: implementazione da completare
     }
+
     // --- LAZY LOADING E CACHE (ESEMPIO SU PROMOTIONS) ---
     private boolean promotionsLoaded = false;
+
     public synchronized List<Promotion> getPromotionsLazy() {
         if (!promotionsLoaded) {
-            try { promotions = loadPromotionsFromFile(PROMOTIONS_FILE); promotionsLoaded = true; }
-            catch (Exception e) { promotions = new ArrayList<>(); }
+            try {
+                promotions = loadPromotionsFromFile(PROMOTIONS_FILE);
+                promotionsLoaded = true;
+            } catch (Exception e) {
+                promotions = new ArrayList<>();
+            }
         }
         return new ArrayList<>(promotions);
     }
@@ -417,9 +445,11 @@ public class DataStore {
     public synchronized List<Station> getAllStations() {
         return new ArrayList<>(stations);
     }
+
     public synchronized Station getStationById(int id) {
         return stations.stream().filter(station -> station.getId() == id).findFirst().orElse(null);
     }
+
     public synchronized void addStation(Station station) {
         if (station == null || station.getId() <= 0) return;
         boolean exists = stations.stream().anyMatch(s -> s.getId() == station.getId());
@@ -428,10 +458,12 @@ public class DataStore {
             saveData();
         }
     }
+
     public synchronized void deleteStation(int id) {
         stations.removeIf(s -> s.getId() == id);
         saveData();
     }
+
     public synchronized List<Station> searchStations(String query, int limit) {
         if (query == null || query.isEmpty()) {
             return stations.stream().limit(limit).collect(Collectors.toList());
@@ -445,16 +477,37 @@ public class DataStore {
     }
 
     public synchronized List<Train> getAllTrains() {
-        java.time.LocalDate today = java.time.LocalDate.now();
+        LocalDate today = java.time.LocalDate.now();
         return generateTrainsForDay(null, null, today);
     }
-    public synchronized Train getTrainById(int id) {
-        java.time.LocalDate today = java.time.LocalDate.now();
-        return generateTrainsForDay(null, null, today).stream()
+
+    /**
+     * Restituisce il treno con l'ID specificato e la data/orario esatti.
+     *
+     * @param id       ID del treno
+     * @param dateTime data e ora della corsa
+     * @return il treno corrispondente, oppure null se non trovato
+     */
+    public synchronized Train getTrainById(int id, LocalDateTime dateTime) {
+        if (dateTime == null) return null;
+        return trains.stream()
                 .filter(train -> train.getId() == id)
+                .filter(train -> {
+                    LocalDateTime dep = LocalDateTime.ofInstant(
+                            Instant.ofEpochSecond(train.getDepartureTime().getSeconds()),
+                            ZoneId.systemDefault() // Uniforma a systemDefault
+                    );
+                    // Confronta anno, mese, giorno, ora e minuto (ignora secondi e nanosecondi)
+                    return dep.getYear() == dateTime.getYear() &&
+                           dep.getMonthValue() == dateTime.getMonthValue() &&
+                           dep.getDayOfMonth() == dateTime.getDayOfMonth() &&
+                           dep.getHour() == dateTime.getHour() &&
+                           dep.getMinute() == dateTime.getMinute();
+                })
                 .findFirst()
                 .orElse(null);
     }
+
     public synchronized void addTrain(Train train) {
         if (train == null || train.getId() <= 0) return;
         boolean exists = trains.stream().anyMatch(t -> t.getId() == train.getId());
@@ -463,6 +516,7 @@ public class DataStore {
             saveData();
         }
     }
+
     public synchronized void deleteTrain(int id) {
         trains.removeIf(t -> t.getId() == id);
         saveData();
@@ -471,9 +525,11 @@ public class DataStore {
     public synchronized List<Ticket> getAllTickets() {
         return new ArrayList<>(tickets);
     }
+
     public synchronized Ticket getTicketById(String id) {
         return tickets.stream().filter(ticket -> ticket.getId().equals(id)).findFirst().orElse(null);
     }
+
     public synchronized void addTicket(Ticket ticket) {
         if (ticket == null || ticket.getId() == null) return;
         boolean exists = tickets.stream().anyMatch(t -> t.getId().equals(ticket.getId()));
@@ -482,6 +538,7 @@ public class DataStore {
             saveData();
         }
     }
+
     public synchronized void deleteTicket(String id) {
         Ticket toRemove = null;
         for (Ticket t : tickets) {
@@ -492,10 +549,6 @@ public class DataStore {
         }
         if (toRemove != null) {
             tickets.remove(toRemove);
-            int trainId = toRemove.getTrainId();
-            int seats = 1;
-            try { seats = Integer.parseInt(toRemove.getSeat()); } catch (Exception ignored) {}
-            incrementSeat(trainId, seats); // Usa incrementSeat per ripristinare i posti
             saveData();
         }
     }
@@ -503,9 +556,11 @@ public class DataStore {
     public synchronized List<Route> getAllRoutes() {
         return new ArrayList<>(routes);
     }
+
     public synchronized Route getRouteById(int id) {
         return routes.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
     }
+
     public synchronized void addRoute(Route route) {
         if (route == null || route.getId() <= 0) return;
         boolean exists = routes.stream().anyMatch(r -> r.getId() == route.getId());
@@ -514,6 +569,7 @@ public class DataStore {
             saveData();
         }
     }
+
     public synchronized void deleteRoute(int id) {
         routes.removeIf(r -> r.getId() == id);
         saveData();
@@ -522,9 +578,11 @@ public class DataStore {
     public synchronized List<Promotion> getAllPromotions() {
         return new ArrayList<>(promotions);
     }
+
     public synchronized Promotion getPromotionById(int id) {
         return promotions.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
     }
+
     public synchronized void addPromotion(Promotion promotion) {
         if (promotion == null || promotion.getId() <= 0) return;
         boolean exists = promotions.stream().anyMatch(p -> p.getId() == promotion.getId());
@@ -533,6 +591,7 @@ public class DataStore {
             saveData();
         }
     }
+
     public synchronized void deletePromotion(int id) {
         promotions.removeIf(p -> p.getId() == id);
         saveData();
@@ -544,16 +603,17 @@ public class DataStore {
         for (Train t : trains) {
             boolean matchDep = (departureStation == null || departureStation.isEmpty() || t.getDepartureStation().toLowerCase().contains(departureStation.toLowerCase()));
             boolean matchArr = (arrivalStation == null || arrivalStation.isEmpty() || t.getArrivalStation().toLowerCase().contains(arrivalStation.toLowerCase()));
-            java.time.LocalDate depDate = java.time.Instant.ofEpochSecond(t.getDepartureTime().getSeconds())
-                .atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+            LocalDate depDate = Instant.ofEpochSecond(t.getDepartureTime().getSeconds())
+                    .atZone(ZoneId.systemDefault()).toLocalDate();
             if (matchDep && matchArr && depDate.equals(date)) {
                 result.add(t);
             }
         }
         return result;
     }
+
     public synchronized List<Train> searchTrains(String departureStation, String arrivalStation, String date, String trainType, int limit) {
-        java.time.LocalDate searchDate;
+        LocalDate searchDate;
         if (date == null || date.isEmpty()) {
             searchDate = java.time.LocalDate.now();
         } else {
@@ -577,22 +637,67 @@ public class DataStore {
     }
 
     // --- GESTIONE POSTI DISPONIBILI ---
-    public synchronized int getAvailableSeats(int trainId) {
-        // Se il treno non è presente nella mappa, inizializza con il valore di default
-        return trainSeatsAvailable.computeIfAbsent(trainId, k -> DEFAULT_SEATS_PER_TRAIN);
+
+    /**
+     * Verifica se ci sono abbastanza posti disponibili per una specifica corsa (treno, data, orario).
+     *
+     * @param trainId        ID del treno
+     * @param travelDateTime data e ora della corsa
+     * @param seats          numero di posti richiesti
+     * @return true se ci sono abbastanza posti disponibili
+     */
+    public synchronized boolean checkAvailableSeats(int trainId, LocalDateTime travelDateTime, int seats) {
+        int available = getAvailableSeats(trainId, travelDateTime);
+        return available >= seats;
     }
-    public synchronized boolean decrementSeat(int trainId, int seats) {
-        int available = getAvailableSeats(trainId);
-        if (available >= seats) {
-            trainSeatsAvailable.put(trainId, available - seats);
-            return true;
+
+    /**
+     * Calcola i posti disponibili per una specifica corsa (treno, data, orario).
+     *
+     * @param trainId        ID del treno
+     * @param travelDateTime data e ora della corsa (può essere null: in tal caso considera solo la data)
+     * @return numero di posti disponibili per quella corsa
+     */
+    public synchronized int getAvailableSeats(int trainId, LocalDateTime travelDateTime) {
+        System.out.println("[DEBUG] getAvailableSeats: trainId=" + trainId + ", travelDateTime=" + travelDateTime);
+        // Trova il treno esatto per ID e data/ora
+        Train train = getTrainById(trainId, travelDateTime);
+        if (train == null) {
+            System.out.println("[DEBUG] Nessun treno trovato per ID=" + trainId + ", travelDateTime=" + travelDateTime);
+            return 0;
         }
-        return false;
-    }
-    public synchronized void incrementSeat(int trainId, int seats) {
-        // Usa solo per cancellazione/annullamento biglietto
-        int available = getAvailableSeats(trainId);
-        trainSeatsAvailable.put(trainId, available + seats);
+        int totalSeats = DEFAULT_SEATS_PER_TRAIN;
+        int booked = 0;
+        for (Ticket t : tickets) {
+            if (t.getTrainId() == trainId && t.hasTravelDate()) {
+                // Escludi biglietti annullati o scaduti
+                if (t.getStatus() != null && (t.getStatus().equalsIgnoreCase("Annullato") || t.getStatus().equalsIgnoreCase("Scaduto"))) {
+                    System.out.println("[DEBUG] Biglietto " + t.getId() + " escluso per status: " + t.getStatus());
+                    continue;
+                }
+                Instant instant = Instant.ofEpochSecond(t.getTravelDate().getSeconds());
+                LocalDateTime ticketDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()); // Uniforma a systemDefault
+                System.out.println("[DEBUG] Confronto ticketDateTime=" + ticketDateTime + " con travelDateTime=" + travelDateTime);
+                if (travelDateTime != null) {
+                    // Confronta solo anno, mese, giorno, ora e minuto (ignora secondi e fuso orario)
+                    if (ticketDateTime.getYear() == travelDateTime.getYear() &&
+                        ticketDateTime.getMonthValue() == travelDateTime.getMonthValue() &&
+                        ticketDateTime.getDayOfMonth() == travelDateTime.getDayOfMonth() &&
+                        ticketDateTime.getHour() == travelDateTime.getHour() &&
+                        ticketDateTime.getMinute() == travelDateTime.getMinute()) {
+                        booked++;
+                        System.out.println("[DEBUG] Biglietto " + t.getId() + " CONTA per il treno " + trainId);
+                    } else {
+                        System.out.println("[DEBUG] Biglietto " + t.getId() + " NON conta: orario diverso");
+                    }
+                }
+            } else if (t.getTrainId() == trainId) {
+                System.out.println("[DEBUG] Biglietto " + t.getId() + " NON ha travelDate");
+            }
+        }
+        int available = totalSeats - booked;
+        System.out.println("[DEBUG] Posti disponibili per treno " + trainId + " = " + available + " (prenotati: " + booked + ")");
+        return Math.max(available, 0);
     }
 
     // --- PROMOZIONI ---

@@ -8,6 +8,8 @@ import it.unical.trenical.grpc.train.*;
 import it.unical.trenical.grpc.common.Train;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -151,19 +153,18 @@ public class TrainClient {
     }
 
     /**
-     * Ottiene i dettagli di un treno specifico per data.
+     * Ottiene i dettagli di un treno specifico per data e ora.
      *
      * @param trainId ID del treno
-     * @param date Data del viaggio (LocalDate)
+     * @param dateTime Data e ora del viaggio (LocalDateTime)
      * @return Dettagli del treno
      */
-    public TrainDetailsResponse getTrainDetails(int trainId, java.time.LocalDate date) {
-        logger.info("Richiesta dettagli del treno (ID: " + trainId + ", data: " + date + ")");
-        com.google.protobuf.Timestamp dateTimestamp = null;
-        if (date != null) {
-            java.time.LocalDateTime dateTime = date.atStartOfDay();
-            java.time.Instant instant = dateTime.toInstant(java.time.ZoneOffset.UTC);
-            dateTimestamp = com.google.protobuf.Timestamp.newBuilder()
+    public TrainDetailsResponse getTrainDetails(int trainId, LocalDateTime dateTime) {
+        logger.info("Richiesta dettagli del treno (ID: " + trainId + ", data/ora: " + dateTime + ")");
+        Timestamp dateTimestamp = null;
+        if (dateTime != null) {
+            java.time.Instant instant = dateTime.atZone(ZoneId.systemDefault()).toInstant();
+            dateTimestamp = Timestamp.newBuilder()
                     .setSeconds(instant.getEpochSecond())
                     .setNanos(instant.getNano())
                     .build();

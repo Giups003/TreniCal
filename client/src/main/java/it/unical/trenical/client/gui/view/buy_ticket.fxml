@@ -37,7 +37,7 @@
             <!-- Treno -->
             <Label text="Treno:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;"/>
             <TextField fx:id="trainField" promptText="Selezionato automaticamente" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-background-radius: 12; -fx-background-color: #f5f5f5; -fx-border-color: #c3cfe2; -fx-border-radius: 12; -fx-padding: 8;" editable="false">
-                <tooltip><Tooltip text="Il treno è selezionato automaticamente in base a partenza e arrivo"/></tooltip>
+                <tooltip><Tooltip text="Seleziona una data"/></tooltip>
             </TextField>
             <Label fx:id="trainErrorLabel" text="" GridPane.rowIndex="2" GridPane.columnIndex="2" style="-fx-text-fill: #d0021b; -fx-font-size: 12px;"/>
             <!-- Classe -->
@@ -95,5 +95,3 @@
         </HBox>
     </bottom>
 </BorderPane>
-
-

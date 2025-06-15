@@ -8,6 +8,8 @@ import it.unical.trenical.grpc.ticket.*;
 import it.unical.trenical.grpc.ticket.PurchaseTicketRequest;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
@@ -89,7 +91,14 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
             int trainId = request.getTrainId();
             int seatsRequested = request.getSeats();
             if (seatsRequested <= 0) seatsRequested = 1;
-            boolean seatsOk = dataStore.decrementSeat(trainId, seatsRequested);
+            // Passa la data/ora corretta a decrementSeat
+            LocalDateTime travelDateTime = null;
+            if (request.hasTravelDate()) {
+                com.google.protobuf.Timestamp ts = request.getTravelDate();
+                travelDateTime = Instant.ofEpochSecond(ts.getSeconds())
+                        .atZone(ZoneId.systemDefault()).toLocalDateTime();
+            }
+            boolean seatsOk = dataStore.checkAvailableSeats(trainId, travelDateTime, seatsRequested);
             if (!seatsOk) {
                 PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
                         .setSuccess(false)
@@ -425,9 +434,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
     private boolean isValidField(String s) {
         return s != null && !s.isEmpty();
     }
-    private boolean isValidField(com.google.protobuf.Timestamp t) {
-        return t != null && t.getSeconds() > 0;
-    }
+
 
     private void sendOperationResponse(boolean success, String message, StreamObserver<OperationResponse> responseObserver) {
         OperationResponse response = OperationResponse.newBuilder()
@@ -438,4 +445,3 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
         responseObserver.onCompleted();
     }
 }
-

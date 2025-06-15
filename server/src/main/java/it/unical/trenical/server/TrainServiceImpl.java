@@ -75,12 +75,14 @@ package it.unical.trenical.server;
         public void getTrainDetails(TrainDetailsRequest request, StreamObserver<TrainDetailsResponse> responseObserver) {
             try {
                 int trainId = request.getTrainId();
-                Train train = null;
+                Train train;
+                LocalDateTime travelDateTime = null;
                 // Se la data è presente nella richiesta, cerca il treno per ID e data
                 if (request.hasDate()) {
                     Timestamp dateTs = request.getDate();
-                    LocalDate date = Instant.ofEpochSecond(dateTs.getSeconds())
-                            .atZone(ZoneId.systemDefault()).toLocalDate();
+                    Instant instant = Instant.ofEpochSecond(dateTs.getSeconds());
+                    travelDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                    LocalDate date = travelDateTime.toLocalDate();
                     // Cerca il treno per ID e data
                     List<Train> trainsForDay = dataStore.generateTrainsForDay(null, null, date);
                     train = trainsForDay.stream()
@@ -88,8 +90,7 @@ package it.unical.trenical.server;
                             .findFirst()
                             .orElse(null);
                 } else {
-                    // Cerca solo per ID (comportamento legacy)
-                    train = dataStore.getTrainById(trainId);
+                    train = null; // Non supportato più senza data
                 }
 
                 if (train == null) {
@@ -99,7 +100,13 @@ package it.unical.trenical.server;
                     return;
                 }
 
-                int seatsAvailable = dataStore.getAvailableSeats(trainId);
+                int seatsAvailable;
+                if (travelDateTime != null) {
+                    seatsAvailable = dataStore.getAvailableSeats(trainId, travelDateTime);
+                } else {
+                    // Per compatibilità, se non viene passata la data, restituisci 0 o un valore di default
+                    seatsAvailable = 5;
+                }
                 boolean isAvailable = seatsAvailable > 0;
 
                 TrainDetailsResponse response = TrainDetailsResponse.newBuilder()
@@ -125,8 +132,7 @@ package it.unical.trenical.server;
 
                 if (trainId > 0) {
                     // Cerca un treno specifico per ID
-                    Train train = dataStore.getTrainById(trainId);
-                    trains = train != null ? List.of(train) : List.of();
+                    trains = List.of(); // Non supportato più senza data
                 } else {
                     // Ottieni tutti i treni
                     trains = dataStore.getAllTrains();
@@ -239,7 +245,8 @@ package it.unical.trenical.server;
         public void getTrainStops(GetTrainStopsRequest request, StreamObserver<GetTrainStopsResponse> responseObserver) {
             try {
                 int trainId = request.getTrainId();
-                Train train = dataStore.getTrainById(trainId);
+                Train train = null; // Non supportato più senza data
+                // ...existing code...
                 if (train == null) {
                     responseObserver.onError(Status.NOT_FOUND
                             .withDescription("Treno con ID " + trainId + " non trovato")
