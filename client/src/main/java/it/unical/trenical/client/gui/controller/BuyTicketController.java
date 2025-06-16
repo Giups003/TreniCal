@@ -183,9 +183,12 @@ public class BuyTicketController {
                 if (!train.hasDepartureTime()) continue;
                 Instant instant = Instant.ofEpochSecond(train.getDepartureTime().getSeconds());
                 LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                if (date.equals(LocalDate.now())) {
+                    // Se la data selezionata è oggi, mostra solo treni con orario >= ora attuale (solo ore e minuti)
+                    LocalTime now = LocalTime.now();
+                    if (ldt.toLocalTime().isBefore(now) && ldt.toLocalDate().isEqual(LocalDate.now())) continue;
+                }
                 LocalTime time = ldt.toLocalTime();
-                // Se la data è oggi, mostra solo orari futuri
-                if (date.equals(LocalDate.now()) && time.isBefore(LocalTime.now())) continue;
                 String timeStr = time.format(DateTimeFormatter.ofPattern("HH:mm"));
                 if (!allTimes.contains(timeStr)) {
                     allTimes.add(timeStr);

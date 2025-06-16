@@ -25,11 +25,10 @@ public class TrainServiceImplTest {
     private StreamObserver<TrainDetailsResponse> detailsResponseObserver;
     private StreamObserver<ScheduleResponse> scheduleResponseObserver;
 
+    @SuppressWarnings("unchecked")
     @BeforeEach
     public void setup() {
         service = new TrainServiceImpl();
-
-        // Mock degli stream observers
         trainResponseObserver = mock(StreamObserver.class);
         detailsResponseObserver = mock(StreamObserver.class);
         scheduleResponseObserver = mock(StreamObserver.class);
@@ -229,5 +228,31 @@ public void testSearchTrains_InvalidRequest() {
         assertNotNull(response);
         assertEquals(0, response.getDeparturesCount(), "Non dovrebbero esserci partenze");
         assertEquals(0, response.getArrivalsCount(), "Non dovrebbero esserci arrivi");
+    }
+
+    @Test
+    public void testSearchTrainsByRouteAndDate() {
+        // Cerca treni tra Roma e Milano per oggi
+        SearchTrainRequest req = SearchTrainRequest.newBuilder()
+                .setDepartureStation("Roma")
+                .setArrivalStation("Milano")
+                .setDate(Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond()).build())
+                .build();
+        service.searchTrains(req, trainResponseObserver);
+        ArgumentCaptor<TrainResponse> captor = ArgumentCaptor.forClass(TrainResponse.class);
+        verify(trainResponseObserver).onNext(captor.capture());
+        assertFalse(captor.getValue().getTrainsList().isEmpty());
+    }
+
+    @Test
+    public void testGetTrainDetails() {
+        TrainDetailsRequest req = TrainDetailsRequest.newBuilder()
+                .setTrainId(1)
+                .setDate(Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond()).build())
+                .build();
+        service.getTrainDetails(req, detailsResponseObserver);
+        ArgumentCaptor<TrainDetailsResponse> captor = ArgumentCaptor.forClass(TrainDetailsResponse.class);
+        verify(detailsResponseObserver).onNext(captor.capture());
+        assertEquals(1, captor.getValue().getTrain().getId());
     }
 }

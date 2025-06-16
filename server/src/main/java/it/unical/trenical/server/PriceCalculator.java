@@ -66,6 +66,7 @@ public class PriceCalculator {
      * @param serviceClass Classe di servizio (Economy, Standard, Prima Classe, Business)
      * @param travelDate Data di viaggio (formato DD-MM-YYYY)
      * @param promoCode Codice promozionale (opzionale)
+     * @param trainType Tipo di treno (es. Frecciarossa, Intercity, Regionale)
      * @return Prezzo calcolato del biglietto
      */
     public double calculateTicketPrice(
@@ -73,7 +74,8 @@ public class PriceCalculator {
             String arrivalStation,
             String serviceClass,
             Timestamp travelDate,
-            String promoCode
+            String promoCode,
+            String trainType
     ) {
         LocalDateTime travelDateTime = toLocalDateTime(travelDate);
 
@@ -94,7 +96,7 @@ public class PriceCalculator {
 
         // --- PROMOZIONE AUTOMATICA: trova la migliore se non è stato inserito un codice promo ---
         if (promoCode == null || promoCode.isBlank()) {
-            var promo = dataStore.findBestPromotion(routeName, serviceClass, travelLocalDate);
+            var promo = dataStore.findBestPromotion(routeName, serviceClass, travelLocalDate, trainType);
             if (promo != null && promo.getDiscountPercent() > 0) {
                 finalPrice = finalPrice * (1.0 - promo.getDiscountPercent() / 100.0);
             }
@@ -223,7 +225,7 @@ public class PriceCalculator {
         if (promoCode == null || promoCode.trim().isEmpty()) {
             return false;
         }
-
+        // Usa sempre uppercase per la validazione
         return promoCodeDiscounts.containsKey(promoCode.toUpperCase());
     }
 
@@ -234,11 +236,12 @@ public class PriceCalculator {
      * @return Fattore di sconto (1.0 = nessuno sconto, 0.8 = 20% di sconto)
      */
     private double getPromoCodeDiscount(String promoCode) {
-        if (!isValidPromoCode(promoCode)) {
+        if (promoCode == null) return 1.0;
+        String code = promoCode.toUpperCase();
+        if (!isValidPromoCode(code)) {
             return 1.0;
         }
-
-        return promoCodeDiscounts.get(promoCode.toUpperCase());
+        return promoCodeDiscounts.get(code);
     }
 
     /**
@@ -275,6 +278,7 @@ public class PriceCalculator {
      * Inizializza il database mock dei codici promozionali.
      */
     private void initializePromoCodeDiscounts() {
+        // Salva sempre i codici in uppercase
         promoCodeDiscounts.put("PROMO10", 0.9);  // 10% di sconto
         promoCodeDiscounts.put("PROMO20", 0.8);  // 20% di sconto
         promoCodeDiscounts.put("STUDENT", 0.7);  // 30% di sconto per studenti

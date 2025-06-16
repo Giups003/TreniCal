@@ -8,7 +8,11 @@ import javafx.collections.FXCollections;
 import java.time.LocalDate;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 import javafx.scene.control.cell.CheckBoxListCell;
 
 public class PromotionDialog {
@@ -61,15 +65,32 @@ public class PromotionDialog {
                 routeListView.getSelectionModel().select(i);
             }
         });
+        // AGGIUNTA OPZIONE "Tutte le classi" e "Tutte le tipologie"
         ListView<String> classListView = new ListView<>(FXCollections.observableArrayList(classes));
         classListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         classListView.setPrefHeight(80);
+        // Bottone per selezionare tutte le classi
+        Button selectAllClassesButton = new Button("Seleziona tutte le classi");
+        selectAllClassesButton.setOnAction(e -> {
+            classListView.getSelectionModel().clearSelection();
+            for (int i = 0; i < classListView.getItems().size(); i++) {
+                classListView.getSelectionModel().select(i);
+            }
+        });
         DatePicker fromPicker = new DatePicker();
         DatePicker toPicker = new DatePicker();
         CheckBox fidelityCheckBox = new CheckBox("Solo per membri FedeltàTreno");
+        // ListView per i tipi treno (senza opzione "Tutte le tipologie")
         ListView<String> trainTypeListView = new ListView<>(FXCollections.observableArrayList(trainTypes));
         trainTypeListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         trainTypeListView.setPrefHeight(80);
+        Button selectAllTrainTypesButton = new Button("Seleziona tutte le tipologie");
+        selectAllTrainTypesButton.setOnAction(e -> {
+            trainTypeListView.getSelectionModel().clearSelection();
+            for (int i = 0; i < trainTypeListView.getItems().size(); i++) {
+                trainTypeListView.getSelectionModel().select(i);
+            }
+        });
 
         if (existing != null) {
             nameField.setText(existing.nameProperty().get());
@@ -123,11 +144,11 @@ public class PromotionDialog {
         grid.add(new Label("Sconto (%):"), 0, 2); grid.add(discountSpinner, 1, 2);
         grid.add(new Label("Tratte:"), 0, 3); grid.add(routeListView, 1, 3);
         grid.add(selectAllRoutesButton, 2, 3); // aggiungi il bottone accanto alla lista
-        grid.add(new Label("Classe:"), 0, 4); grid.add(classListView, 1, 4);
+        grid.add(new Label("Classe:"), 0, 4); grid.add(classListView, 1, 4); grid.add(selectAllClassesButton, 2, 4);
         grid.add(new Label("Valida dal:"), 0, 5); grid.add(fromPicker, 1, 5);
         grid.add(new Label("Valida al:"), 0, 6); grid.add(toPicker, 1, 6);
         grid.add(fidelityCheckBox, 1, 7);
-        grid.add(new Label("Tipo treno:"), 0, 8); grid.add(trainTypeListView, 1, 8);
+        grid.add(new Label("Tipo treno:"), 0, 8); grid.add(trainTypeListView, 1, 8); grid.add(selectAllTrainTypesButton, 2, 8);
 
         Node okButton = dialog.getDialogPane().lookupButton(okButtonType);
         okButton.setDisable(true);
@@ -136,52 +157,38 @@ public class PromotionDialog {
         nameField.textProperty().addListener((obs, oldVal, newVal) -> okButton.setDisable(newVal.trim().isEmpty()));
 
         dialog.getDialogPane().setContent(grid);
+        // Quando si preme OK, crea il ViewModel con la logica "tutte"
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == okButtonType) {
-                try {
-                    int id = existing != null ? existing.idProperty().get() : 0;
-                    String name = nameField.getText();
-                    String desc = descField.getText();
-                    double discount = discountSpinner.getValue();
-                    // Ottieni le tratte selezionate
-                    StringBuilder routesBuilder = new StringBuilder();
-                    for (String route : routeListView.getSelectionModel().getSelectedItems()) {
-                        if (routesBuilder.length() > 0) routesBuilder.append(",");
-                        routesBuilder.append(route);
-                    }
-                    String route = routesBuilder.toString();
-                    // Ottieni le classi selezionate
-                    StringBuilder classesBuilder = new StringBuilder();
-                    for (String cl : classListView.getSelectionModel().getSelectedItems()) {
-                        if (classesBuilder.length() > 0) classesBuilder.append(",");
-                        classesBuilder.append(cl);
-                    }
-                    String serviceClass = classesBuilder.toString();
-                    String from = fromPicker.getValue() != null ? fromPicker.getValue().toString() : "";
-                    String to = toPicker.getValue() != null ? toPicker.getValue().toString() : "";
-                    boolean fidelityOnly = fidelityCheckBox.isSelected();
-                    // Ottieni i tipi treno selezionati
-                    StringBuilder trainTypesBuilder = new StringBuilder();
-                    for (String t : trainTypeListView.getSelectionModel().getSelectedItems()) {
-                        if (trainTypesBuilder.length() > 0) trainTypesBuilder.append(",");
-                        trainTypesBuilder.append(t);
-                    }
-                    String trainType = trainTypesBuilder.toString();
-                    return new PromotionsAdminController.PromotionViewModel(
-                            id,
-                            name,
-                            desc,
-                            discount,
-                            route,
-                            serviceClass,
-                            from,
-                            to,
-                            fidelityOnly,
-                            trainType
-                    );
-                } catch (Exception e) {
-                    return null;
+                // Raccogli i dati solo se servono per il ViewModel
+                String name = nameField.getText();
+                String desc = descField.getText();
+                double discount = discountSpinner.getValue();
+                java.util.List<String> selectedRoutes = new ArrayList<>(routeListView.getSelectionModel().getSelectedItems());
+                java.util.List<String> selectedClasses = new ArrayList<>(classListView.getSelectionModel().getSelectedItems());
+                java.util.List<String> selectedTypes = new ArrayList<>(trainTypeListView.getSelectionModel().getSelectedItems());
+                String trainType = "";
+                if (!selectedTypes.isEmpty() && selectedTypes.contains("Tutte le tipologie")) {
+                    trainType = "";
+                } else if (!selectedTypes.isEmpty()) {
+                    trainType = String.join(",", selectedTypes);
                 }
+                String from = fromPicker.getValue() != null ? fromPicker.getValue().toString() : "";
+                String to = toPicker.getValue() != null ? toPicker.getValue().toString() : "";
+                boolean fidelity = fidelityCheckBox.isSelected();
+                // Crea e restituisci il PromotionViewModel
+                return new PromotionsAdminController.PromotionViewModel(
+                        0, // id (verrà gestito dal backend)
+                        name,
+                        desc,
+                        discount,
+                        String.join(",", selectedRoutes),
+                        String.join(",", selectedClasses),
+                        from,
+                        to,
+                        fidelity,
+                        trainType
+                );
             }
             return null;
         });
@@ -226,3 +233,5 @@ public class PromotionDialog {
         return dialog.showAndWait().orElse(null);
     }
 }
+
+

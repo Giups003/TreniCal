@@ -49,6 +49,7 @@ public class ModifyTicketDialogController {
     private double oldPrice = 0.0;
     private double newPrice = 0.0;
     private double surcharge = 0.0;
+    private boolean oldPriceLoaded = false;
 
     @FXML
     public void initialize() {
@@ -125,15 +126,16 @@ public class ModifyTicketDialogController {
                     .build();
             TrainResponse resp = trainService.searchTrains(req);
             List<String> allTimes = new ArrayList<>();
-            Map<String, it.unical.trenical.grpc.common.Train> localTimeToTrain = new HashMap<>();
-            LocalTime now = LocalTime.now();
-            boolean isToday = date.equals(LocalDate.now());
+            Map<String, Train> localTimeToTrain = new HashMap<>();
             for (Train train : resp.getTrainsList()) {
                 if (!train.hasDepartureTime()) continue;
                 Instant instant = Instant.ofEpochSecond(train.getDepartureTime().getSeconds());
                 LocalDateTime ldt = LocalDateTime.ofInstant(instant, DEFAULT_ZONE);
+                if (date.equals(LocalDate.now())) {
+                    LocalTime nowTime = LocalTime.now();
+                    if (ldt.toLocalTime().isBefore(nowTime) && ldt.toLocalDate().isEqual(LocalDate.now())) continue;
+                }
                 LocalTime time = ldt.toLocalTime();
-                if (isToday && time.isBefore(now)) continue;
                 String timeStr = time.format(TIME_FORMATTER);
                 if (!allTimes.contains(timeStr)) {
                     allTimes.add(timeStr);
@@ -230,12 +232,41 @@ public class ModifyTicketDialogController {
             selectedTrainId = timeToTrainId.get(time);
             confirmButton.setDisable(false);
         } else {
-            selectedTrainId = originalTrainId;
-            confirmButton.setDisable(selectedTrainId == null);
+            selectedTrainId = null;
+            confirmButton.setDisable(true);
+        }
+    }
+
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
+        oldPriceLoaded = false;
+        oldPrice = 0.0;
+        fetchOriginalTicketPrice();
+    }
+
+    private void fetchOriginalTicketPrice() {
+        if (ticketId == null || ticketId.isEmpty() || oldPriceLoaded) return;
+        try {
+            it.unical.trenical.grpc.ticket.GetTicketRequest req = it.unical.trenical.grpc.ticket.GetTicketRequest.newBuilder()
+                .setTicketId(ticketId)
+                .build();
+            it.unical.trenical.grpc.ticket.GetTicketResponse resp = ticketService.getTicket(req);
+            if (resp.hasTicket()) {
+                oldPrice = resp.getTicket().getPrice();
+                oldPriceLoaded = true;
+            }
+        } catch (Exception e) {
+            // In caso di errore lascia oldPrice a 0
         }
     }
 
     private void updatePrice() {
+        // Assicura che oldPrice sia caricato prima di calcolare il sovrapprezzo
+        if (!oldPriceLoaded) {
+            fetchOriginalTicketPrice();
+            priceLabel.setText("Prezzo: -");
+            return;
+        }
         String dep = getDepartureStation();
         String arr = getArrivalStation();
         LocalDate date = getDate();
@@ -270,8 +301,14 @@ public class ModifyTicketDialogController {
             GetTicketPriceResponse resp = ticketService.getTicketPrice(req);
             newPrice = resp.getPrice();
             // Calcola sovrapprezzo
-            surcharge = Math.max(0, newPrice - oldPrice);
-            priceLabel.setText("Sovrapprezzo: " + String.format("%.2f", surcharge) + " €");
+            surcharge = newPrice - oldPrice;
+            if (Math.abs(surcharge) < 0.01) {
+                priceLabel.setText("Prezzo: " + String.format("%.2f", newPrice) + " €");
+            } else if (surcharge > 0.01) {
+                priceLabel.setText("Prezzo: " + String.format("%.2f", newPrice) + " €  (Sovrapprezzo: +" + String.format("%.2f", surcharge) + " €)");
+            } else {
+                priceLabel.setText("Prezzo: " + String.format("%.2f", newPrice) + " €  (Risparmio: -" + String.format("%.2f", -surcharge) + " €)");
+            }
         } catch (Exception e) {
             priceLabel.setText("Prezzo: errore");
         }
@@ -320,30 +357,6 @@ public class ModifyTicketDialogController {
         updateSeatsAvailable();
         // Recupera il prezzo originale del biglietto dal server
         fetchOriginalTicketPrice();
-    }
-
-    private void fetchOriginalTicketPrice() {
-        if (ticketId == null || ticketId.isEmpty()) return;
-        try {
-            it.unical.trenical.grpc.ticket.GetTicketRequest req = it.unical.trenical.grpc.ticket.GetTicketRequest.newBuilder()
-                .setTicketId(ticketId)
-                .build();
-            it.unical.trenical.grpc.ticket.GetTicketResponse resp = ticketService.getTicket(req);
-            if (resp.hasTicket()) {
-                oldPrice = resp.getTicket().getPrice();
-                updatePrice();
-            }
-        } catch (Exception e) {
-            // In caso di errore lascia oldPrice a 0
-        }
-    }
-
-    public void setTicketId(String ticketId) {
-        this.ticketId = ticketId;
-    }
-
-    public void setOnSuccess(Runnable onSuccess) {
-        this.onSuccess = onSuccess;
     }
 
     @FXML
@@ -481,4 +494,3 @@ public class ModifyTicketDialogController {
         }
     }
 }
-

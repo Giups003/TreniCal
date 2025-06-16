@@ -32,31 +32,31 @@ public interface GetTicketPriceRequestOrBuilder extends
       getArrivalStationBytes();
 
   /**
-   * <code>.google.protobuf.Timestamp travel_date = 3;</code>
-   * @return Whether the travelDate field is set.
-   */
-  boolean hasTravelDate();
-  /**
-   * <code>.google.protobuf.Timestamp travel_date = 3;</code>
-   * @return The travelDate.
-   */
-  com.google.protobuf.Timestamp getTravelDate();
-  /**
-   * <code>.google.protobuf.Timestamp travel_date = 3;</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getTravelDateOrBuilder();
-
-  /**
-   * <code>string service_class = 4;</code>
+   * <code>string service_class = 3;</code>
    * @return The serviceClass.
    */
   java.lang.String getServiceClass();
   /**
-   * <code>string service_class = 4;</code>
+   * <code>string service_class = 3;</code>
    * @return The bytes for serviceClass.
    */
   com.google.protobuf.ByteString
       getServiceClassBytes();
+
+  /**
+   * <code>.google.protobuf.Timestamp travel_date = 4;</code>
+   * @return Whether the travelDate field is set.
+   */
+  boolean hasTravelDate();
+  /**
+   * <code>.google.protobuf.Timestamp travel_date = 4;</code>
+   * @return The travelDate.
+   */
+  com.google.protobuf.Timestamp getTravelDate();
+  /**
+   * <code>.google.protobuf.Timestamp travel_date = 4;</code>
+   */
+  com.google.protobuf.TimestampOrBuilder getTravelDateOrBuilder();
 
   /**
    * <code>string promo_code = 5;</code>
@@ -69,4 +69,16 @@ public interface GetTicketPriceRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPromoCodeBytes();
+
+  /**
+   * <code>string train_type = 6;</code>
+   * @return The trainType.
+   */
+  java.lang.String getTrainType();
+  /**
+   * <code>string train_type = 6;</code>
+   * @return The bytes for trainType.
+   */
+  com.google.protobuf.ByteString
+      getTrainTypeBytes();
 }

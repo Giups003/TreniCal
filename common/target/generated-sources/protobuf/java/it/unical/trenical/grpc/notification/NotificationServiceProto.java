@@ -94,87 +94,84 @@ public final class NotificationServiceProto {
   static {
     java.lang.String[] descriptorData = {
       "\n\032notification_service.proto\022\025trenical.n" +
-      "otification\032\014common.proto\032\037google/protob" +
-      "uf/timestamp.proto\032\033google/protobuf/empt" +
-      "y.proto\"=\n\027RegisterForTrainRequest\022\020\n\010us" +
-      "ername\030\001 \001(\t\022\020\n\010train_id\030\002 \001(\005\"7\n\021Unregi" +
-      "sterRequest\022\020\n\010username\030\001 \001(\t\022\020\n\010train_i" +
-      "d\030\002 \001(\005\"A\n\027GetNotificationsRequest\022\020\n\010us" +
-      "ername\030\001 \001(\t\022\024\n\014include_read\030\002 \001(\010\"2\n\027Ma" +
-      "rkNotificationRequest\022\027\n\017notification_id" +
-      "\030\001 \001(\t\"S\n\025GetTrainStatusRequest\022\020\n\010train" +
-      "_id\030\001 \001(\005\022(\n\004date\030\002 \001(\0132\032.google.protobu" +
-      "f.Timestamp\"\313\001\n\030UpdateTrainStatusRequest" +
-      "\022\020\n\010train_id\030\001 \001(\005\0222\n\006status\030\002 \001(\0162\".tre" +
-      "nical.notification.TrainStatus\022\017\n\007messag" +
-      "e\030\003 \001(\t\022\027\n\017platform_change\030\004 \001(\005\022\025\n\rdela" +
-      "y_minutes\030\005 \001(\005\022(\n\004date\030\006 \001(\0132\032.google.p" +
-      "rotobuf.Timestamp\"}\n\026SendPromotionalRequ" +
-      "est\022\r\n\005title\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\022\n\np" +
-      "romo_code\030\003 \001(\t\022/\n\013expiry_date\030\004 \001(\0132\032.g" +
-      "oogle.protobuf.Timestamp\"0\n\034PromotionalP" +
-      "referenceRequest\022\020\n\010username\030\001 \001(\t\"9\n\035Pr" +
-      "omotionalPreferenceResponse\022\030\n\020wants_pro" +
-      "motions\030\001 \001(\010\"M\n\037SetPromotionalPreferenc" +
-      "eRequest\022\020\n\010username\030\001 \001(\t\022\030\n\020wants_prom" +
-      "otions\030\002 \001(\010\"5\n\021OperationResponse\022\017\n\007suc" +
-      "cess\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\"N\n\020Notificat" +
-      "ionList\022:\n\rnotifications\030\001 \003(\0132#.trenica" +
-      "l.notification.Notification\"\346\001\n\014Notifica" +
-      "tion\022\n\n\002id\030\001 \001(\t\022\020\n\010username\030\002 \001(\t\022\r\n\005ti" +
-      "tle\030\003 \001(\t\022\017\n\007message\030\004 \001(\t\022-\n\ttimestamp\030" +
-      "\005 \001(\0132\032.google.protobuf.Timestamp\0225\n\004typ" +
-      "e\030\006 \001(\0162\'.trenical.notification.Notifica" +
-      "tionType\022\014\n\004read\030\007 \001(\010\022\020\n\010train_id\030\010 \001(\005" +
-      "\022\022\n\npromo_code\030\t \001(\t\"\332\001\n\023TrainStatusResp" +
-      "onse\022\020\n\010train_id\030\001 \001(\005\022\022\n\ntrain_name\030\002 \001" +
-      "(\t\0222\n\006status\030\003 \001(\0162\".trenical.notificati" +
-      "on.TrainStatus\022\020\n\010platform\030\004 \001(\005\022\025\n\rdela" +
-      "y_minutes\030\005 \001(\005\022\017\n\007message\030\006 \001(\t\022/\n\013last" +
-      "_update\030\007 \001(\0132\032.google.protobuf.Timestam" +
-      "p*\213\001\n\020NotificationType\022\013\n\007UNKNOWN\020\000\022\020\n\014T" +
-      "RAIN_STATUS\020\001\022\017\n\013TRAIN_DELAY\020\002\022\026\n\022TRAIN_" +
-      "CANCELLATION\020\003\022\023\n\017PLATFORM_CHANGE\020\004\022\r\n\tP" +
-      "ROMOTION\020\005\022\013\n\007GENERAL\020\006*e\n\013TrainStatus\022\022" +
-      "\n\016UNKNOWN_STATUS\020\000\022\013\n\007ON_TIME\020\001\022\013\n\007DELAY" +
-      "ED\020\002\022\r\n\tCANCELLED\020\003\022\013\n\007ARRIVED\020\004\022\014\n\010DEPA" +
-      "RTED\020\0052\270\010\n\023NotificationService\022s\n\027Regist" +
-      "erForTrainUpdates\022..trenical.notificatio" +
-      "n.RegisterForTrainRequest\032(.trenical.not" +
-      "ification.OperationResponse\022p\n\032Unregiste" +
-      "rFromTrainUpdates\022(.trenical.notificatio" +
-      "n.UnregisterRequest\032(.trenical.notificat" +
-      "ion.OperationResponse\022k\n\020GetNotification" +
-      "s\022..trenical.notification.GetNotificatio" +
-      "nsRequest\032\'.trenical.notification.Notifi" +
-      "cationList\022r\n\026MarkNotificationAsRead\022..t" +
-      "renical.notification.MarkNotificationReq" +
+      "otification\032\037google/protobuf/timestamp.p" +
+      "roto\"=\n\027RegisterForTrainRequest\022\020\n\010usern" +
+      "ame\030\001 \001(\t\022\020\n\010train_id\030\002 \001(\005\"7\n\021Unregiste" +
+      "rRequest\022\020\n\010username\030\001 \001(\t\022\020\n\010train_id\030\002" +
+      " \001(\005\"A\n\027GetNotificationsRequest\022\020\n\010usern" +
+      "ame\030\001 \001(\t\022\024\n\014include_read\030\002 \001(\010\"2\n\027MarkN" +
+      "otificationRequest\022\027\n\017notification_id\030\001 " +
+      "\001(\t\"S\n\025GetTrainStatusRequest\022\020\n\010train_id" +
+      "\030\001 \001(\005\022(\n\004date\030\002 \001(\0132\032.google.protobuf.T" +
+      "imestamp\"\313\001\n\030UpdateTrainStatusRequest\022\020\n" +
+      "\010train_id\030\001 \001(\005\0222\n\006status\030\002 \001(\0162\".trenic" +
+      "al.notification.TrainStatus\022\017\n\007message\030\003" +
+      " \001(\t\022\027\n\017platform_change\030\004 \001(\005\022\025\n\rdelay_m" +
+      "inutes\030\005 \001(\005\022(\n\004date\030\006 \001(\0132\032.google.prot" +
+      "obuf.Timestamp\"}\n\026SendPromotionalRequest" +
+      "\022\r\n\005title\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\022\n\nprom" +
+      "o_code\030\003 \001(\t\022/\n\013expiry_date\030\004 \001(\0132\032.goog" +
+      "le.protobuf.Timestamp\"0\n\034PromotionalPref" +
+      "erenceRequest\022\020\n\010username\030\001 \001(\t\"9\n\035Promo" +
+      "tionalPreferenceResponse\022\030\n\020wants_promot" +
+      "ions\030\001 \001(\010\"M\n\037SetPromotionalPreferenceRe" +
+      "quest\022\020\n\010username\030\001 \001(\t\022\030\n\020wants_promoti" +
+      "ons\030\002 \001(\010\"5\n\021OperationResponse\022\017\n\007succes" +
+      "s\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\"N\n\020Notification" +
+      "List\022:\n\rnotifications\030\001 \003(\0132#.trenical.n" +
+      "otification.Notification\"\346\001\n\014Notificatio" +
+      "n\022\n\n\002id\030\001 \001(\t\022\020\n\010username\030\002 \001(\t\022\r\n\005title" +
+      "\030\003 \001(\t\022\017\n\007message\030\004 \001(\t\022-\n\ttimestamp\030\005 \001" +
+      "(\0132\032.google.protobuf.Timestamp\0225\n\004type\030\006" +
+      " \001(\0162\'.trenical.notification.Notificatio" +
+      "nType\022\014\n\004read\030\007 \001(\010\022\020\n\010train_id\030\010 \001(\005\022\022\n" +
+      "\npromo_code\030\t \001(\t\"\332\001\n\023TrainStatusRespons" +
+      "e\022\020\n\010train_id\030\001 \001(\005\022\022\n\ntrain_name\030\002 \001(\t\022" +
+      "2\n\006status\030\003 \001(\0162\".trenical.notification." +
+      "TrainStatus\022\020\n\010platform\030\004 \001(\005\022\025\n\rdelay_m" +
+      "inutes\030\005 \001(\005\022\017\n\007message\030\006 \001(\t\022/\n\013last_up" +
+      "date\030\007 \001(\0132\032.google.protobuf.Timestamp*\213" +
+      "\001\n\020NotificationType\022\013\n\007UNKNOWN\020\000\022\020\n\014TRAI" +
+      "N_STATUS\020\001\022\017\n\013TRAIN_DELAY\020\002\022\026\n\022TRAIN_CAN" +
+      "CELLATION\020\003\022\023\n\017PLATFORM_CHANGE\020\004\022\r\n\tPROM" +
+      "OTION\020\005\022\013\n\007GENERAL\020\006*e\n\013TrainStatus\022\022\n\016U" +
+      "NKNOWN_STATUS\020\000\022\013\n\007ON_TIME\020\001\022\013\n\007DELAYED\020" +
+      "\002\022\r\n\tCANCELLED\020\003\022\013\n\007ARRIVED\020\004\022\014\n\010DEPARTE" +
+      "D\020\0052\270\010\n\023NotificationService\022s\n\027RegisterF" +
+      "orTrainUpdates\022..trenical.notification.R" +
+      "egisterForTrainRequest\032(.trenical.notifi" +
+      "cation.OperationResponse\022p\n\032UnregisterFr" +
+      "omTrainUpdates\022(.trenical.notification.U" +
+      "nregisterRequest\032(.trenical.notification" +
+      ".OperationResponse\022k\n\020GetNotifications\022." +
+      ".trenical.notification.GetNotificationsR" +
+      "equest\032\'.trenical.notification.Notificat" +
+      "ionList\022r\n\026MarkNotificationAsRead\022..tren" +
+      "ical.notification.MarkNotificationReques" +
+      "t\032(.trenical.notification.OperationRespo" +
+      "nse\022j\n\016GetTrainStatus\022,.trenical.notific" +
+      "ation.GetTrainStatusRequest\032*.trenical.n" +
+      "otification.TrainStatusResponse\022n\n\021Updat" +
+      "eTrainStatus\022/.trenical.notification.Upd" +
+      "ateTrainStatusRequest\032(.trenical.notific" +
+      "ation.OperationResponse\022w\n\034SendPromotion" +
+      "alNotifications\022-.trenical.notification." +
+      "SendPromotionalRequest\032(.trenical.notifi" +
+      "cation.OperationResponse\022\205\001\n\030GetPromotio" +
+      "nalPreference\0223.trenical.notification.Pr" +
+      "omotionalPreferenceRequest\0324.trenical.no" +
+      "tification.PromotionalPreferenceResponse" +
+      "\022|\n\030SetPromotionalPreference\0226.trenical." +
+      "notification.SetPromotionalPreferenceReq" +
       "uest\032(.trenical.notification.OperationRe" +
-      "sponse\022j\n\016GetTrainStatus\022,.trenical.noti" +
-      "fication.GetTrainStatusRequest\032*.trenica" +
-      "l.notification.TrainStatusResponse\022n\n\021Up" +
-      "dateTrainStatus\022/.trenical.notification." +
-      "UpdateTrainStatusRequest\032(.trenical.noti" +
-      "fication.OperationResponse\022w\n\034SendPromot" +
-      "ionalNotifications\022-.trenical.notificati" +
-      "on.SendPromotionalRequest\032(.trenical.not" +
-      "ification.OperationResponse\022\205\001\n\030GetPromo" +
-      "tionalPreference\0223.trenical.notification" +
-      ".PromotionalPreferenceRequest\0324.trenical" +
-      ".notification.PromotionalPreferenceRespo" +
-      "nse\022|\n\030SetPromotionalPreference\0226.trenic" +
-      "al.notification.SetPromotionalPreference" +
-      "Request\032(.trenical.notification.Operatio" +
-      "nResponseBB\n$it.unical.trenical.grpc.not" +
-      "ificationB\030NotificationServiceProtoP\001b\006p" +
-      "roto3"
+      "sponseBB\n$it.unical.trenical.grpc.notifi" +
+      "cationB\030NotificationServiceProtoP\001b\006prot" +
+      "o3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          it.unical.trenical.grpc.common.CommonProto.getDescriptor(),
           com.google.protobuf.TimestampProto.getDescriptor(),
-          com.google.protobuf.EmptyProto.getDescriptor(),
         });
     internal_static_trenical_notification_RegisterForTrainRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -260,9 +257,7 @@ public final class NotificationServiceProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_notification_TrainStatusResponse_descriptor,
         new java.lang.String[] { "TrainId", "TrainName", "Status", "Platform", "DelayMinutes", "Message", "LastUpdate", });
-    it.unical.trenical.grpc.common.CommonProto.getDescriptor();
     com.google.protobuf.TimestampProto.getDescriptor();
-    com.google.protobuf.EmptyProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -177,4 +177,24 @@ public interface ModifyTicketRequestOrBuilder extends
    * @return The trainId.
    */
   int getTrainId();
+
+  /**
+   * <pre>
+   * Nuovo campo: tipologia treno
+   * </pre>
+   *
+   * <code>string train_type = 9;</code>
+   * @return The trainType.
+   */
+  java.lang.String getTrainType();
+  /**
+   * <pre>
+   * Nuovo campo: tipologia treno
+   * </pre>
+   *
+   * <code>string train_type = 9;</code>
+   * @return The bytes for trainType.
+   */
+  com.google.protobuf.ByteString
+      getTrainTypeBytes();
 }

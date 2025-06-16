@@ -67,7 +67,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
 
             // Se la richiesta non contiene un metodo di pagamento o è esplicitamente marcata come solo prezzo,
             // viene trattata come simulazione per calcolo prezzo
-            if (request.getPaymentMethod() == null || request.getPaymentMethod().isEmpty() ||
+            if (request.getPaymentMethod().isEmpty() ||
                 "SOLO_PREZZO".equals(request.getPaymentMethod())) {
 
                 double price = priceCalculator.calculateTicketPrice(
@@ -75,7 +75,8 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                         request.getArrivalStation(),
                         request.getServiceClass(),
                         request.getTravelDate(),
-                        request.getPromoCode()
+                        request.getPromoCode(),
+                        request.getTrainType()
                 );
                 PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
                         .setSuccess(true)
@@ -115,7 +116,8 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                     request.getArrivalStation(),
                     request.getServiceClass(),
                     request.getTravelDate(),
-                    request.getPromoCode()
+                    request.getPromoCode() != null ? request.getPromoCode().toUpperCase() : "",
+                    request.getTrainType()
             );
             // Crea e salva un biglietto per ogni posto richiesto
             List<Ticket> createdTickets = new ArrayList<>();
@@ -208,16 +210,31 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
             Timestamp newDate = request.hasNewTravelDate() ? request.getNewTravelDate() : ticket.getTravelDate();
             Timestamp newTime = request.hasNewTravelTime() ? request.getNewTravelTime() : ticket.getTravelTime();
 
+            // Determina il nuovo trainId (se non specificato, usa quello attuale)
+            int newTrainId = request.getTrainId() != 0 ? request.getTrainId() : ticket.getTrainId();
+
+            // Libera il vecchio posto (rimuovendo il biglietto)
+            dataStore.deleteTicket(ticket.getId());
+            // Trova tutti i posti occupati sul nuovo treno/data/orario
+            Set<Integer> occupiedSeats = new HashSet<>();
+            for (Ticket t : dataStore.getAllTickets()) {
+                if (t.getTrainId() == newTrainId && t.hasTravelDate() && t.getTravelDate().equals(newDate) && t.hasTravelTime() && t.getTravelTime().equals(newTime)) {
+                    try { occupiedSeats.add(Integer.parseInt(t.getSeat())); } catch (Exception ignored) {}
+                }
+            }
+            // Assegna il primo posto libero
+            int seatNumber = 1;
+            while (occupiedSeats.contains(seatNumber)) {
+                seatNumber++;
+            }
+            updatedTicket.setSeat(String.valueOf(seatNumber));
+            // Aggiorna i campi modificati
             if (isValidField(request.getNewDepartureStation())) {
                 updatedTicket.setDepartureStation(request.getNewDepartureStation());
                 modified = true;
             }
             if (isValidField(request.getNewArrivalStation())) {
                 updatedTicket.setArrivalStation(request.getNewArrivalStation());
-                modified = true;
-            }
-            if (isValidField(request.getNewServiceClass())) {
-                updatedTicket.setServiceClass(request.getNewServiceClass());
                 modified = true;
             }
             if (request.hasNewTravelDate()) {
@@ -232,38 +249,48 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 updatedTicket.setTrainId(request.getTrainId());
                 modified = true;
             }
+            if (isValidField(request.getNewServiceClass())) {
+                updatedTicket.setServiceClass(request.getNewServiceClass());
+                modified = true;
+            }
 
             // Ricalcola il prezzo e applica eventuale penale/differenza
+            double oldPrice = ticket.getPrice();
+            double newPrice = priceCalculator.calculateTicketPrice(
+                    newDeparture,
+                    newArrival,
+                    newServiceClass,
+                    newDate,
+                    "", // promoCode vuoto, nessun codice promo durante modifica
+                    request.getTrainType()
+            );
+            double finalPrice = newPrice;
+            String msg = "Biglietto modificato con successo!";
+            // Penale variabile: 10% del prezzo originale se cambia classe, altrimenti 5% se cambia solo data/orario
+            double penale = 0.0;
+            boolean classChanged = !ticket.getServiceClass().equals(newServiceClass);
+            boolean dateChanged = !ticket.getTravelDate().equals(newDate) || !ticket.getTravelTime().equals(newTime);
+            if (classChanged) {
+                penale = oldPrice * 0.10; // 10% se cambia classe
+                msg += String.format(" (penale cambio classe: %.2f euro)", penale);
+            } else if (dateChanged) {
+                penale = oldPrice * 0.05; // 5% se cambia solo data/orario
+                msg += String.format(" (penale cambio data/orario: %.2f euro)", penale);
+            }
+            if (newPrice > oldPrice) {
+                double diff = newPrice - oldPrice;
+                finalPrice = newPrice + penale;
+                msg += String.format(" (differenza tariffaria: %.2f euro)", diff);
+            } else {
+                finalPrice = newPrice + penale;
+            }
+            updatedTicket.setPrice(finalPrice);
+
             if (modified) {
-                double oldPrice = ticket.getPrice();
-                double newPrice = priceCalculator.calculateTicketPrice(
-                        newDeparture,
-                        newArrival,
-                        newServiceClass,
-                        newDate,
-                        ""
-                );
-                double finalPrice = newPrice;
-                String msg = "Biglietto modificato con successo!";
-                // Penale variabile: 10% del prezzo originale se cambia classe, altrimenti 5% se cambia solo data/orario
-                double penale = 0.0;
-                if (!ticket.getServiceClass().equals(newServiceClass)) {
-                    penale = oldPrice * 0.10; // 10% se cambia classe
-                    msg += String.format(" (penale cambio classe: %.2f euro)", penale);
-                } else if (!ticket.getTravelDate().equals(newDate)) {
-                    penale = oldPrice * 0.05; // 5% se cambia solo data/orario
-                    msg += String.format(" (penale cambio data/orario: %.2f euro)", penale);
-                }
-                if (newPrice > oldPrice) {
-                    double diff = newPrice - oldPrice;
-                    finalPrice = newPrice + penale;
-                    msg += String.format(" (differenza tariffaria: %.2f euro)", diff);
-                } else {
-                    finalPrice = newPrice + penale;
-                }
-                updatedTicket.setPrice(finalPrice);
                 dataStore.deleteTicket(ticket.getId());
                 dataStore.addTicket(updatedTicket.build());
+                // Mostra sempre il nuovo prezzo, la penale e la differenza tariffaria
+                msg += String.format(" [Prezzo nuovo: %.2f euro, Prezzo precedente: %.2f euro, Penale: %.2f euro]", newPrice, oldPrice, penale);
                 sendOperationResponse(true, msg, responseObserver);
             } else {
                 sendOperationResponse(false, "Nessuna modifica effettuata!", responseObserver);
@@ -407,7 +434,8 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 request.getArrivalStation(),
                 request.getServiceClass(),
                 request.getTravelDate(),
-                request.getPromoCode()
+                request.getPromoCode() != null ? request.getPromoCode().toUpperCase() : "",
+                request.getTrainType()
             );
             GetTicketPriceResponse response = GetTicketPriceResponse.newBuilder()
                 .setPrice(price)

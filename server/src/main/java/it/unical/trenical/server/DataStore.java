@@ -701,9 +701,26 @@ public class DataStore {
     }
 
     // --- PROMOZIONI ---
-    public synchronized Promotion findBestPromotion(String routeName, String serviceClass, java.time.LocalDate travelDate) {
-        // Implementazione da aggiornare se serve, ora non più usata direttamente
-        return null;
+    /**
+     * Trova la migliore promozione per tratta, classe, data e tipologia treno (obbligatorio).
+     */
+    public synchronized Promotion findBestPromotion(String routeName, String serviceClass, java.time.LocalDate travelDate, String trainType) {
+        Promotion bestPromo = null;
+        double maxDiscount = 0.0;
+        for (Promotion promo : promotions) {
+            boolean routeOk = (promo.getRouteNamesList().isEmpty() || promo.getRouteNamesList().contains(routeName));
+            boolean classOk = (promo.getServiceClassesList().isEmpty() || promo.getServiceClassesList().contains(serviceClass));
+            boolean fromOk = (!promo.hasValidFrom() || !travelDate.isBefore(java.time.Instant.ofEpochSecond(promo.getValidFrom().getSeconds()).atZone(java.time.ZoneOffset.UTC).toLocalDate()));
+            boolean toOk = (!promo.hasValidTo() || !travelDate.isAfter(java.time.Instant.ofEpochSecond(promo.getValidTo().getSeconds()).atZone(java.time.ZoneOffset.UTC).toLocalDate()));
+            boolean typeOk = (promo.getTrainType().isEmpty() || promo.getTrainType().equalsIgnoreCase(trainType));
+            if (routeOk && classOk && fromOk && toOk && typeOk) {
+                if (promo.getDiscountPercent() > maxDiscount) {
+                    maxDiscount = promo.getDiscountPercent();
+                    bestPromo = promo;
+                }
+            }
+        }
+        return bestPromo;
     }
 
     public synchronized void clearAllTickets() {

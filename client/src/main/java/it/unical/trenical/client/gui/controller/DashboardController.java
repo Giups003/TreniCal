@@ -64,8 +64,6 @@ public class DashboardController {
     @FXML
     private Button adminPanelButton;
     @FXML
-    private Button activateNotificationsButton;
-    @FXML
     private CheckBox promotionsCheckBox;
 
     @FXML
@@ -235,12 +233,12 @@ public class DashboardController {
     }
 
     @FXML
-    private void onBuyTicket(ActionEvent event) {
+    private void onBuyTicket() {
         SceneManager.getInstance().switchTo(SceneManager.BUY_TICKET);
     }
 
     @FXML
-    private void onMyTickets(ActionEvent event) {
+    private void onMyTickets() {
         if (UserSession.getUsername() == null || UserSession.getUsername().isEmpty()) {
             // Mostra errore e non naviga
             Alert alert = new Alert(Alert.AlertType.ERROR, "Devi effettuare il login per visualizzare i tuoi biglietti.", ButtonType.OK);
@@ -278,12 +276,12 @@ public class DashboardController {
     }
 
     @FXML
-    private void onAdminPromotions(ActionEvent event) {
+    private void onAdminPromotions() {
         SceneManager.getInstance().showPromotionsAdmin();
     }
 
     @FXML
-    private void onNotifications(ActionEvent event) {
+    private void onNotifications() {
         if (UserSession.getUsername() == null || UserSession.getUsername().isEmpty()) {
             // Mostra errore e non naviga
             Alert alert = new Alert(Alert.AlertType.ERROR, "Devi effettuare il login per visualizzare le notifiche.", ButtonType.OK);
@@ -317,95 +315,14 @@ public class DashboardController {
     private void onLogout() {
         // Chiamata diretta al logout del LoginController
         try {
-            it.unical.trenical.client.gui.controller.LoginController loginController = new it.unical.trenical.client.gui.controller.LoginController();
+            LoginController loginController = new LoginController();
             loginController.onLogout();
         } catch (Exception e) {
             // Fallback: reset manuale
-            it.unical.trenical.client.session.UserSession.setUsername("");
-            it.unical.trenical.client.session.UserSession.setEmail("");
-            it.unical.trenical.client.session.UserSession.setAdmin(false);
-            it.unical.trenical.client.gui.SceneManager.getInstance().switchTo(it.unical.trenical.client.gui.SceneManager.LOGIN);
+            UserSession.setUsername("");
+            UserSession.setEmail("");
+            UserSession.setAdmin(false);
+            SceneManager.getInstance().switchTo(SceneManager.LOGIN);
         }
-    }
-
-    @FXML
-    private void onActivateNotifications() {
-        String username = UserSession.getUsername();
-        if (username == null || username.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Devi effettuare il login per attivare le notifiche.", ButtonType.OK);
-            alert.showAndWait();
-            return;
-        }
-        // Recupera i biglietti dell'utente
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
-        TicketServiceGrpc.TicketServiceBlockingStub ticketStub = TicketServiceGrpc.newBlockingStub(channel);
-        ListTicketsRequest req = ListTicketsRequest.newBuilder().setPassengerName(username).build();
-        ListTicketsResponse resp = ticketStub.listTickets(req);
-        List<Ticket> tickets = resp.getTicketsList();
-        if (tickets.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Non hai biglietti attivi per nessun treno.", ButtonType.OK);
-            alert.showAndWait();
-            channel.shutdown();
-            return;
-        }
-        // Dialog personalizzata con selezione multipla
-        Dialog<List<Ticket>> dialog = new Dialog<>();
-        dialog.setTitle("Attiva notifiche treno");
-        dialog.setHeaderText("Seleziona uno o più treni per cui ricevere notifiche");
-        ButtonType okButtonType = new ButtonType("Attiva notifiche", ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
-        ObservableList<Ticket> observableTickets = FXCollections.observableArrayList(tickets);
-        ListView<CheckBox> listView = new ListView<>();
-        ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
-        for (Ticket t : tickets) {
-            String label = "Treno " + t.getTrainId() + " - " + t.getDepartureStation() + " → " + t.getArrivalStation();
-            CheckBox cb = new CheckBox(label);
-            cb.setUserData(t);
-            checkBoxes.add(cb);
-        }
-        listView.setItems(checkBoxes);
-        listView.setPrefHeight(Math.min(300, tickets.size() * 40 + 20));
-        // Pulsante seleziona tutti
-        Button selectAllBtn = new Button("Seleziona tutti");
-        selectAllBtn.setOnAction(e -> checkBoxes.forEach(cb -> cb.setSelected(true)));
-        VBox vbox = new VBox(10, selectAllBtn, listView);
-        dialog.getDialogPane().setContent(vbox);
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == okButtonType) {
-                return checkBoxes.stream()
-                        .filter(CheckBox::isSelected)
-                        .map(cb -> (Ticket) cb.getUserData())
-                        .collect(Collectors.toList());
-            }
-            return null;
-        });
-        Optional<List<Ticket>> result = dialog.showAndWait();
-        if (result.isPresent() && !result.get().isEmpty()) {
-            NotificationServiceGrpc.NotificationServiceBlockingStub notifStub = NotificationServiceGrpc.newBlockingStub(channel);
-            int successCount = 0;
-            int failCount = 0;
-            StringBuilder failMsg = new StringBuilder();
-            for (Ticket t : result.get()) {
-                RegisterForTrainRequest regReq = RegisterForTrainRequest.newBuilder()
-                        .setUsername(username)
-                        .setTrainId(t.getTrainId())
-                        .build();
-                OperationResponse opResp = notifStub.registerForTrainUpdates(regReq);
-                if (opResp.getSuccess()) {
-                    successCount++;
-                } else {
-                    failCount++;
-                    failMsg.append("\nTreno ").append(t.getTrainId()).append(": ").append(opResp.getMessage());
-                }
-            }
-            if (successCount > 0) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Notifiche attivate per " + successCount + " treni selezionati!" + (failCount > 0 ? "\nAlcuni errori:" + failMsg : ""), ButtonType.OK);
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Errore: nessuna notifica attivata." + (failCount > 0 ? failMsg.toString() : ""), ButtonType.OK);
-                alert.showAndWait();
-            }
-        }
-        channel.shutdown();
     }
 }

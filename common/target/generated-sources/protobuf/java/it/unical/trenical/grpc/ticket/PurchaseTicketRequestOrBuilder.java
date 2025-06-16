@@ -160,4 +160,24 @@ public interface PurchaseTicketRequestOrBuilder extends
    * <code>.google.protobuf.Timestamp travel_time = 10;</code>
    */
   com.google.protobuf.TimestampOrBuilder getTravelTimeOrBuilder();
+
+  /**
+   * <pre>
+   * tipologia treno
+   * </pre>
+   *
+   * <code>string train_type = 11;</code>
+   * @return The trainType.
+   */
+  java.lang.String getTrainType();
+  /**
+   * <pre>
+   * tipologia treno
+   * </pre>
+   *
+   * <code>string train_type = 11;</code>
+   * @return The bytes for trainType.
+   */
+  com.google.protobuf.ByteString
+      getTrainTypeBytes();
 }

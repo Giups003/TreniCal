@@ -47,6 +47,7 @@ message PurchaseTicketRequest {
   string payment_method = 8; // Es: "Carta di Credito", "PayPal"
   int32 seats = 9;
   google.protobuf.Timestamp travel_time = 10; // Orario di viaggio
+  string train_type = 11; // tipologia treno
 }
 
 // Risposta per l'acquisto di un biglietto
@@ -69,6 +70,7 @@ message ModifyTicketRequest {
   string new_arrival_station = 6; // Nuova stazione di arrivo (opzionale)
   google.protobuf.Timestamp new_travel_time = 7; // Nuovo orario di viaggio (opzionale)
   int32 train_id = 8; // Nuovo ID treno (opzionale, aggiunto per supporto cambio treno)
+  string train_type = 9; // Nuovo campo: tipologia treno
 }
 
 // Richiesta per annullare un biglietto
@@ -111,9 +113,10 @@ message ClearAllTicketsRequest {}
 message GetTicketPriceRequest {
   string departure_station = 1;
   string arrival_station = 2;
-  google.protobuf.Timestamp travel_date = 3;
-  string service_class = 4;
+  string service_class = 3;
+  google.protobuf.Timestamp travel_date = 4;
   string promo_code = 5;
+  string train_type = 6;
 }
 
 // Risposta per il calcolo del prezzo di un biglietto

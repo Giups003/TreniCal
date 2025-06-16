@@ -6,9 +6,7 @@ option java_multiple_files = true;
 option java_package = "it.unical.trenical.grpc.notification";
 option java_outer_classname = "NotificationServiceProto";
 
-import "common.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
 
 // Servizio per la gestione delle notifiche
 service NotificationService {

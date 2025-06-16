@@ -1,33 +1,11 @@
 [{
-  "id": 6,
+  "id": 1,
   "name": "Giugno25",
-  "description": "30% di sconto da Reggio a Lamezia",
+  "description": "30% di sconto OVUNQUE !",
   "discountPercent": 30.0,
-  "routeNames": ["Regionale Reggio-Lamezia"],
+  "routeNames": ["Frecciarossa Roma-Milano", "Italo Milano-Napoli", "Intercity Napoli-Reggio Calabria", "Regionale Reggio-Lamezia", "Regionale Lamezia-Cosenza", "Regionale Cosenza-Catanzaro", "Regionale Bari-Venezia", "Regionale Torino-Genova", "Regionale Firenze-Bologna", "Regionale Napoli-Paola", "Regionale Cosenza-Reggio Calabria", "Regionale Lamezia-Catanzaro", "Regionale Crotone-Catanzaro", "Regionale Paola-Cosenza", "Regionale Lamezia-Crotone"],
   "serviceClasses": ["Prima Classe", "Seconda Classe"],
   "validFrom": "2025-06-01T00:00:00Z",
   "validTo": "2025-06-30T00:00:00Z",
-  "onlyForLoyaltyMembers": true,
   "trainType": "Frecciarossa,Intercity,Regionale,Italo"
-},{
-  "id": 7,
-  "name": "prova",
-  "description": "prova1",
-  "discountPercent": 10.0,
-  "routeNames": ["Regionale Reggio-Lamezia"],
-  "serviceClasses": ["Prima Classe"],
-  "validFrom": "2025-06-01T00:00:00Z",
-  "validTo": "2025-06-30T00:00:00Z",
-  "trainType": "Frecciarossa,Intercity,Regionale,Italo"
-},{
-  "id": 8,
-  "name": "luglio",
-  "description": "Gaia morirà affogata nel fiume",
-  "discountPercent": 99.0,
-  "routeNames": ["Regionale Reggio-Lamezia"],
-  "serviceClasses": ["Prima Classe"],
-  "validFrom": "2025-07-01T00:00:00Z",
-  "validTo": "2025-06-30T00:00:00Z",
-  "onlyForLoyaltyMembers": true,
-  "trainType": "Regionale"
 }]

@@ -26,6 +26,7 @@ private static final long serialVersionUID = 0L;
     serviceClass_ = "";
     promoCode_ = "";
     paymentMethod_ = "";
+    trainType_ = "";
   }
 
   @java.lang.Override
@@ -397,6 +398,53 @@ private static final long serialVersionUID = 0L;
     return travelTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : travelTime_;
   }
 
+  public static final int TRAIN_TYPE_FIELD_NUMBER = 11;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object trainType_ = "";
+  /**
+   * <pre>
+   * tipologia treno
+   * </pre>
+   *
+   * <code>string train_type = 11;</code>
+   * @return The trainType.
+   */
+  @java.lang.Override
+  public java.lang.String getTrainType() {
+    java.lang.Object ref = trainType_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      trainType_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * tipologia treno
+   * </pre>
+   *
+   * <code>string train_type = 11;</code>
+   * @return The bytes for trainType.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getTrainTypeBytes() {
+    java.lang.Object ref = trainType_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      trainType_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -441,6 +489,9 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000002) != 0)) {
       output.writeMessage(10, getTravelTime());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(trainType_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, trainType_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -484,6 +535,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(10, getTravelTime());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(trainType_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, trainType_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -525,6 +579,8 @@ private static final long serialVersionUID = 0L;
       if (!getTravelTime()
           .equals(other.getTravelTime())) return false;
     }
+    if (!getTrainType()
+        .equals(other.getTrainType())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -560,6 +616,8 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + TRAVEL_TIME_FIELD_NUMBER;
       hash = (53 * hash) + getTravelTime().hashCode();
     }
+    hash = (37 * hash) + TRAIN_TYPE_FIELD_NUMBER;
+    hash = (53 * hash) + getTrainType().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -720,6 +778,7 @@ private static final long serialVersionUID = 0L;
         travelTimeBuilder_.dispose();
         travelTimeBuilder_ = null;
       }
+      trainType_ = "";
       return this;
     }
 
@@ -789,6 +848,9 @@ private static final long serialVersionUID = 0L;
             ? travelTime_
             : travelTimeBuilder_.build();
         to_bitField0_ |= 0x00000002;
+      }
+      if (((from_bitField0_ & 0x00000400) != 0)) {
+        result.trainType_ = trainType_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -879,6 +941,11 @@ private static final long serialVersionUID = 0L;
       if (other.hasTravelTime()) {
         mergeTravelTime(other.getTravelTime());
       }
+      if (!other.getTrainType().isEmpty()) {
+        trainType_ = other.trainType_;
+        bitField0_ |= 0x00000400;
+        onChanged();
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -959,6 +1026,11 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000200;
               break;
             } // case 82
+            case 90: {
+              trainType_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000400;
+              break;
+            } // case 90
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1820,6 +1892,98 @@ private static final long serialVersionUID = 0L;
         travelTime_ = null;
       }
       return travelTimeBuilder_;
+    }
+
+    private java.lang.Object trainType_ = "";
+    /**
+     * <pre>
+     * tipologia treno
+     * </pre>
+     *
+     * <code>string train_type = 11;</code>
+     * @return The trainType.
+     */
+    public java.lang.String getTrainType() {
+      java.lang.Object ref = trainType_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trainType_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * tipologia treno
+     * </pre>
+     *
+     * <code>string train_type = 11;</code>
+     * @return The bytes for trainType.
+     */
+    public com.google.protobuf.ByteString
+        getTrainTypeBytes() {
+      java.lang.Object ref = trainType_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        trainType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * tipologia treno
+     * </pre>
+     *
+     * <code>string train_type = 11;</code>
+     * @param value The trainType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTrainType(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      trainType_ = value;
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * tipologia treno
+     * </pre>
+     *
+     * <code>string train_type = 11;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTrainType() {
+      trainType_ = getDefaultInstance().getTrainType();
+      bitField0_ = (bitField0_ & ~0x00000400);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * tipologia treno
+     * </pre>
+     *
+     * <code>string train_type = 11;</code>
+     * @param value The bytes for trainType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTrainTypeBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      trainType_ = value;
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

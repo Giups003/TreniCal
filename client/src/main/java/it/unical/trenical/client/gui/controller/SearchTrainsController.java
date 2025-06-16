@@ -252,7 +252,7 @@ public class SearchTrainsController {
         LocalTime departureTime = convertTimestampToLocalTime(train.getDepartureTime());
         int availableSeats = 0;
         try {
-            // Usa sempre la data e l'orario esatti del treno
+            // Richiama sempre il server con la data e l'orario esatti del treno
             if (date != null && departureTime != null) {
                 LocalDateTime dateTime = LocalDateTime.of(date, departureTime);
                 TrainDetailsResponse details = trainClient.getTrainDetails(trainId, dateTime);
@@ -263,6 +263,7 @@ public class SearchTrainsController {
                 }
             }
         } catch (Exception e) {
+            // In caso di errore, mostra 0 posti disponibili
             availableSeats = 0;
         }
         return new TrainSearchResult(
@@ -336,4 +337,3 @@ public class SearchTrainsController {
         SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
     }
 }
-
