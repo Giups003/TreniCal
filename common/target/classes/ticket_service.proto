@@ -104,6 +104,11 @@ message ListTicketsResponse {
 message OperationResponse {
   bool success = 1; // Indica se l'operazione è andata a buon fine
   string message = 2; // Messaggio di conferma o errore
+  double old_price = 3;
+  double new_price = 4;
+  double penalty = 5;
+  double tariff_diff = 6;
+  double total = 7;
 }
 
 // Richiesta per eliminare tutti i biglietti

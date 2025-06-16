@@ -105,6 +105,61 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int OLD_PRICE_FIELD_NUMBER = 3;
+  private double oldPrice_ = 0D;
+  /**
+   * <code>double old_price = 3;</code>
+   * @return The oldPrice.
+   */
+  @java.lang.Override
+  public double getOldPrice() {
+    return oldPrice_;
+  }
+
+  public static final int NEW_PRICE_FIELD_NUMBER = 4;
+  private double newPrice_ = 0D;
+  /**
+   * <code>double new_price = 4;</code>
+   * @return The newPrice.
+   */
+  @java.lang.Override
+  public double getNewPrice() {
+    return newPrice_;
+  }
+
+  public static final int PENALTY_FIELD_NUMBER = 5;
+  private double penalty_ = 0D;
+  /**
+   * <code>double penalty = 5;</code>
+   * @return The penalty.
+   */
+  @java.lang.Override
+  public double getPenalty() {
+    return penalty_;
+  }
+
+  public static final int TARIFF_DIFF_FIELD_NUMBER = 6;
+  private double tariffDiff_ = 0D;
+  /**
+   * <code>double tariff_diff = 6;</code>
+   * @return The tariffDiff.
+   */
+  @java.lang.Override
+  public double getTariffDiff() {
+    return tariffDiff_;
+  }
+
+  public static final int TOTAL_FIELD_NUMBER = 7;
+  private double total_ = 0D;
+  /**
+   * <code>double total = 7;</code>
+   * @return The total.
+   */
+  @java.lang.Override
+  public double getTotal() {
+    return total_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -125,6 +180,21 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, message_);
     }
+    if (java.lang.Double.doubleToRawLongBits(oldPrice_) != 0) {
+      output.writeDouble(3, oldPrice_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(newPrice_) != 0) {
+      output.writeDouble(4, newPrice_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(penalty_) != 0) {
+      output.writeDouble(5, penalty_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(tariffDiff_) != 0) {
+      output.writeDouble(6, tariffDiff_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(total_) != 0) {
+      output.writeDouble(7, total_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -140,6 +210,26 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, message_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(oldPrice_) != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeDoubleSize(3, oldPrice_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(newPrice_) != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeDoubleSize(4, newPrice_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(penalty_) != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeDoubleSize(5, penalty_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(tariffDiff_) != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeDoubleSize(6, tariffDiff_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(total_) != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeDoubleSize(7, total_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -160,6 +250,21 @@ private static final long serialVersionUID = 0L;
         != other.getSuccess()) return false;
     if (!getMessage()
         .equals(other.getMessage())) return false;
+    if (java.lang.Double.doubleToLongBits(getOldPrice())
+        != java.lang.Double.doubleToLongBits(
+            other.getOldPrice())) return false;
+    if (java.lang.Double.doubleToLongBits(getNewPrice())
+        != java.lang.Double.doubleToLongBits(
+            other.getNewPrice())) return false;
+    if (java.lang.Double.doubleToLongBits(getPenalty())
+        != java.lang.Double.doubleToLongBits(
+            other.getPenalty())) return false;
+    if (java.lang.Double.doubleToLongBits(getTariffDiff())
+        != java.lang.Double.doubleToLongBits(
+            other.getTariffDiff())) return false;
+    if (java.lang.Double.doubleToLongBits(getTotal())
+        != java.lang.Double.doubleToLongBits(
+            other.getTotal())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -176,6 +281,21 @@ private static final long serialVersionUID = 0L;
         getSuccess());
     hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
     hash = (53 * hash) + getMessage().hashCode();
+    hash = (37 * hash) + OLD_PRICE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getOldPrice()));
+    hash = (37 * hash) + NEW_PRICE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getNewPrice()));
+    hash = (37 * hash) + PENALTY_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getPenalty()));
+    hash = (37 * hash) + TARIFF_DIFF_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getTariffDiff()));
+    hash = (37 * hash) + TOTAL_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getTotal()));
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -313,6 +433,11 @@ private static final long serialVersionUID = 0L;
       bitField0_ = 0;
       success_ = false;
       message_ = "";
+      oldPrice_ = 0D;
+      newPrice_ = 0D;
+      penalty_ = 0D;
+      tariffDiff_ = 0D;
+      total_ = 0D;
       return this;
     }
 
@@ -351,6 +476,21 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000002) != 0)) {
         result.message_ = message_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.oldPrice_ = oldPrice_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.newPrice_ = newPrice_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.penalty_ = penalty_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.tariffDiff_ = tariffDiff_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.total_ = total_;
       }
     }
 
@@ -406,6 +546,21 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000002;
         onChanged();
       }
+      if (other.getOldPrice() != 0D) {
+        setOldPrice(other.getOldPrice());
+      }
+      if (other.getNewPrice() != 0D) {
+        setNewPrice(other.getNewPrice());
+      }
+      if (other.getPenalty() != 0D) {
+        setPenalty(other.getPenalty());
+      }
+      if (other.getTariffDiff() != 0D) {
+        setTariffDiff(other.getTariffDiff());
+      }
+      if (other.getTotal() != 0D) {
+        setTotal(other.getTotal());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -442,6 +597,31 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000002;
               break;
             } // case 18
+            case 25: {
+              oldPrice_ = input.readDouble();
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 25
+            case 33: {
+              newPrice_ = input.readDouble();
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 33
+            case 41: {
+              penalty_ = input.readDouble();
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 41
+            case 49: {
+              tariffDiff_ = input.readDouble();
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 49
+            case 57: {
+              total_ = input.readDouble();
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 57
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -591,6 +771,166 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       message_ = value;
       bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
+
+    private double oldPrice_ ;
+    /**
+     * <code>double old_price = 3;</code>
+     * @return The oldPrice.
+     */
+    @java.lang.Override
+    public double getOldPrice() {
+      return oldPrice_;
+    }
+    /**
+     * <code>double old_price = 3;</code>
+     * @param value The oldPrice to set.
+     * @return This builder for chaining.
+     */
+    public Builder setOldPrice(double value) {
+
+      oldPrice_ = value;
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>double old_price = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearOldPrice() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      oldPrice_ = 0D;
+      onChanged();
+      return this;
+    }
+
+    private double newPrice_ ;
+    /**
+     * <code>double new_price = 4;</code>
+     * @return The newPrice.
+     */
+    @java.lang.Override
+    public double getNewPrice() {
+      return newPrice_;
+    }
+    /**
+     * <code>double new_price = 4;</code>
+     * @param value The newPrice to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNewPrice(double value) {
+
+      newPrice_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>double new_price = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNewPrice() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      newPrice_ = 0D;
+      onChanged();
+      return this;
+    }
+
+    private double penalty_ ;
+    /**
+     * <code>double penalty = 5;</code>
+     * @return The penalty.
+     */
+    @java.lang.Override
+    public double getPenalty() {
+      return penalty_;
+    }
+    /**
+     * <code>double penalty = 5;</code>
+     * @param value The penalty to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPenalty(double value) {
+
+      penalty_ = value;
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>double penalty = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPenalty() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      penalty_ = 0D;
+      onChanged();
+      return this;
+    }
+
+    private double tariffDiff_ ;
+    /**
+     * <code>double tariff_diff = 6;</code>
+     * @return The tariffDiff.
+     */
+    @java.lang.Override
+    public double getTariffDiff() {
+      return tariffDiff_;
+    }
+    /**
+     * <code>double tariff_diff = 6;</code>
+     * @param value The tariffDiff to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTariffDiff(double value) {
+
+      tariffDiff_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>double tariff_diff = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTariffDiff() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      tariffDiff_ = 0D;
+      onChanged();
+      return this;
+    }
+
+    private double total_ ;
+    /**
+     * <code>double total = 7;</code>
+     * @return The total.
+     */
+    @java.lang.Override
+    public double getTotal() {
+      return total_;
+    }
+    /**
+     * <code>double total = 7;</code>
+     * @param value The total to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTotal(double value) {
+
+      total_ = value;
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>double total = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTotal() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      total_ = 0D;
       onChanged();
       return this;
     }

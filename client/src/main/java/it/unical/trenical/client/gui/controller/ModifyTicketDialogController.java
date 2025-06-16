@@ -2,12 +2,8 @@ package it.unical.trenical.client.gui.controller;
 
 import com.google.protobuf.Timestamp;
 import it.unical.trenical.grpc.common.Train;
+import it.unical.trenical.grpc.ticket.*;
 import it.unical.trenical.grpc.train.*;
-import it.unical.trenical.grpc.ticket.ModifyTicketRequest;
-import it.unical.trenical.grpc.ticket.OperationResponse;
-import it.unical.trenical.grpc.ticket.TicketServiceGrpc;
-import it.unical.trenical.grpc.ticket.GetTicketPriceRequest;
-import it.unical.trenical.grpc.ticket.GetTicketPriceResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -239,10 +235,10 @@ public class ModifyTicketDialogController {
     private void fetchOriginalTicketPrice() {
         if (ticketId == null || ticketId.isEmpty() || oldPriceLoaded) return;
         try {
-            it.unical.trenical.grpc.ticket.GetTicketRequest req = it.unical.trenical.grpc.ticket.GetTicketRequest.newBuilder()
+            GetTicketRequest req = GetTicketRequest.newBuilder()
                     .setTicketId(ticketId)
                     .build();
-            it.unical.trenical.grpc.ticket.GetTicketResponse resp = ticketService.getTicket(req);
+            GetTicketResponse resp = ticketService.getTicket(req);
             if (resp.hasTicket()) {
                 oldPrice = resp.getTicket().getPrice();
                 oldPriceLoaded = true;
@@ -254,26 +250,55 @@ public class ModifyTicketDialogController {
     }
 
     private void updatePrice() {
-        System.out.println("[updatePrice] INIZIO");
         String dep = getDepartureStation();
         String arr = getArrivalStation();
         LocalDate date = getDate();
         String time = getTime();
         String serviceClass = getServiceClass();
-        System.out.println("[updatePrice] dep=" + dep + ", arr=" + arr + ", date=" + date + ", time=" + time + ", class=" + serviceClass);
+        if (!oldPriceLoaded) {
+            fetchOriginalTicketPrice();
+            priceLabel.setText("Calcolo in corso...");
+            return;
+        }
         if (dep == null || dep.isEmpty() || arr == null || arr.isEmpty() || date == null ||
                 time == null || time.isEmpty() || serviceClass == null || serviceClass.isEmpty()) {
-            System.out.println("[updatePrice] Campi mancanti");
             priceLabel.setText("Sovrapprezzo: -");
             return;
         }
         updateSelectedTrain();
         if (selectedTrain == null) {
-            System.out.println("[updatePrice] selectedTrain è null");
             priceLabel.setText("Sovrapprezzo: -");
             return;
         }
         try {
+            // Recupera i dati originali del biglietto
+            GetTicketRequest reqTicket = GetTicketRequest.newBuilder().setTicketId(ticketId).build();
+            GetTicketResponse respTicket = ticketService.getTicket(reqTicket);
+            if (!respTicket.hasTicket()) {
+                priceLabel.setText("Sovrapprezzo: -");
+                return;
+            }
+            var originalTicket = respTicket.getTicket();
+            String originalClass = originalTicket.getServiceClass();
+            LocalDate originalDate = Instant.ofEpochSecond(originalTicket.getTravelDate().getSeconds()).atZone(DEFAULT_ZONE).toLocalDate();
+            String originalTime = "";
+            if (originalTicket.hasTravelTime()) {
+                LocalTime ot = LocalTime.ofSecondOfDay(originalTicket.getTravelTime().getSeconds());
+                originalTime = ot.format(TIME_FORMATTER);
+            }
+            // Se tutti i parametri sono uguali, nessun sovrapprezzo
+            boolean sameClass = serviceClass.equals(originalClass);
+            boolean sameDate = date.equals(originalDate);
+            boolean sameTime = (!originalTime.isEmpty() && time != null) ? time.equals(originalTime) : true;
+            if (dep.equals(originalTicket.getDepartureStation()) &&
+                arr.equals(originalTicket.getArrivalStation()) &&
+                sameClass &&
+                sameDate &&
+                sameTime) {
+                priceLabel.setText("Nessun sovrapprezzo");
+                return;
+            }
+            // Altrimenti calcola il sovrapprezzo
             LocalTime localTime = LocalTime.parse(time, TIME_FORMATTER);
             LocalDateTime ldt = LocalDateTime.of(date, localTime);
             ZonedDateTime zdt = ldt.atZone(DEFAULT_ZONE);
@@ -281,7 +306,6 @@ public class ModifyTicketDialogController {
                     .setSeconds(zdt.toEpochSecond())
                     .setNanos(0)
                     .build();
-            System.out.println("[updatePrice] Chiedo prezzo per " + dep + " -> " + arr + " " + date + " " + time + " " + serviceClass);
             GetTicketPriceRequest req = GetTicketPriceRequest.newBuilder()
                     .setDepartureStation(dep)
                     .setArrivalStation(arr)
@@ -291,21 +315,25 @@ public class ModifyTicketDialogController {
                     .build();
             GetTicketPriceResponse resp = ticketService.getTicketPrice(req);
             newPrice = resp.getPrice();
-            System.out.println("[updatePrice] newPrice=" + newPrice + ", oldPriceLoaded=" + oldPriceLoaded + ", oldPrice=" + oldPrice);
-            if (oldPriceLoaded && oldPrice > 0.0) {
-                surcharge = Math.max(0, newPrice - oldPrice);
-                System.out.println("[updatePrice] surcharge=" + surcharge);
-                if (surcharge < 0.01) {
-                    priceLabel.setText("Nessun sovrapprezzo");
-                } else {
-                    priceLabel.setText("Sovrapprezzo: " + String.format("%.2f", surcharge) + " €");
-                }
+            double penale = 0.0;
+            double diff = 0.0;
+            boolean classChanged = !sameClass;
+            boolean dateOrTimeChanged = !sameDate || !sameTime;
+            if (classChanged) {
+                penale = oldPrice * 0.10;
+            } else if (dateOrTimeChanged) {
+                penale = oldPrice * 0.05;
+            }
+            if (newPrice > oldPrice) {
+                diff = newPrice - oldPrice;
+            }
+            surcharge = penale + diff;
+            if (surcharge < 0.01) {
+                priceLabel.setText("Nessun sovrapprezzo");
             } else {
-                System.out.println("[updatePrice] oldPrice non caricato o zero");
-                priceLabel.setText("Sovrapprezzo: -");
+                priceLabel.setText("Sovrapprezzo: " + String.format("%.2f", surcharge) + " €");
             }
         } catch (Exception e) {
-            System.out.println("[updatePrice] Errore: " + e.getMessage());
             priceLabel.setText("Sovrapprezzo: errore");
         }
     }
@@ -432,12 +460,14 @@ public class ModifyTicketDialogController {
             // Invio richiesta
             OperationResponse resp = ticketService.modifyTicket(req);
 
-            // Gestione risposta
+            // Gestione risposta dettagliata dal server
             if (resp.getSuccess()) {
-                showConfirmation(surcharge < 0.01 ?
-                    "Modifica effettuata con successo! Nessun sovrapprezzo." :
-                    "Modifica effettuata con successo! Sovrapprezzo da pagare: " + String.format("%.2f", surcharge) + " €"
-                );
+                StringBuilder msg = new StringBuilder();
+                msg.append("Modifica effettuata con successo!\n");
+                msg.append(String.format("Prezzo precedente: %.2f €\n", oldPrice));
+                msg.append(String.format("Prezzo nuovo: %.2f €\n", newPrice));
+                msg.append(String.format("Sovrapprezzo: %.2f €", surcharge));
+                showConfirmation(msg.toString());
                 if (onSuccess != null) onSuccess.run();
                 closeDialog();
             } else {

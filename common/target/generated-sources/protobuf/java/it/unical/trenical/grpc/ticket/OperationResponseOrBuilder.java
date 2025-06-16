@@ -36,4 +36,34 @@ public interface OperationResponseOrBuilder extends
    */
   com.google.protobuf.ByteString
       getMessageBytes();
+
+  /**
+   * <code>double old_price = 3;</code>
+   * @return The oldPrice.
+   */
+  double getOldPrice();
+
+  /**
+   * <code>double new_price = 4;</code>
+   * @return The newPrice.
+   */
+  double getNewPrice();
+
+  /**
+   * <code>double penalty = 5;</code>
+   * @return The penalty.
+   */
+  double getPenalty();
+
+  /**
+   * <code>double tariff_diff = 6;</code>
+   * @return The tariffDiff.
+   */
+  double getTariffDiff();
+
+  /**
+   * <code>double total = 7;</code>
+   * @return The total.
+   */
+  double getTotal();
 }

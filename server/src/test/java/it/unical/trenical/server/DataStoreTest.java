@@ -84,7 +84,11 @@ class DataStoreTest {
         var trains = dataStore.getAllTrains();
         if (!trains.isEmpty()) {
             var id = trains.get(0).getId();
-            var t = dataStore.getTrainById(id);
+            var depTime = java.time.LocalDateTime.ofInstant(
+                java.time.Instant.ofEpochSecond(trains.get(0).getDepartureTime().getSeconds()),
+                java.time.ZoneId.systemDefault()
+            );
+            var t = dataStore.getTrainById(id, depTime);
             assertNotNull(t);
         }
     }
