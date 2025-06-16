@@ -1,6 +1,7 @@
 package it.unical.trenical.client.gui;
 
 import it.unical.trenical.client.gui.controller.LoginController;
+import it.unical.trenical.client.gui.controller.ModifyTicketDialogController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -129,7 +130,7 @@ public class SceneManager {
         try {
             FXMLLoader loader = new FXMLLoader(new File(MODIFY_TICKET_DIALOG).toURI().toURL());
             Parent root = loader.load();
-            it.unical.trenical.client.gui.controller.ModifyTicketDialogController controller = loader.getController();
+            ModifyTicketDialogController controller = loader.getController();
             controller.setTicketId(ticketId);
             controller.setFields(departure, arrival, date, time, serviceClass, trainId);
             controller.setOnSuccess(onSuccess);
