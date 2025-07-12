@@ -21,6 +21,7 @@ message Promotion {
   google.protobuf.Timestamp valid_to = 8;
   bool only_for_loyalty_members = 9;
   string train_type = 10;
+  repeated string user_types = 11;
 }
 
 // Lista promozioni

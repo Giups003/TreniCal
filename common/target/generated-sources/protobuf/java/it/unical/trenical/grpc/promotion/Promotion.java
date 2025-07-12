@@ -27,6 +27,8 @@ private static final long serialVersionUID = 0L;
     serviceClasses_ =
         com.google.protobuf.LazyStringArrayList.emptyList();
     trainType_ = "";
+    userTypes_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
   }
 
   @java.lang.Override
@@ -326,6 +328,43 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int USER_TYPES_FIELD_NUMBER = 11;
+  @SuppressWarnings("serial")
+  private com.google.protobuf.LazyStringArrayList userTypes_ =
+      com.google.protobuf.LazyStringArrayList.emptyList();
+  /**
+   * <code>repeated string user_types = 11;</code>
+   * @return A list containing the userTypes.
+   */
+  public com.google.protobuf.ProtocolStringList
+      getUserTypesList() {
+    return userTypes_;
+  }
+  /**
+   * <code>repeated string user_types = 11;</code>
+   * @return The count of userTypes.
+   */
+  public int getUserTypesCount() {
+    return userTypes_.size();
+  }
+  /**
+   * <code>repeated string user_types = 11;</code>
+   * @param index The index of the element to return.
+   * @return The userTypes at the given index.
+   */
+  public java.lang.String getUserTypes(int index) {
+    return userTypes_.get(index);
+  }
+  /**
+   * <code>repeated string user_types = 11;</code>
+   * @param index The index of the value to return.
+   * @return The bytes of the userTypes at the given index.
+   */
+  public com.google.protobuf.ByteString
+      getUserTypesBytes(int index) {
+    return userTypes_.getByteString(index);
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -369,6 +408,9 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(trainType_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 10, trainType_);
+    }
+    for (int i = 0; i < userTypes_.size(); i++) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, userTypes_.getRaw(i));
     }
     getUnknownFields().writeTo(output);
   }
@@ -424,6 +466,14 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(trainType_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, trainType_);
     }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < userTypes_.size(); i++) {
+        dataSize += computeStringSizeNoTag(userTypes_.getRaw(i));
+      }
+      size += dataSize;
+      size += 1 * getUserTypesList().size();
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -466,6 +516,8 @@ private static final long serialVersionUID = 0L;
         != other.getOnlyForLoyaltyMembers()) return false;
     if (!getTrainType()
         .equals(other.getTrainType())) return false;
+    if (!getUserTypesList()
+        .equals(other.getUserTypesList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -507,6 +559,10 @@ private static final long serialVersionUID = 0L;
         getOnlyForLoyaltyMembers());
     hash = (37 * hash) + TRAIN_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + getTrainType().hashCode();
+    if (getUserTypesCount() > 0) {
+      hash = (37 * hash) + USER_TYPES_FIELD_NUMBER;
+      hash = (53 * hash) + getUserTypesList().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -669,6 +725,8 @@ private static final long serialVersionUID = 0L;
       }
       onlyForLoyaltyMembers_ = false;
       trainType_ = "";
+      userTypes_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
       return this;
     }
 
@@ -740,6 +798,10 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000200) != 0)) {
         result.trainType_ = trainType_;
+      }
+      if (((from_bitField0_ & 0x00000400) != 0)) {
+        userTypes_.makeImmutable();
+        result.userTypes_ = userTypes_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -838,6 +900,16 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000200;
         onChanged();
       }
+      if (!other.userTypes_.isEmpty()) {
+        if (userTypes_.isEmpty()) {
+          userTypes_ = other.userTypes_;
+          bitField0_ |= 0x00000400;
+        } else {
+          ensureUserTypesIsMutable();
+          userTypes_.addAll(other.userTypes_);
+        }
+        onChanged();
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -920,6 +992,12 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000200;
               break;
             } // case 82
+            case 90: {
+              java.lang.String s = input.readStringRequireUtf8();
+              ensureUserTypesIsMutable();
+              userTypes_.add(s);
+              break;
+            } // case 90
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1709,6 +1787,117 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       trainType_ = value;
       bitField0_ |= 0x00000200;
+      onChanged();
+      return this;
+    }
+
+    private com.google.protobuf.LazyStringArrayList userTypes_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
+    private void ensureUserTypesIsMutable() {
+      if (!userTypes_.isModifiable()) {
+        userTypes_ = new com.google.protobuf.LazyStringArrayList(userTypes_);
+      }
+      bitField0_ |= 0x00000400;
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @return A list containing the userTypes.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getUserTypesList() {
+      userTypes_.makeImmutable();
+      return userTypes_;
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @return The count of userTypes.
+     */
+    public int getUserTypesCount() {
+      return userTypes_.size();
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @param index The index of the element to return.
+     * @return The userTypes at the given index.
+     */
+    public java.lang.String getUserTypes(int index) {
+      return userTypes_.get(index);
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the userTypes at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getUserTypesBytes(int index) {
+      return userTypes_.getByteString(index);
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @param index The index to set the value at.
+     * @param value The userTypes to set.
+     * @return This builder for chaining.
+     */
+    public Builder setUserTypes(
+        int index, java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      ensureUserTypesIsMutable();
+      userTypes_.set(index, value);
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @param value The userTypes to add.
+     * @return This builder for chaining.
+     */
+    public Builder addUserTypes(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      ensureUserTypesIsMutable();
+      userTypes_.add(value);
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @param values The userTypes to add.
+     * @return This builder for chaining.
+     */
+    public Builder addAllUserTypes(
+        java.lang.Iterable<java.lang.String> values) {
+      ensureUserTypesIsMutable();
+      com.google.protobuf.AbstractMessageLite.Builder.addAll(
+          values, userTypes_);
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearUserTypes() {
+      userTypes_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000400);;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated string user_types = 11;</code>
+     * @param value The bytes of the userTypes to add.
+     * @return This builder for chaining.
+     */
+    public Builder addUserTypesBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      ensureUserTypesIsMutable();
+      userTypes_.add(value);
+      bitField0_ |= 0x00000400;
       onChanged();
       return this;
     }

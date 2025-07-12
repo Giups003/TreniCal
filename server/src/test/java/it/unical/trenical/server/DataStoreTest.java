@@ -1,5 +1,6 @@
 package it.unical.trenical.server;
 
+import it.unical.trenical.grpc.promotion.Promotion;
 import org.junit.jupiter.api.*;
 import java.util.List;
 import it.unical.trenical.grpc.common.Station;
@@ -12,6 +13,11 @@ class DataStoreTest {
     @BeforeEach
     void setUp() {
         dataStore = DataStore.getInstance();
+        // Pulizia promozioni per evitare conflitti
+        List<Promotion> promos = dataStore.getAllPromotions();
+        for (Promotion p : promos) {
+            dataStore.deletePromotion(p.getId());
+        }
     }
 
     @Test
@@ -115,11 +121,13 @@ class DataStoreTest {
 
     @Test
     void testExportImportBackup() {
-        String backup = dataStore.exportAllData();
-        assertNotNull(backup);
-        assertFalse(backup.isEmpty());
-        // Import test: non deve lanciare eccezioni
-        assertDoesNotThrow(() -> dataStore.importAllData(backup));
+        // Serializza solo i dati come stringa, senza JSONObject diretto su oggetti Protobuf
+        assertDoesNotThrow(() -> {
+            String backup = dataStore.exportAllData();
+            assertNotNull(backup);
+            assertFalse(backup.isEmpty());
+            dataStore.importAllData(backup);
+        });
     }
 
     @Test
@@ -148,8 +156,10 @@ class DataStoreTest {
 
     @Test
     void testPromotionAddAndGet() {
-        var promo = it.unical.trenical.grpc.promotion.Promotion.newBuilder()
-                .setId(1).setName("PROMO10").setDiscountPercent(10).build();
+        // Usa un ID univoco
+        int id = (int) (System.currentTimeMillis() % 100000);
+        var promo = Promotion.newBuilder()
+                .setId(id).setName("PROMO10").setDiscountPercent(10).build();
         dataStore.addPromotion(promo);
         var promos = dataStore.getAllPromotions();
         assertTrue(promos.stream().anyMatch(p -> p.getName().equals("PROMO10")));

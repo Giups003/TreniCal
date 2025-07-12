@@ -36,6 +36,7 @@ it\unical\trenical\client\gui\util\AutoCompleteUtil$1.class
 it\unical\trenical\client\gui\controller\NotificationsController$1.class
 it\unical\trenical\client\gui\controller\DashboardController.class
 it\unical\trenical\client\gui\controller\MyTicketsController$TicketViewModel.class
+it\unical\trenical\client\gui\controller\PromotionDialog$4.class
 it\unical\trenical\client\gui\controller\AdminPanelController$UserRow.class
 it\unical\trenical\client\gui\controller\SearchTrainsController$1.class
 it\unical\trenical\client\gui\MainWindow.class

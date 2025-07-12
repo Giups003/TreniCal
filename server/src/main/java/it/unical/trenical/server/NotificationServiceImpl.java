@@ -66,17 +66,17 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
             userTrainSubscriptions.computeIfAbsent(username, k -> ConcurrentHashMap.newKeySet()).add(trainId);
             trainSubscribers.computeIfAbsent(trainId, k -> ConcurrentHashMap.newKeySet()).add(username);
             createNotification(
-                username,
-                "Registrazione completata",
-                "Riceverai aggiornamenti in tempo reale per il treno " + trainId,
-                NotificationType.GENERAL,
-                trainId,
-                null
+                    username,
+                    "Registrazione completata",
+                    "Riceverai aggiornamenti in tempo reale per il treno " + trainId,
+                    NotificationType.GENERAL,
+                    trainId,
+                    null
             );
             sendOperationResponse(true, "Registrazione completata con successo", responseObserver);
         } catch (Exception e) {
             responseObserver.onError(
-                Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
+                    Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
             );
         }
     }
@@ -108,7 +108,7 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
             sendOperationResponse(true, "Registrazione annullata con successo", responseObserver);
         } catch (Exception e) {
             responseObserver.onError(
-                Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
+                    Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
             );
         }
     }
@@ -127,17 +127,17 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
                 return;
             }
             List<Notification> userNotifications = notifications.stream()
-                .filter(n -> n.getUsername().equals(username))
-                .filter(n -> includeRead || !n.getRead())
-                .collect(Collectors.toList());
+                    .filter(n -> n.getUsername().equals(username))
+                    .filter(n -> includeRead || !n.getRead())
+                    .collect(Collectors.toList());
             NotificationList response = NotificationList.newBuilder()
-                .addAllNotifications(userNotifications)
-                .build();
+                    .addAllNotifications(userNotifications)
+                    .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(
-                Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
+                    Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
             );
         }
     }
@@ -174,7 +174,7 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
             }
         } catch (Exception e) {
             responseObserver.onError(
-                Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
+                    Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
             );
         }
     }
@@ -198,24 +198,24 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
             }
             if (train == null) {
                 responseObserver.onError(
-                    Status.NOT_FOUND.withDescription("Treno non trovato per la data/orario richiesti").asRuntimeException()
+                        Status.NOT_FOUND.withDescription("Treno non trovato per la data/orario richiesti").asRuntimeException()
                 );
                 return;
             }
             TrainStatusResponse response = TrainStatusResponse.newBuilder()
-                .setTrainId(trainId)
-                .setTrainName(train.getName())
-                .setStatus(TrainStatus.ON_TIME)
-                .setPlatform(1)
-                .setDelayMinutes(0)
-                .setMessage("Il treno è in orario")
-                .setLastUpdate(Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond()).build())
-                .build();
+                    .setTrainId(trainId)
+                    .setTrainName(train.getName())
+                    .setStatus(TrainStatus.ON_TIME)
+                    .setPlatform(1)
+                    .setDelayMinutes(0)
+                    .setMessage("Il treno è in orario")
+                    .setLastUpdate(Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond()).build())
+                    .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(
-                Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
+                    Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
             );
         }
     }
@@ -263,18 +263,18 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
             }
             for (String username : subscribers) {
                 createNotification(
-                    username,
-                    title,
-                    notifMsg,
-                    type,
-                    trainId,
-                    null
+                        username,
+                        title,
+                        notifMsg,
+                        type,
+                        trainId,
+                        null
                 );
             }
             sendOperationResponse(true, "Stato treno aggiornato e notifiche inviate", responseObserver);
         } catch (Exception e) {
             responseObserver.onError(
-                Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
+                    Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
             );
         }
     }
@@ -301,13 +301,13 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
                     else if (status == TrainStatus.CANCELLED) msg = "Treno cancellato.";
                     else if (platform > 0) msg = "Cambio binario: " + platform;
                     UpdateTrainStatusRequest req = UpdateTrainStatusRequest.newBuilder()
-                        .setTrainId(trainId)
-                        .setStatus(status)
-                        .setDelayMinutes(delay)
-                        .setPlatformChange(platform)
-                        .setMessage(msg == null ? "" : msg)
-                        .setDate(Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond()).build())
-                        .build();
+                            .setTrainId(trainId)
+                            .setStatus(status)
+                            .setDelayMinutes(delay)
+                            .setPlatformChange(platform)
+                            .setMessage(msg == null ? "" : msg)
+                            .setDate(Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond()).build())
+                            .build();
                     updateTrainStatus(req, new StreamObserver<OperationResponse>() {
                         @Override public void onNext(OperationResponse value) {}
                         @Override public void onError(Throwable t) {}
@@ -341,7 +341,7 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
             sendOperationResponse(true, "Notifiche promozionali inviate a " + count + " utenti fedeltà", responseObserver);
         } catch (Exception e) {
             responseObserver.onError(
-                Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
+                    Status.INTERNAL.withDescription("Errore interno: " + e.getMessage()).asRuntimeException()
             );
         }
     }
@@ -382,14 +382,14 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
         String id = UUID.randomUUID().toString();
         Timestamp timestamp = Timestamp.newBuilder().setSeconds(Instant.now().getEpochSecond()).build();
         Notification.Builder builder = Notification.newBuilder()
-            .setId(id)
-            .setUsername(username)
-            .setTitle(title)
-            .setMessage(message)
-            .setTimestamp(timestamp)
-            .setType(type)
-            .setRead(false)
-            .setTrainId(trainId);
+                .setId(id)
+                .setUsername(username)
+                .setTitle(title)
+                .setMessage(message)
+                .setTimestamp(timestamp)
+                .setType(type)
+                .setRead(false)
+                .setTrainId(trainId);
         if (promoCode != null && !promoCode.isEmpty()) {
             builder.setPromoCode(promoCode);
         }
@@ -404,9 +404,9 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
      */
     private void sendOperationResponse(boolean success, String message, StreamObserver<OperationResponse> responseObserver) {
         OperationResponse response = OperationResponse.newBuilder()
-            .setSuccess(success)
-            .setMessage(message)
-            .build();
+                .setSuccess(success)
+                .setMessage(message)
+                .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

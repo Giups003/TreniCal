@@ -6,6 +6,7 @@ import io.grpc.stub.StreamObserver;
 import it.unical.trenical.grpc.common.Ticket;
 import it.unical.trenical.grpc.ticket.*;
 import it.unical.trenical.grpc.ticket.PurchaseTicketRequest;
+import it.unical.trenical.server.strategy.PriceCalculator;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -20,30 +21,40 @@ import java.util.HashSet;
 /**
  * Implementazione del servizio gRPC per la gestione dei biglietti.
  * Fornisce funzionalità per l'acquisto e la modifica dei biglietti.
+ * PATTERN STRATEGY: Utilizza PriceCalculator che implementa il pattern Strategy
+ * per il calcolo dinamico dei prezzi con diverse strategie intercambiabili.
  */
 public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
 
-    // Calcolatore di prezzi
+    // PATTERN STRATEGY: Calcolatore di prezzi con strategia intercambiabile
     private final PriceCalculator priceCalculator;
     // DataStore per la persistenza reale
     private final DataStore dataStore;
 
     /**
-     * Costruttore che inizializza il servizio con un calcolatore di prezzi.
+     * Costruttore che inizializza il servizio con strategia di calcolo prezzi standard.
+     * PATTERN STRATEGY: Inizializza con strategia predefinita.
      */
     public TicketServiceImpl() {
-        this.priceCalculator = new PriceCalculator();
+        this.priceCalculator = new PriceCalculator(); // Strategia standard di default
         this.dataStore = DataStore.getInstance();
+
+        System.out.println("[STRATEGY PATTERN] TicketServiceImpl inizializzato con strategia: " +
+                         priceCalculator.getCurrentStrategyName());
     }
 
     /**
      * Costruttore che accetta un calcolatore di prezzi esterno (utile per i test).
+     * PATTERN STRATEGY: Permette iniezione di dipendenza con strategia specifica.
      *
      * @param priceCalculator Calcolatore di prezzi da utilizzare
      */
     public TicketServiceImpl(PriceCalculator priceCalculator) {
         this.priceCalculator = priceCalculator;
         this.dataStore = DataStore.getInstance();
+
+        System.out.println("[STRATEGY PATTERN] TicketServiceImpl inizializzato con strategia custom: " +
+                         priceCalculator.getCurrentStrategyName());
     }
 
     /**
@@ -66,40 +77,82 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 return;
             }
 
+            // PATTERN STRATEGY: Determina il tipo di cliente e imposta la strategia appropriata
+            String username = request.getPassengerName();
+            String customerType = dataStore.getCustomerType(username);
+
+            System.out.println("[STRATEGY PATTERN] Cliente: " + username +
+                              ", Tipo: " + customerType);
+
+            // PATTERN STRATEGY: Imposta la strategia appropriata per il tipo di cliente
+            priceCalculator.setStrategyByType(customerType);
+
             // Se la richiesta non contiene un metodo di pagamento o è esplicitamente marcata come solo prezzo,
             // viene trattata come simulazione per calcolo prezzo
             if (request.getPaymentMethod().isEmpty() ||
                 "SOLO_PREZZO".equals(request.getPaymentMethod())) {
 
+                // CORREZIONE: Valida il codice promo anche per le simulazioni di prezzo
+                String promoCode = request.getPromoCode();
+                if (!promoCode.trim().isEmpty()) {
+                    if (!priceCalculator.isValidPromoCode(promoCode, customerType)) {
+                        PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
+                                .setSuccess(false)
+                                .setMessage("Codice promozionale '" + promoCode + "' non valido o non applicabile per il tuo tipo di account (" + customerType + ").")
+                                .build();
+                        responseObserver.onNext(response);
+                        responseObserver.onCompleted();
+                        return;
+                    }
+                }
+
+                // PATTERN STRATEGY: Delega il calcolo del prezzo alla strategia corretta per tipo utente
                 double price = priceCalculator.calculateTicketPrice(
                         request.getDepartureStation(),
                         request.getArrivalStation(),
                         request.getServiceClass(),
                         request.getTravelDate(),
-                        request.getPromoCode(),
-                        request.getTrainType()
+                        !request.getPromoCode().trim().isEmpty() ? request.getPromoCode().toUpperCase() : "",
+                        request.getTrainType(),
+                        customerType
                 );
+
                 PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
                         .setSuccess(true)
                         .setPrice(price)
+                        .setMessage("Prezzo calcolato per cliente " + customerType + ": " + priceCalculator.getCurrentStrategyName())
                         .build();
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
                 return;
             }
 
+            // PATTERN STRATEGY: Validazione codice promo tramite strategia appropriata per tipo utente
+            String promoCode = request.getPromoCode();
+            if (!promoCode.trim().isEmpty()) {
+                if (!priceCalculator.isValidPromoCode(promoCode, customerType)) {
+                    PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
+                            .setSuccess(false)
+                            .setMessage("Codice promozionale '" + promoCode + "' non valido o non applicabile per il tuo tipo di account (" + customerType + ").")
+                            .build();
+                    responseObserver.onNext(response);
+                    responseObserver.onCompleted();
+                    return;
+                }
+            }
+
             // Gestione posti disponibili
-            DataStore dataStore = this.dataStore;
             int trainId = request.getTrainId();
             int seatsRequested = request.getSeats();
             if (seatsRequested <= 0) seatsRequested = 1;
-            // Passa la data/ora corretta a decrementSeat
+
             LocalDateTime travelDateTime = null;
             if (request.hasTravelDate()) {
-                com.google.protobuf.Timestamp ts = request.getTravelDate();
+                Timestamp ts = request.getTravelDate();
                 travelDateTime = Instant.ofEpochSecond(ts.getSeconds())
                         .atZone(ZoneId.systemDefault()).toLocalDateTime();
             }
+
             boolean seatsOk = dataStore.checkAvailableSeats(trainId, travelDateTime, seatsRequested);
             if (!seatsOk) {
                 PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
@@ -111,31 +164,40 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 return;
             }
 
-            // Calcola il prezzo del biglietto una sola volta prima del ciclo
-            double price = priceCalculator.calculateTicketPrice(
+            // PATTERN STRATEGY: Calcola il prezzo finale con la strategia corretta per tipo utente
+            double finalPrice = priceCalculator.calculateTicketPrice(
                     request.getDepartureStation(),
                     request.getArrivalStation(),
                     request.getServiceClass(),
                     request.getTravelDate(),
-                    request.getPromoCode() != null ? request.getPromoCode().toUpperCase() : "",
-                    request.getTrainType()
+                    !promoCode.trim().isEmpty() ? promoCode.toUpperCase() : "",
+                    request.getTrainType(),
+                    customerType
             );
+
             // Crea e salva un biglietto per ogni posto richiesto
             List<Ticket> createdTickets = new ArrayList<>();
-            // Trova tutti i posti già occupati per il treno
             Set<Integer> occupiedSeats = new HashSet<>();
+
+            // Trova tutti i posti già occupati per il treno
             for (Ticket t : dataStore.getAllTickets()) {
                 if (t.getTrainId() == trainId) {
-                    try { occupiedSeats.add(Integer.parseInt(t.getSeat())); } catch (Exception ignored) {}
+                    try {
+                        occupiedSeats.add(Integer.parseInt(t.getSeat()));
+                    } catch (Exception ignored) {}
                 }
             }
+
             int seatNumber = 1;
             for (int i = 0; i < seatsRequested; i++) {
                 // Trova il primo posto libero
                 while (occupiedSeats.contains(seatNumber)) {
                     seatNumber++;
                 }
+
                 String ticketId = UUID.randomUUID().toString();
+
+                // Pattern BUILDER: utilizzo di Ticket.newBuilder() per costruire oggetti complessi
                 Ticket ticket = Ticket.newBuilder()
                         .setId(ticketId)
                         .setTrainId(request.getTrainId())
@@ -144,7 +206,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                         .setArrivalStation(request.getArrivalStation())
                         .setTravelDate(request.getTravelDate())
                         .setServiceClass(request.getServiceClass())
-                        .setPrice(price)
+                        .setPrice(finalPrice)
                         .setSeat(String.valueOf(seatNumber))
                         .setPurchaseDate(
                             Timestamp.newBuilder()
@@ -152,30 +214,41 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                                 .build()
                         )
                         .build();
+
                 dataStore.addTicket(ticket);
                 createdTickets.add(ticket);
                 occupiedSeats.add(seatNumber);
                 seatNumber++;
             }
 
-            // Prepara e invia la risposta al client (tutti i biglietti acquistati)
+            // Prepara e invia la risposta al client
             Ticket firstTicket = createdTickets.get(0);
+            String successMessage = String.format(
+                "Biglietti acquistati con successo! Strategia applicata: %s. " +
+                "Prezzo per biglietto: %.2f €. " +
+                (!promoCode.trim().isEmpty() ?
+                    "Codice promo '" + promoCode + "' applicato." : "Nessun codice promo applicato."),
+                priceCalculator.getCurrentStrategyName(),
+                finalPrice
+            );
+
             PurchaseTicketResponse response = PurchaseTicketResponse.newBuilder()
                     .setSuccess(true)
                     .setTicketId(firstTicket.getId())
-                    .setMessage("Biglietti acquistati con successo!")
-                    .setPrice(price)
+                    .setMessage(successMessage)
+                    .setPrice(finalPrice)
                     .setTicket(firstTicket)
                     .addAllTickets(createdTickets)
                     .build();
 
             responseObserver.onNext(response);
             responseObserver.onCompleted();
+
         } catch (Exception e) {
             // Gestisce eventuali errori imprevisti
             responseObserver.onError(
                     Status.INTERNAL
-                            .withDescription("Errore interno: " + e.getMessage())
+                            .withDescription("Errore interno durante l'acquisto: " + e.getMessage())
                             .asRuntimeException()
             );
         }
@@ -272,14 +345,16 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                     request.getTrainType()
             );
             double penale = 0.0;
-            double diff = 0.0;
-            double finalPrice = oldPrice;
+
             boolean classChanged = !ticket.getServiceClass().equals(newServiceClass);
             boolean dateChanged = !ticket.getTravelDate().equals(newDate) || !ticket.getTravelTime().equals(newTime);
-            // Se la data/orario è oggi e nessun campo è cambiato, nessun sovrapprezzo
             LocalDate today = LocalDate.now();
             LocalDate ticketDate = Instant.ofEpochSecond(ticket.getTravelDate().getSeconds()).atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate newDateLocal = Instant.ofEpochSecond(newDate.getSeconds()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+            double diff = newPrice - oldPrice;
+            double finalPrice;
+
             if (ticketDate.equals(today) && newDateLocal.equals(today) &&
                 !classChanged && !dateChanged && !changedDeparture && !changedArrival && !changedTrain) {
                 penale = 0.0;
@@ -291,13 +366,10 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 } else if (dateChanged) {
                     penale = oldPrice * 0.05; // 5% se cambia solo data/orario
                 }
-                if (newPrice > oldPrice) {
-                    diff = newPrice - oldPrice;
-                }
                 finalPrice = oldPrice + penale + diff;
             }
             updatedTicket.setPrice(finalPrice);
-
+            // Elimina solo una volta il biglietto originale
             dataStore.deleteTicket(ticket.getId());
             dataStore.addTicket(updatedTicket.build());
             // Risposta dettagliata con breakdown prezzi
@@ -334,7 +406,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
         try {
             String ticketId = request.getTicketId();
             System.out.println("[cancelTicket] Richiesta annullamento per biglietto ID: " + ticketId);
-            if (ticketId == null || ticketId.isEmpty()) {
+            if (ticketId.isEmpty()) {
                 OperationResponse response = OperationResponse.newBuilder()
                         .setSuccess(false)
                         .setMessage("ID biglietto non valido!")
@@ -387,7 +459,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
             List<Ticket> toUpdate = new ArrayList<>();
             long now = System.currentTimeMillis() / 1000L;
             for (Ticket t : allTickets) {
-                if (t.hasTravelDate() && (t.getStatus() == null || (!t.getStatus().equalsIgnoreCase("Annullato") && !t.getStatus().equalsIgnoreCase("Scaduto")))) {
+                if (t.hasTravelDate() && ( (!t.getStatus().equalsIgnoreCase("Annullato") && !t.getStatus().equalsIgnoreCase("Scaduto")))) {
                     long travelEpoch = t.getTravelDate().getSeconds();
                     if (travelEpoch < now) {
                         // Aggiorna lo stato a "Scaduto"
@@ -396,7 +468,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                         t = updated;
                     }
                 }
-                if (passengerName != null && !passengerName.isEmpty()) {
+                if (!passengerName.isEmpty()) {
                     if (t.getPassengerName().equals(passengerName)) {
                         filteredTickets.add(t);
                     }
@@ -409,14 +481,14 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 dataStore.deleteTicket(t.getId());
                 dataStore.addTicket(t);
             }
-            ListTicketsResponse response = ListTicketsResponse.newBuilder()
-                    .addAllTickets(filteredTickets)
-                    .build();
+            ListTicketsResponse response = ListTicketsResponse.newBuilder().addAllTickets(filteredTickets).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(
-                Status.INTERNAL.withDescription("Errore durante il recupero dei biglietti: " + e.getMessage()).asRuntimeException()
+                    Status.INTERNAL
+                            .withDescription("Errore durante la lista biglietti: " + e.getMessage())
+                            .asRuntimeException()
             );
         }
     }
@@ -443,26 +515,40 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
 
     /**
      * Gestisce la richiesta del prezzo di un biglietto senza acquistarlo.
-     *
-     * @param request          Richiesta contenente i dettagli del biglietto.
-     * @param responseObserver Stream per inviare la risposta al client.
+     * PATTERN STRATEGY: Utilizza la strategia appropriata per il calcolo del prezzo.
      */
     @Override
     public void getTicketPrice(GetTicketPriceRequest request, StreamObserver<GetTicketPriceResponse> responseObserver) {
         try {
+            // PATTERN STRATEGY: Usa il tipo utente dalla richiesta per selezionare la strategia corretta
+            String userType = request.getUserType();
+            if (userType == null || userType.isEmpty()) {
+                userType = "standard"; // Default fallback
+            }
+
+            System.out.println("[STRATEGY PATTERN] Calcolo prezzo per tipo utente: " + userType);
+
+            // PATTERN STRATEGY: Imposta la strategia appropriata per il tipo di utente
+            priceCalculator.setStrategyByUserType(userType);
+
+            // PATTERN STRATEGY: Delega il calcolo alla strategia corretta per tipo utente
             double price = priceCalculator.calculateTicketPrice(
                 request.getDepartureStation(),
                 request.getArrivalStation(),
                 request.getServiceClass(),
                 request.getTravelDate(),
-                request.getPromoCode() != null ? request.getPromoCode().toUpperCase() : "",
-                request.getTrainType()
+                !request.getPromoCode().trim().isEmpty() ? request.getPromoCode().toUpperCase() : "",
+                request.getTrainType(),
+                userType // Passa il tipo utente
             );
+
             GetTicketPriceResponse response = GetTicketPriceResponse.newBuilder()
                 .setPrice(price)
                 .build();
+
             responseObserver.onNext(response);
             responseObserver.onCompleted();
+
         } catch (Exception e) {
             responseObserver.onError(
                 Status.INTERNAL.withDescription("Errore durante il calcolo del prezzo: " + e.getMessage()).asRuntimeException()
@@ -480,7 +566,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
     public void getTicket(GetTicketRequest request, StreamObserver<GetTicketResponse> responseObserver) {
         try {
             String ticketId = request.getTicketId();
-            if (ticketId == null || ticketId.isEmpty()) {
+            if (ticketId.isEmpty()) {
                 responseObserver.onNext(GetTicketResponse.newBuilder().build());
                 responseObserver.onCompleted();
                 return;
@@ -506,11 +592,11 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
     private boolean isValidPurchaseRequest(PurchaseTicketRequest request) {
         return request != null &&
                 request.getTrainId() > 0 &&
-                request.getPassengerName() != null && !request.getPassengerName().isEmpty() &&
-                request.getDepartureStation() != null && !request.getDepartureStation().isEmpty() &&
-                request.getArrivalStation() != null && !request.getArrivalStation().isEmpty() &&
-                request.getServiceClass() != null && !request.getServiceClass().isEmpty() &&
-                request.getTravelDate() != null;
+                !request.getPassengerName().isEmpty() &&
+                !request.getDepartureStation().isEmpty() &&
+                !request.getArrivalStation().isEmpty() &&
+                !request.getServiceClass().isEmpty() &&
+                request.hasTravelDate();
     }
 
     private boolean isValidField(String s) {
@@ -527,4 +613,3 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
         responseObserver.onCompleted();
     }
 }
-

@@ -1,35 +1,13 @@
 package it.unical.trenical.client.gui.controller;
 
-import it.unical.trenical.client.gui.SceneManager;
-import it.unical.trenical.client.session.UserSession;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import it.unical.trenical.client.gui.SceneManager;
+import it.unical.trenical.client.session.UserSession;
 import it.unical.trenical.grpc.notification.NotificationServiceGrpc;
-import it.unical.trenical.grpc.notification.RegisterForTrainRequest;
-import it.unical.trenical.grpc.notification.OperationResponse;
-import it.unical.trenical.grpc.ticket.TicketServiceGrpc;
-import it.unical.trenical.grpc.ticket.ListTicketsRequest;
-import it.unical.trenical.grpc.ticket.ListTicketsResponse;
-import it.unical.trenical.grpc.common.Ticket;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.CheckBox;
-import javafx.scene.layout.VBox;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import javafx.scene.control.*;
 
 /**
  * Controller della schermata dashboard.
@@ -170,7 +148,8 @@ public class DashboardController {
                                     .build();
                             stub.setPromotionalPreference(req);
                             channel.shutdown();
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                         return null;
                     }
                 };
@@ -207,7 +186,15 @@ public class DashboardController {
         emailLabel.setVisible(loggedIn);
         emailLabel.setManaged(loggedIn);
         if (loggedIn) {
-            emailLabel.setText("Utente: " + UserSession.getUsername() + " (" + UserSession.getEmail() + ")");
+            String email = UserSession.getEmail();
+            String username = UserSession.getUsername();
+
+            // Controlla se l'email è valida prima di mostrarla
+            if (email != null && !email.isEmpty() && !email.equals("null")) {
+                emailLabel.setText("Utente: " + username + " (" + email + ")");
+            } else {
+                emailLabel.setText("Utente: " + username);
+            }
         } else {
             emailLabel.setText("Utente non loggato");
         }

@@ -18,8 +18,13 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.io.Serializable;
+import it.unical.trenical.server.util.DistanceCalculator;
 
-public class DataStore {
+// Applicazione del pattern Singleton
+public final class DataStore implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final String DATA_DIR = "C:/Users/Giuseppe/Documents/TreniCal/TreniCal/server/data";
     private static final String STATIONS_FILE = DATA_DIR + "/stations.json";
     private static final String TRAINS_FILE = DATA_DIR + "/trains.json";
@@ -36,6 +41,7 @@ public class DataStore {
     private final Map<Integer, Integer> trainSeatsAvailable = new ConcurrentHashMap<>();
     private static final int DEFAULT_SEATS_PER_TRAIN = 150;
 
+    // Costruttore privato per impedire istanziazione esterna
     private DataStore() {
         File dataDir = new File(DATA_DIR);
         if (!dataDir.exists()) {
@@ -72,11 +78,17 @@ public class DataStore {
         }
     }
 
+    // Metodo statico sincronizzato per ottenere l'istanza unica
     public static synchronized DataStore getInstance() {
         if (instance == null) {
             instance = new DataStore();
         }
         return instance;
+    }
+
+    // Protegge il singleton dalla serializzazione
+    private Object readResolve() {
+        return getInstance();
     }
 
     private void loadData() {
@@ -151,6 +163,7 @@ public class DataStore {
                         String key = routeKey + "_" + date + "_" + hour;
                         if (!uniqueTrainKeys.add(key)) continue;
 
+                        // Pattern BUILDER: utilizzo di Train.newBuilder() per costruire oggetti complessi in modo sicuro e leggibile
                         Train train = Train.newBuilder()
                                 .setId(++maxId)
                                 .setName(route.getName())
@@ -196,6 +209,7 @@ public class DataStore {
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = array.getJSONObject(i);
             try {
+                // Pattern BUILDER: Station.newBuilder() per parsing e costruzione oggetto
                 Station.Builder builder = Station.newBuilder();
                 JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add(builder.build());
@@ -216,6 +230,7 @@ public class DataStore {
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = array.getJSONObject(i);
             try {
+                // Pattern BUILDER: Train.newBuilder() per parsing e costruzione oggetto
                 Train.Builder builder = Train.newBuilder();
                 JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add(builder.build());
@@ -236,6 +251,7 @@ public class DataStore {
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = array.getJSONObject(i);
             try {
+                // Pattern BUILDER: Ticket.newBuilder() per parsing e costruzione oggetto
                 Ticket.Builder builder = Ticket.newBuilder();
                 JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add(builder.build());
@@ -256,6 +272,7 @@ public class DataStore {
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = array.getJSONObject(i);
             try {
+                // Pattern BUILDER: Route.newBuilder() per parsing e costruzione oggetto
                 Route.Builder builder = Route.newBuilder();
                 JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add(builder.build());
@@ -276,6 +293,7 @@ public class DataStore {
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = array.getJSONObject(i);
             try {
+                // Pattern BUILDER: Promotion.newBuilder() per parsing e costruzione oggetto
                 Promotion.Builder builder = Promotion.newBuilder();
                 JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add(builder.build());
@@ -410,13 +428,28 @@ public class DataStore {
      * Esporta tutti i dati in una stringa JSON.
      */
     public synchronized String exportAllData() {
-        JSONObject obj = new JSONObject();
-        obj.put("stations", stations);
-        obj.put("trains", trains);
-        obj.put("tickets", tickets);
-        obj.put("routes", routes);
-        obj.put("promotions", promotions);
-        return obj.toString();
+        try {
+            JSONObject obj = new JSONObject();
+            com.google.protobuf.util.JsonFormat.Printer printer = com.google.protobuf.util.JsonFormat.printer();
+            JSONArray stationsArr = new JSONArray();
+            for (Station s : stations) stationsArr.put(new JSONObject(printer.print(s)));
+            JSONArray trainsArr = new JSONArray();
+            for (Train t : trains) trainsArr.put(new JSONObject(printer.print(t)));
+            JSONArray ticketsArr = new JSONArray();
+            for (Ticket t : tickets) ticketsArr.put(new JSONObject(printer.print(t)));
+            JSONArray routesArr = new JSONArray();
+            for (Route r : routes) routesArr.put(new JSONObject(printer.print(r)));
+            JSONArray promotionsArr = new JSONArray();
+            for (Promotion p : promotions) promotionsArr.put(new JSONObject(printer.print(p)));
+            obj.put("stations", stationsArr);
+            obj.put("trains", trainsArr);
+            obj.put("tickets", ticketsArr);
+            obj.put("routes", routesArr);
+            obj.put("promotions", promotionsArr);
+            return obj.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante l'export dei dati: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -448,6 +481,20 @@ public class DataStore {
 
     public synchronized Station getStationById(int id) {
         return stations.stream().filter(station -> station.getId() == id).findFirst().orElse(null);
+    }
+
+    /**
+     * Trova una stazione per nome (case-insensitive).
+     * @param name Nome della stazione
+     * @return la stazione trovata o null
+     */
+    public synchronized Station getStationByName(String name) {
+        if (name == null || name.trim().isEmpty()) return null;
+
+        return stations.stream()
+                .filter(station -> station.getName().equalsIgnoreCase(name.trim()))
+                .findFirst()
+                .orElse(null);
     }
 
     public synchronized void addStation(Station station) {
@@ -730,5 +777,87 @@ public class DataStore {
             trainSeatsAvailable.put(t.getId(), DEFAULT_SEATS_PER_TRAIN);
         }
         saveData();
+    }
+
+    // --- GESTIONE UTENTI SEMPLIFICATA (SOLO LETTURA) ---
+
+    /**
+     * Carica i dati utenti direttamente dal file JSON.
+     */
+    private Map<String, Map<String, Object>> loadUsersData() {
+        Map<String, Map<String, Object>> usersData = new HashMap<>();
+        try {
+            String usersFile = DATA_DIR + "/users.json";
+            File file = new File(usersFile);
+            if (!file.exists()) return usersData;
+
+            String json = Files.readString(Paths.get(usersFile)).trim();
+            if (json.isEmpty() || json.equals("[]")) return usersData;
+
+            JSONArray arr = new JSONArray(json);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                String username = obj.optString("username");
+                if (!username.isEmpty()) {
+                    Map<String, Object> userData = new HashMap<>();
+                    userData.put("email", obj.optString("email", ""));
+                    userData.put("fidelityMember", obj.optBoolean("fidelityMember", false));
+                    userData.put("customerType", obj.optString("customerType", "standard"));
+                    usersData.put(username, userData);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Errore caricamento utenti: " + e.getMessage());
+        }
+        return usersData;
+    }
+
+    /**
+     * Verifica se un utente è membro fidelity (SOLO LETTURA).
+     */
+    public boolean isFidelityMember(String username) {
+        if (username == null || username.isEmpty()) return false;
+
+        Map<String, Map<String, Object>> usersData = loadUsersData();
+        Map<String, Object> userData = usersData.get(username);
+        if (userData != null) {
+            return (Boolean) userData.getOrDefault("fidelityMember", false);
+        }
+        return false;
+    }
+
+    /**
+     * Ottiene il tipo di cliente per un utente (SOLO LETTURA).
+     * Legge direttamente il valore salvato nel file JSON senza logica automatica.
+     */
+    public String getCustomerType(String username) {
+        if (username == null || username.isEmpty()) return "standard";
+
+        Map<String, Map<String, Object>> usersData = loadUsersData();
+        Map<String, Object> userData = usersData.get(username);
+        if (userData == null) return "standard";
+
+        // Restituisce il tipo salvato nel file, senza logica automatica
+        String customerType = (String) userData.getOrDefault("customerType", "standard");
+        return customerType != null && !customerType.isEmpty() ? customerType : "standard";
+    }
+
+    // --- CALCOLO DISTANZE ---
+
+    /**
+     * Calcola distanza tra due stazioni.
+     */
+    public synchronized double calculateDistance(int station1Id, int station2Id) {
+        Station s1 = getStationById(station1Id);
+        Station s2 = getStationById(station2Id);
+        return DistanceCalculator.calculateDistance(s1, s2);
+    }
+
+    /**
+     * Calcola prezzo basato su distanza.
+     */
+    public synchronized double calculatePrice(int depId, int arrId, double pricePerKm, double basePrice) {
+        double distance = calculateDistance(depId, arrId);
+        return DistanceCalculator.calculatePriceByDistance(distance, pricePerKm, basePrice);
     }
 }

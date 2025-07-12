@@ -8,11 +8,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.Button;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Controller per il pannello admin che mostra tutti gli utenti.
+ * Visualizza username, email, stato della membership fedeltà e biglietti.
+ */
 public class AdminPanelController {
     @FXML
     private TableView<UserRow> usersTable;
@@ -54,16 +56,29 @@ public class AdminPanelController {
         private final String email;
         private final String fidelity;
         private final String tickets;
+
         public UserRow(String username, String email, String fidelity, String tickets) {
             this.username = username;
             this.email = email;
             this.fidelity = fidelity;
             this.tickets = tickets;
         }
-        public String getUsername() { return username; }
-        public String getEmail() { return email; }
-        public String getFidelity() { return fidelity; }
-        public String getTickets() { return tickets; }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getFidelity() {
+            return fidelity;
+        }
+
+        public String getTickets() {
+            return tickets;
+        }
     }
 }
 

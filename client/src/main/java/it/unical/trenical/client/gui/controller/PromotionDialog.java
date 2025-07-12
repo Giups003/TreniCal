@@ -1,5 +1,6 @@
 package it.unical.trenical.client.gui.controller;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -11,7 +12,6 @@ import javafx.scene.control.SelectionMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javafx.scene.control.cell.CheckBoxListCell;
 
@@ -19,7 +19,8 @@ public class PromotionDialog {
     public static PromotionsAdminController.PromotionViewModel showDialog(PromotionsAdminController.PromotionViewModel existing,
                                                                           java.util.List<String> routes,
                                                                           java.util.List<String> classes,
-                                                                          java.util.List<String> trainTypes) {
+                                                                          java.util.List<String> trainTypes,
+                                                                          java.util.List<String> userTypes) {
         Dialog<PromotionsAdminController.PromotionViewModel> dialog = new Dialog<>();
         dialog.setTitle(existing == null ? "Aggiungi Promozione" : "Modifica Promozione");
         dialog.setHeaderText(existing == null ? "Inserisci i dati della nuova promozione" : "Modifica i dati della promozione");
@@ -91,6 +92,17 @@ public class PromotionDialog {
                 trainTypeListView.getSelectionModel().select(i);
             }
         });
+        // ListView per i tipi utente
+        ListView<String> userTypeListView = new ListView<>(FXCollections.observableArrayList(userTypes));
+        userTypeListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        userTypeListView.setPrefHeight(80);
+        Button selectAllUserTypesButton = new Button("Seleziona tutti i tipi");
+        selectAllUserTypesButton.setOnAction(e -> {
+            userTypeListView.getSelectionModel().clearSelection();
+            for (int i = 0; i < userTypeListView.getItems().size(); i++) {
+                userTypeListView.getSelectionModel().select(i);
+            }
+        });
 
         if (existing != null) {
             nameField.setText(existing.nameProperty().get());
@@ -134,6 +146,18 @@ public class PromotionDialog {
                     trainTypeListView.scrollTo(trainTypes.indexOf(selectedTypes.get(0)));
                 }
             }
+            // Seleziona i tipi utente già associati
+            if (existing.userTypesProperty().get() != null && !existing.userTypesProperty().get().isEmpty()) {
+                java.util.List<String> selectedUserTypes = Arrays.asList(existing.userTypesProperty().get().split(","));
+                for (int i = 0; i < userTypes.size(); i++) {
+                    if (selectedUserTypes.contains(userTypes.get(i))) {
+                        userTypeListView.getSelectionModel().select(i);
+                    }
+                }
+                if (!selectedUserTypes.isEmpty()) {
+                    userTypeListView.scrollTo(userTypes.indexOf(selectedUserTypes.get(0)));
+                }
+            }
             if (!existing.validFromProperty().get().isEmpty()) fromPicker.setValue(LocalDate.parse(existing.validFromProperty().get()));
             if (!existing.validToProperty().get().isEmpty()) toPicker.setValue(LocalDate.parse(existing.validToProperty().get()));
             fidelityCheckBox.setSelected(existing.fidelityOnlyProperty().get());
@@ -149,6 +173,7 @@ public class PromotionDialog {
         grid.add(new Label("Valida al:"), 0, 6); grid.add(toPicker, 1, 6);
         grid.add(fidelityCheckBox, 1, 7);
         grid.add(new Label("Tipo treno:"), 0, 8); grid.add(trainTypeListView, 1, 8); grid.add(selectAllTrainTypesButton, 2, 8);
+        grid.add(new Label("Tipo utente:"), 0, 9); grid.add(userTypeListView, 1, 9); grid.add(selectAllUserTypesButton, 2, 9);
 
         Node okButton = dialog.getDialogPane().lookupButton(okButtonType);
         okButton.setDisable(true);
@@ -167,6 +192,7 @@ public class PromotionDialog {
                 java.util.List<String> selectedRoutes = new ArrayList<>(routeListView.getSelectionModel().getSelectedItems());
                 java.util.List<String> selectedClasses = new ArrayList<>(classListView.getSelectionModel().getSelectedItems());
                 java.util.List<String> selectedTypes = new ArrayList<>(trainTypeListView.getSelectionModel().getSelectedItems());
+                java.util.List<String> selectedUserTypes = new ArrayList<>(userTypeListView.getSelectionModel().getSelectedItems());
                 String trainType = "";
                 if (!selectedTypes.isEmpty() && selectedTypes.contains("Tutte le tipologie")) {
                     trainType = "";
@@ -176,6 +202,7 @@ public class PromotionDialog {
                 String from = fromPicker.getValue() != null ? fromPicker.getValue().toString() : "";
                 String to = toPicker.getValue() != null ? toPicker.getValue().toString() : "";
                 boolean fidelity = fidelityCheckBox.isSelected();
+                String userTypesStr = String.join(",", selectedUserTypes);
                 // Crea e restituisci il PromotionViewModel
                 return new PromotionsAdminController.PromotionViewModel(
                         0, // id (verrà gestito dal backend)
@@ -187,26 +214,25 @@ public class PromotionDialog {
                         from,
                         to,
                         fidelity,
-                        trainType
+                        trainType,
+                        userTypesStr
                 );
             }
             return null;
         });
 
-        routeListView.setCellFactory(CheckBoxListCell.forListView(item -> {
-            return new javafx.beans.property.SimpleBooleanProperty(routeListView.getSelectionModel().getSelectedItems().contains(item)) {
-                @Override
-                public void set(boolean selected) {
-                    if (selected) {
-                        routeListView.getSelectionModel().select(item);
-                    } else {
-                        routeListView.getSelectionModel().clearSelection(routeListView.getItems().indexOf(item));
-                    }
+        routeListView.setCellFactory(CheckBoxListCell.forListView(item -> new SimpleBooleanProperty(routeListView.getSelectionModel().getSelectedItems().contains(item)) {
+            @Override
+            public void set(boolean selected) {
+                if (selected) {
+                    routeListView.getSelectionModel().select(item);
+                } else {
+                    routeListView.getSelectionModel().clearSelection(routeListView.getItems().indexOf(item));
                 }
-            };
+            }
         }));
         classListView.setCellFactory(CheckBoxListCell.forListView(item -> {
-            return new javafx.beans.property.SimpleBooleanProperty(classListView.getSelectionModel().getSelectedItems().contains(item)) {
+            return new SimpleBooleanProperty(classListView.getSelectionModel().getSelectedItems().contains(item)) {
                 @Override
                 public void set(boolean selected) {
                     if (selected) {
@@ -218,7 +244,7 @@ public class PromotionDialog {
             };
         }));
         trainTypeListView.setCellFactory(CheckBoxListCell.forListView(item -> {
-            return new javafx.beans.property.SimpleBooleanProperty(trainTypeListView.getSelectionModel().getSelectedItems().contains(item)) {
+            return new SimpleBooleanProperty(trainTypeListView.getSelectionModel().getSelectedItems().contains(item)) {
                 @Override
                 public void set(boolean selected) {
                     if (selected) {
@@ -229,9 +255,19 @@ public class PromotionDialog {
                 }
             };
         }));
+        userTypeListView.setCellFactory(CheckBoxListCell.forListView(item -> {
+            return new SimpleBooleanProperty(userTypeListView.getSelectionModel().getSelectedItems().contains(item)) {
+                @Override
+                public void set(boolean selected) {
+                    if (selected) {
+                        userTypeListView.getSelectionModel().select(item);
+                    } else {
+                        userTypeListView.getSelectionModel().clearSelection(userTypeListView.getItems().indexOf(item));
+                    }
+                }
+            };
+        }));
 
         return dialog.showAndWait().orElse(null);
     }
 }
-
-

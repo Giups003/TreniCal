@@ -216,6 +216,36 @@ private static final long serialVersionUID = 0L;
     return platforms_;
   }
 
+  public static final int LATITUDE_FIELD_NUMBER = 6;
+  private double latitude_ = 0D;
+  /**
+   * <pre>
+   * Latitudine GPS per calcolo distanze
+   * </pre>
+   *
+   * <code>double latitude = 6;</code>
+   * @return The latitude.
+   */
+  @java.lang.Override
+  public double getLatitude() {
+    return latitude_;
+  }
+
+  public static final int LONGITUDE_FIELD_NUMBER = 7;
+  private double longitude_ = 0D;
+  /**
+   * <pre>
+   * Longitudine GPS per calcolo distanze
+   * </pre>
+   *
+   * <code>double longitude = 7;</code>
+   * @return The longitude.
+   */
+  @java.lang.Override
+  public double getLongitude() {
+    return longitude_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -245,6 +275,12 @@ private static final long serialVersionUID = 0L;
     if (platforms_ != 0) {
       output.writeInt32(5, platforms_);
     }
+    if (java.lang.Double.doubleToRawLongBits(latitude_) != 0) {
+      output.writeDouble(6, latitude_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(longitude_) != 0) {
+      output.writeDouble(7, longitude_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -271,6 +307,14 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(5, platforms_);
     }
+    if (java.lang.Double.doubleToRawLongBits(latitude_) != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeDoubleSize(6, latitude_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(longitude_) != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeDoubleSize(7, longitude_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -296,6 +340,12 @@ private static final long serialVersionUID = 0L;
         .equals(other.getAddress())) return false;
     if (getPlatforms()
         != other.getPlatforms()) return false;
+    if (java.lang.Double.doubleToLongBits(getLatitude())
+        != java.lang.Double.doubleToLongBits(
+            other.getLatitude())) return false;
+    if (java.lang.Double.doubleToLongBits(getLongitude())
+        != java.lang.Double.doubleToLongBits(
+            other.getLongitude())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -317,6 +367,12 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getAddress().hashCode();
     hash = (37 * hash) + PLATFORMS_FIELD_NUMBER;
     hash = (53 * hash) + getPlatforms();
+    hash = (37 * hash) + LATITUDE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getLatitude()));
+    hash = (37 * hash) + LONGITUDE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getLongitude()));
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -457,6 +513,8 @@ private static final long serialVersionUID = 0L;
       city_ = "";
       address_ = "";
       platforms_ = 0;
+      latitude_ = 0D;
+      longitude_ = 0D;
       return this;
     }
 
@@ -504,6 +562,12 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
         result.platforms_ = platforms_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.latitude_ = latitude_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.longitude_ = longitude_;
       }
     }
 
@@ -572,6 +636,12 @@ private static final long serialVersionUID = 0L;
       if (other.getPlatforms() != 0) {
         setPlatforms(other.getPlatforms());
       }
+      if (other.getLatitude() != 0D) {
+        setLatitude(other.getLatitude());
+      }
+      if (other.getLongitude() != 0D) {
+        setLongitude(other.getLongitude());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -623,6 +693,16 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000010;
               break;
             } // case 40
+            case 49: {
+              latitude_ = input.readDouble();
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 49
+            case 57: {
+              longitude_ = input.readDouble();
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 57
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1000,6 +1080,94 @@ private static final long serialVersionUID = 0L;
     public Builder clearPlatforms() {
       bitField0_ = (bitField0_ & ~0x00000010);
       platforms_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private double latitude_ ;
+    /**
+     * <pre>
+     * Latitudine GPS per calcolo distanze
+     * </pre>
+     *
+     * <code>double latitude = 6;</code>
+     * @return The latitude.
+     */
+    @java.lang.Override
+    public double getLatitude() {
+      return latitude_;
+    }
+    /**
+     * <pre>
+     * Latitudine GPS per calcolo distanze
+     * </pre>
+     *
+     * <code>double latitude = 6;</code>
+     * @param value The latitude to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLatitude(double value) {
+
+      latitude_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Latitudine GPS per calcolo distanze
+     * </pre>
+     *
+     * <code>double latitude = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLatitude() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      latitude_ = 0D;
+      onChanged();
+      return this;
+    }
+
+    private double longitude_ ;
+    /**
+     * <pre>
+     * Longitudine GPS per calcolo distanze
+     * </pre>
+     *
+     * <code>double longitude = 7;</code>
+     * @return The longitude.
+     */
+    @java.lang.Override
+    public double getLongitude() {
+      return longitude_;
+    }
+    /**
+     * <pre>
+     * Longitudine GPS per calcolo distanze
+     * </pre>
+     *
+     * <code>double longitude = 7;</code>
+     * @param value The longitude to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLongitude(double value) {
+
+      longitude_ = value;
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Longitudine GPS per calcolo distanze
+     * </pre>
+     *
+     * <code>double longitude = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLongitude() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      longitude_ = 0D;
       onChanged();
       return this;
     }

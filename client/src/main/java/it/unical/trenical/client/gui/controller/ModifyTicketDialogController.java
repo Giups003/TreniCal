@@ -1,6 +1,8 @@
 package it.unical.trenical.client.gui.controller;
 
 import com.google.protobuf.Timestamp;
+import it.unical.trenical.client.session.UserManager;
+import it.unical.trenical.client.session.UserSession;
 import it.unical.trenical.grpc.common.Train;
 import it.unical.trenical.grpc.ticket.*;
 import it.unical.trenical.grpc.train.*;
@@ -160,9 +162,11 @@ public class ModifyTicketDialogController {
         String time = getTime();
         if (time != null && !time.isEmpty() && timeToTrain.containsKey(time)) {
             selectedTrain = timeToTrain.get(time);
+            selectedTrainId = selectedTrain.getId();
             confirmButton.setDisable(false);
         } else {
             selectedTrain = null;
+            selectedTrainId = null;
             confirmButton.setDisable(true);
         }
     }
@@ -176,7 +180,7 @@ public class ModifyTicketDialogController {
         }
         try {
             int trainId = selectedTrain.getId();
-            // Usa l'orario reale del treno selezionato per la richiesta!
+            // Usa l'orario reale del treno selezionato per la richiesta
             LocalDateTime travelDateTime;
             if (selectedTrain.hasDepartureTime()) {
                 Instant instant = Instant.ofEpochSecond(selectedTrain.getDepartureTime().getSeconds());
@@ -222,14 +226,9 @@ public class ModifyTicketDialogController {
     }
 
     private void updateSelectedTrainId() {
-        String time = getTime();
-        if (time != null && !time.isEmpty() && timeToTrainId.containsKey(time)) {
-            selectedTrainId = timeToTrainId.get(time);
-            confirmButton.setDisable(false);
-        } else {
-            selectedTrainId = originalTrainId;
-            confirmButton.setDisable(selectedTrainId == null);
-        }
+        // Questo metodo ora è ridondante perché updateSelectedTrain già aggiorna selectedTrainId
+        // Ma lo manteniamo per compatibilità
+        updateSelectedTrain();
     }
 
     private void fetchOriginalTicketPrice() {
@@ -306,13 +305,24 @@ public class ModifyTicketDialogController {
                     .setSeconds(zdt.toEpochSecond())
                     .setNanos(0)
                     .build();
+
+            // Ottieni il tipo utente dal client
+            String username = UserSession.getUsername();
+            String userType = UserManager.getCustomerType(username);
+            if (userType == null || userType.isEmpty()) {
+                userType = "standard";
+            }
+
             GetTicketPriceRequest req = GetTicketPriceRequest.newBuilder()
                     .setDepartureStation(dep)
                     .setArrivalStation(arr)
                     .setTravelDate(travelTimestamp)
                     .setServiceClass(serviceClass)
                     .setPromoCode("")
+                    .setTrainType(selectedTrain != null ? selectedTrain.getName() : "")
+                    .setUserType(userType) // PASSA IL TIPO UTENTE
                     .build();
+
             GetTicketPriceResponse resp = ticketService.getTicketPrice(req);
             newPrice = resp.getPrice();
             double penale = 0.0;
@@ -462,11 +472,21 @@ public class ModifyTicketDialogController {
 
             // Gestione risposta dettagliata dal server
             if (resp.getSuccess()) {
+                // Calcola il prezzo totale finale che include tutte le componenti
+                double finalTotalPrice = oldPrice + surcharge;
+
                 StringBuilder msg = new StringBuilder();
                 msg.append("Modifica effettuata con successo!\n");
-                msg.append(String.format("Prezzo precedente: %.2f €\n", oldPrice));
-                msg.append(String.format("Prezzo nuovo: %.2f €\n", newPrice));
-                msg.append(String.format("Sovrapprezzo: %.2f €", surcharge));
+                msg.append(String.format("Prezzo biglietto originale: %.2f €\n", oldPrice));
+
+                if (surcharge > 0.01) {
+                    msg.append(String.format("Sovrapprezzo applicato: %.2f €\n", surcharge));
+                    msg.append(String.format("PREZZO TOTALE FINALE: %.2f €", finalTotalPrice));
+                } else {
+                    msg.append("Nessun sovrapprezzo applicato\n");
+                    msg.append(String.format("PREZZO TOTALE FINALE: %.2f €", oldPrice));
+                }
+
                 showConfirmation(msg.toString());
                 if (onSuccess != null) onSuccess.run();
                 closeDialog();

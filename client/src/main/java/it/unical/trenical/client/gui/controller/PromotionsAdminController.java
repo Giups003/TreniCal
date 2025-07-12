@@ -27,6 +27,7 @@ public class PromotionsAdminController {
     @FXML private TableColumn<PromotionViewModel, Double> colDiscount;
     @FXML private TableColumn<PromotionViewModel, String> colRoute;
     @FXML private TableColumn<PromotionViewModel, String> colClass;
+    @FXML private TableColumn<PromotionViewModel, String> colUserTypes;
     @FXML private TableColumn<PromotionViewModel, String> colFrom;
     @FXML private TableColumn<PromotionViewModel, String> colTo;
     @FXML private TableColumn<PromotionViewModel, Boolean> colFidelity;
@@ -48,6 +49,7 @@ public class PromotionsAdminController {
         colDiscount.setCellValueFactory(data -> data.getValue().discountPercentProperty().asObject());
         colRoute.setCellValueFactory(data -> data.getValue().routeNameProperty());
         colClass.setCellValueFactory(data -> data.getValue().serviceClassProperty());
+        colUserTypes.setCellValueFactory(data -> data.getValue().userTypesProperty());
         colFrom.setCellValueFactory(data -> data.getValue().validFromProperty());
         colTo.setCellValueFactory(data -> data.getValue().validToProperty());
         colFidelity.setCellValueFactory(data -> data.getValue().fidelityOnlyProperty().asObject());
@@ -84,7 +86,8 @@ public class PromotionsAdminController {
         java.util.List<String> routes = getRoutesList();
         java.util.List<String> classes = getClassesList();
         java.util.List<String> trainTypes = getTrainTypesList();
-        PromotionViewModel newPromo = PromotionDialog.showDialog(null, routes, classes, trainTypes);
+        java.util.List<String> userTypes = getUserTypesList();
+        PromotionViewModel newPromo = PromotionDialog.showDialog(null, routes, classes, trainTypes, userTypes);
         if (newPromo != null) {
             try {
                 Promotion proto = viewModelToProto(newPromo);
@@ -136,7 +139,8 @@ public class PromotionsAdminController {
             java.util.List<String> routes = getRoutesList();
             java.util.List<String> classes = getClassesList();
             java.util.List<String> trainTypes = getTrainTypesList();
-            PromotionViewModel edited = PromotionDialog.showDialog(selected, routes, classes, trainTypes);
+            java.util.List<String> userTypes = getUserTypesList();
+            PromotionViewModel edited = PromotionDialog.showDialog(selected, routes, classes, trainTypes, userTypes);
             if (edited != null) {
                 try {
                     // Prima rimuovi la promozione esistente
@@ -192,6 +196,15 @@ public class PromotionsAdminController {
         return Arrays.asList("Frecciarossa", "Intercity", "Regionale", "Italo");
     }
 
+    private List<String> getUserTypesList() {
+        // Tipi di utente standard nel sistema
+        return java.util.Arrays.asList(
+            "Standard",
+            "VIP",
+            "corporate"
+        );
+    }
+
     private String protocolStringListToString(List<String> list) {
         return (list != null && !list.isEmpty()) ? String.join(",", list) : "";
     }
@@ -211,7 +224,8 @@ public class PromotionsAdminController {
                 p.hasValidFrom() ? toLocalDate(p.getValidFrom()).toString() : "",
                 p.hasValidTo() ? toLocalDate(p.getValidTo()).toString() : "",
                 p.getOnlyForLoyaltyMembers(),
-                p.getTrainType()
+                p.getTrainType(),
+                protocolStringListToString(p.getUserTypesList())
         );
     }
 
@@ -223,6 +237,7 @@ public class PromotionsAdminController {
                 .setDiscountPercent(vm.discountPercentProperty().get())
                 .addAllRouteNames(stringToProtocolStringList(vm.routeNameProperty().get()))
                 .addAllServiceClasses(stringToProtocolStringList(vm.serviceClassProperty().get()))
+                .addAllUserTypes(stringToProtocolStringList(vm.userTypesProperty().get()))
                 .setOnlyForLoyaltyMembers(vm.fidelityOnlyProperty().get())
                 .setTrainType(vm.trainTypeProperty().get() == null ? "" : vm.trainTypeProperty().get());
         if (!vm.validFromProperty().get().isEmpty()) b.setValidFrom(toProtoTimestamp(LocalDate.parse(vm.validFromProperty().get())));
@@ -255,8 +270,9 @@ public class PromotionsAdminController {
         private final javafx.beans.property.StringProperty validTo;
         private final javafx.beans.property.BooleanProperty fidelityOnly;
         private final javafx.beans.property.StringProperty trainType;
+        private final javafx.beans.property.StringProperty userTypes;
 
-        public PromotionViewModel(int id, String name, String description, double discountPercent, String routeName, String serviceClass, String validFrom, String validTo, boolean fidelityOnly, String trainType) {
+        public PromotionViewModel(int id, String name, String description, double discountPercent, String routeName, String serviceClass, String validFrom, String validTo, boolean fidelityOnly, String trainType, String userTypes) {
             this.id = new javafx.beans.property.SimpleIntegerProperty(id);
             this.name = new javafx.beans.property.SimpleStringProperty(name);
             this.description = new javafx.beans.property.SimpleStringProperty(description);
@@ -267,6 +283,7 @@ public class PromotionsAdminController {
             this.validTo = new javafx.beans.property.SimpleStringProperty(validTo);
             this.fidelityOnly = new javafx.beans.property.SimpleBooleanProperty(fidelityOnly);
             this.trainType = new javafx.beans.property.SimpleStringProperty(trainType);
+            this.userTypes = new javafx.beans.property.SimpleStringProperty(userTypes);
         }
         public IntegerProperty idProperty() { return id; }
         public StringProperty nameProperty() { return name; }
@@ -278,5 +295,6 @@ public class PromotionsAdminController {
         public StringProperty validToProperty() { return validTo; }
         public BooleanProperty fidelityOnlyProperty() { return fidelityOnly; }
         public StringProperty trainTypeProperty() { return trainType; }
+        public StringProperty userTypesProperty() { return userTypes; }
     }
 }

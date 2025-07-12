@@ -1,1 +1,4 @@
 it\unical\trenical\server\TrainServiceImplTest.class
+it\unical\trenical\server\strategy\PriceCalculatorTest.class
+it\unical\trenical\server\DataStoreTest.class
+it\unical\trenical\server\strategy\StandardPriceCalculationStrategyTest.class

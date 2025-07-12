@@ -7,7 +7,7 @@ import java.util.prefs.Preferences;
 public class UserSession {
     private static String username;
     private static boolean isAdmin = false;
-    private static boolean loyaltyMember = false;
+    private static boolean loyaltyMember;
     private static final Preferences prefs = Preferences.userNodeForPackage(UserSession.class);
     private static final String LOYALTY_KEY = "loyaltyMember";
     private static String email;

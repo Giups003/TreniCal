@@ -140,4 +140,29 @@ public interface PromotionOrBuilder extends
    */
   com.google.protobuf.ByteString
       getTrainTypeBytes();
+
+  /**
+   * <code>repeated string user_types = 11;</code>
+   * @return A list containing the userTypes.
+   */
+  java.util.List<java.lang.String>
+      getUserTypesList();
+  /**
+   * <code>repeated string user_types = 11;</code>
+   * @return The count of userTypes.
+   */
+  int getUserTypesCount();
+  /**
+   * <code>repeated string user_types = 11;</code>
+   * @param index The index of the element to return.
+   * @return The userTypes at the given index.
+   */
+  java.lang.String getUserTypes(int index);
+  /**
+   * <code>repeated string user_types = 11;</code>
+   * @param index The index of the value to return.
+   * @return The bytes of the userTypes at the given index.
+   */
+  com.google.protobuf.ByteString
+      getUserTypesBytes(int index);
 }

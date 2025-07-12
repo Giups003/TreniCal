@@ -1,7 +1,7 @@
 package it.unical.trenical.client.gui.controller;
 
-import com.google.protobuf.Timestamp;
 import com.google.protobuf.Empty;
+import com.google.protobuf.Timestamp;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import it.unical.trenical.client.gui.SceneManager;
@@ -10,13 +10,11 @@ import it.unical.trenical.client.gui.util.AlertUtils;
 import it.unical.trenical.client.gui.util.AutoCompleteUtil;
 import it.unical.trenical.client.session.UserSession;
 import it.unical.trenical.grpc.common.Train;
-import it.unical.trenical.grpc.ticket.PurchaseTicketRequest;
-import it.unical.trenical.grpc.ticket.PurchaseTicketResponse;
-import it.unical.trenical.grpc.ticket.TicketServiceGrpc;
-import it.unical.trenical.grpc.train.*;
-import it.unical.trenical.grpc.promotion.PromotionServiceGrpc;
-import it.unical.trenical.grpc.promotion.PromotionList;
 import it.unical.trenical.grpc.promotion.Promotion;
+import it.unical.trenical.grpc.promotion.PromotionList;
+import it.unical.trenical.grpc.promotion.PromotionServiceGrpc;
+import it.unical.trenical.grpc.ticket.*;
+import it.unical.trenical.grpc.train.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -25,9 +23,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * Controller ottimizzato per la schermata di acquisto biglietto.
+ * Controller per la schermata di acquisto biglietto.
+ * Gestisce la selezione di treni, validazione codici promozionali e processo di acquisto.
  */
 public class BuyTicketController {
+
+    // Campi UI
     @FXML private TextField trainField, departureStationField, arrivalStationField, promoCodeField;
     @FXML private ComboBox<String> classBox, timeBox;
     @FXML private Spinner<Integer> seatsSpinner;
@@ -36,45 +37,54 @@ public class BuyTicketController {
     @FXML private Button validatePromoButton, buyButton;
     @FXML private DatePicker datePicker;
 
+    // Servizi gRPC
     private TrainServiceGrpc.TrainServiceBlockingStub trainService;
     private TicketServiceGrpc.TicketServiceBlockingStub ticketService;
     private PromotionServiceGrpc.PromotionServiceBlockingStub promotionService;
 
-    // Mappa nome treno → oggetto Train
+    // Stato interno
     private final Map<String, Train> trainNameToTrain = new HashMap<>();
     private Train selectedTrain = null;
     private int seatsSpinnerMax = 10;
     private boolean promoValid = false;
     private double promoPrice = 0.0;
-    private final Set<String> promoCodesFromServer = new HashSet<>();
 
     @FXML
     public void initialize() {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        // Inizializza servizi gRPC
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+                .usePlaintext()
+                .build();
         trainService = TrainServiceGrpc.newBlockingStub(channel);
         ticketService = TicketServiceGrpc.newBlockingStub(channel);
         promotionService = PromotionServiceGrpc.newBlockingStub(channel);
 
-        loadPromoCodesFromServer();
-
+        // Configura UI
         classBox.getItems().addAll("Prima Classe", "Seconda Classe");
         classBox.setValue("Seconda Classe");
         seatsSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 1));
 
+        // Configura gruppo radio button per pagamento
         ToggleGroup paymentGroup = new ToggleGroup();
         creditCardRadio.setToggleGroup(paymentGroup);
         digitalWalletRadio.setToggleGroup(paymentGroup);
         creditCardRadio.setSelected(true);
 
+        // Setup autocompletamento
         AutoCompleteUtil.setupAutoComplete(trainField, this::fetchTrainSuggestions);
         setupTrainFieldListener();
         AutoCompleteUtil.setupAutoComplete(departureStationField, this::fetchStationSuggestions);
         AutoCompleteUtil.setupAutoComplete(arrivalStationField, this::fetchStationSuggestions);
 
-        // Listeners per aggiornare treno/orari/prezzi
+        // Listeners per aggiornamenti automatici
         classBox.valueProperty().addListener((obs, oldVal, newVal) -> updatePrice());
         seatsSpinner.valueProperty().addListener((obs, oldVal, newVal) -> updatePrice());
-        trainField.textProperty().addListener((obs, oldVal, newVal) -> updatePrice());
+        trainField.textProperty().addListener((obs, oldVal, newVal) -> {
+            selectedTrain = trainNameToTrain.get(newVal);
+            buyButton.setDisable(selectedTrain == null);
+            updateSeatsSpinnerMax();
+            updatePrice();
+        });
 
         departureStationField.textProperty().addListener((obs, oldVal, newVal) -> {
             updateAvailableTimes();
@@ -86,6 +96,7 @@ public class BuyTicketController {
             updateTrainByStations();
             updateSeatsSpinnerMax();
         });
+
         if (datePicker != null) {
             datePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
                 updateAvailableTimes();
@@ -102,7 +113,7 @@ public class BuyTicketController {
             });
         }
 
-        // Impedisci selezione di date antecedenti a oggi
+        // Impedisci selezione di date passate
         if (datePicker != null) {
             datePicker.setDayCellFactory(picker -> new DateCell() {
                 @Override
@@ -113,54 +124,45 @@ public class BuyTicketController {
             });
         }
 
+        // Carica dati iniziali
         loadSelectedTrain();
+        loadSelectedDateTime();
+        setupTooltips();
+        validatePromoButton.setOnAction(e -> onValidatePromo());
+        updateSeatsSpinnerMax();
+        updatePrice();
+    }
 
-        // Pre-compila se arrivo da schermata ricerca treni
-        if (departureStationField.getText() != null && !departureStationField.getText().isBlank()
-                && arrivalStationField.getText() != null && !arrivalStationField.getText().isBlank()
-                && datePicker.getValue() != null) {
-            updateAvailableTimes();
-            updateTrainByStations();
-        }
-        LocalDate searchDate = SelectedTrainService.getInstance().getSelectedDate();
-        LocalTime searchTime = SelectedTrainService.getInstance().getSelectedTime();
+    private void setupTooltips() {
+        trainField.setTooltip(new Tooltip("Il treno è selezionato automaticamente in base a partenza e arrivo"));
+        classBox.setTooltip(new Tooltip("Seleziona la classe del biglietto"));
+        seatsSpinner.setTooltip(new Tooltip("Seleziona il numero di posti da acquistare"));
+        promoCodeField.setTooltip(new Tooltip("Inserisci un codice promozionale se disponibile"));
+        validatePromoButton.setTooltip(new Tooltip("Verifica la validità del codice promozionale"));
+        creditCardRadio.setTooltip(new Tooltip("Paga con carta di credito"));
+        digitalWalletRadio.setTooltip(new Tooltip("Paga con portafoglio digitale"));
+        buyButton.setTooltip(new Tooltip("Procedi all'acquisto del biglietto"));
+    }
+
+    private void loadSelectedDateTime() {
+        SelectedTrainService service = SelectedTrainService.getInstance();
+
+        LocalDate searchDate = service.getSelectedDate();
         if (searchDate != null && datePicker != null) {
             datePicker.setValue(searchDate);
         } else if (datePicker != null) {
             datePicker.setValue(LocalDate.now());
         }
+
+        LocalTime searchTime = service.getSelectedTime();
         if (searchTime != null && timeBox != null) {
             updateAvailableTimes();
             String timeStr = searchTime.toString();
-            if (!timeBox.getItems().contains(timeStr)) timeBox.getItems().add(timeStr);
+            if (!timeBox.getItems().contains(timeStr)) {
+                timeBox.getItems().add(timeStr);
+            }
             timeBox.setValue(timeStr);
         }
-
-        validatePromoButton.setOnAction(e -> onValidatePromo());
-        updateSeatsSpinnerMax();
-        updatePrice();
-
-        // Tooltip rapidi
-        setToolTips();
-    }
-
-    private void setToolTips() {
-        if (trainField.getTooltip() == null)
-            trainField.setTooltip(new Tooltip("Il treno è selezionato automaticamente in base a partenza e arrivo"));
-        if (classBox.getTooltip() == null)
-            classBox.setTooltip(new Tooltip("Seleziona la classe del biglietto"));
-        if (seatsSpinner.getTooltip() == null)
-            seatsSpinner.setTooltip(new Tooltip("Seleziona il numero di posti da acquistare"));
-        if (promoCodeField.getTooltip() == null)
-            promoCodeField.setTooltip(new Tooltip("Inserisci un codice promozionale se disponibile"));
-        if (validatePromoButton.getTooltip() == null)
-            validatePromoButton.setTooltip(new Tooltip("Verifica la validità del codice promozionale"));
-        if (creditCardRadio.getTooltip() == null)
-            creditCardRadio.setTooltip(new Tooltip("Paga con carta di credito"));
-        if (digitalWalletRadio.getTooltip() == null)
-            digitalWalletRadio.setTooltip(new Tooltip("Paga con portafoglio digitale"));
-        if (buyButton.getTooltip() == null)
-            buyButton.setTooltip(new Tooltip("Procedi all'acquisto del biglietto"));
     }
 
     private void updateAvailableTimes() {
@@ -295,29 +297,44 @@ public class BuyTicketController {
                 return;
             }
             int seats = seatsSpinner.getValue();
-            String promoCode = promoCodeField != null ? promoCodeField.getText() : "";
-            double total;
+
+            // Se c'è un codice promo validato, mostra il prezzo promo
+            if (promoValid && promoPrice > 0.0) {
+                double total = promoPrice * seats;
+                priceLabel.setText("Prezzo: " + String.format("%.2f", total) + " € (promo)");
+                return;
+            }
+
+            // Ottieni il tipo utente dal client
+            String userType = it.unical.trenical.client.session.UserManager.getCustomerType(username);
+            if (userType == null || userType.isEmpty()) {
+                userType = "standard";
+            }
+
             LocalTime localTime = LocalTime.parse(time);
             LocalDateTime ldt = LocalDateTime.of(date, localTime);
-            // Conversione coerente con il server: ZoneId.systemDefault()
             Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
-            if (promoValid && promoCode != null && !promoCode.isBlank()) {
-                total = promoPrice * seats;
-            } else {
-                PurchaseTicketRequest req = PurchaseTicketRequest.newBuilder()
-                        .setTrainId(selectedTrain.getId())
-                        .setDepartureStation(partenza)
-                        .setArrivalStation(arrivo)
-                        .setServiceClass(classBox.getValue())
-                        .setSeats(1)
-                        .setPassengerName(username)
-                        .setTravelDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build())
-                        .setPromoCode("")
-                        .build();
-                PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
-                total = resp.getPrice() * seats;
+
+            // USA IL NUOVO SERVIZIO GetTicketPrice con il tipo utente
+            GetTicketPriceRequest req = GetTicketPriceRequest.newBuilder()
+                    .setDepartureStation(partenza)
+                    .setArrivalStation(arrivo)
+                    .setServiceClass(classBox.getValue())
+                    .setTravelDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build())
+                    .setPromoCode("") // Non applicare promo se non validato
+                    .setTrainType(selectedTrain != null ? selectedTrain.getName() : "")
+                    .setUserType(userType) // PASSA IL TIPO UTENTE
+                    .build();
+
+            GetTicketPriceResponse resp = ticketService.getTicketPrice(req);
+            double total = resp.getPrice() * seats;
+
+            // Mostra il prezzo con indicazione del tipo utente se non è standard
+            String priceText = "Prezzo: " + String.format("%.2f", total) + " €";
+            if (!"standard".equalsIgnoreCase(userType)) {
+                priceText += " (" + userType + ")";
             }
-            priceLabel.setText("Prezzo: " + String.format("%.2f", total) + " €");
+            priceLabel.setText(priceText);
         } catch (Exception e) {
             priceLabel.setText("Prezzo: errore");
         }
@@ -364,10 +381,7 @@ public class BuyTicketController {
     private void loadPromoCodesFromServer() {
         try {
             PromotionList promoList = promotionService.listPromotions(Empty.getDefaultInstance());
-            promoCodesFromServer.clear();
-            for (Promotion p : promoList.getPromotionsList()) {
-                promoCodesFromServer.add(p.getName());
-            }
+            promoList.getPromotionsList();
         } catch (Exception e) {
             // In caso di errore lascia la lista vuota
         }
@@ -377,47 +391,45 @@ public class BuyTicketController {
     private void onValidatePromo() {
         String promoCode = promoCodeField.getText();
         if (promoCode == null || promoCode.isBlank()) {
-            promoValidationLabel.setText("Inserisci un codice promo.");
+            promoValidationLabel.setText("Inserisci un codice promozione");
+            promoValidationLabel.setStyle("-fx-text-fill: red;");
             promoValid = false;
             promoPrice = 0.0;
             updatePrice();
             return;
         }
-        if (!promoCodesFromServer.contains(promoCode)) {
-            promoValidationLabel.setText("Codice non valido.");
-            promoValid = false;
-            promoPrice = 0.0;
-            updatePrice();
-            return;
-        }
-        double oldPrice = getCurrentBasePrice();
-        double newPrice = getPromoPrice(promoCode);
-        if (newPrice > 0 && newPrice < oldPrice) {
-            promoValidationLabel.setText("Codice valido! Sconto applicato: " + String.format("%.2f", oldPrice - newPrice) + " €");
-            promoValid = true;
-            promoPrice = newPrice;
-        } else {
-            promoValidationLabel.setText("Codice valido, ma non applicabile.");
-            promoValid = false;
-            promoPrice = 0.0;
-        }
-        updatePrice();
-    }
 
-    private double getCurrentBasePrice() {
+        String partenza = departureStationField.getText();
+        String arrivo = arrivalStationField.getText();
+        LocalDate date = datePicker.getValue();
+        String time = timeBox.getValue();
+
+        if (partenza.isBlank() || arrivo.isBlank() || date == null || time == null) {
+            promoValidationLabel.setText("Compila tutti i campi per validare il codice");
+            promoValidationLabel.setStyle("-fx-text-fill: red;");
+            promoValid = false;
+            promoPrice = 0.0;
+            updatePrice();
+            return;
+        }
+
         try {
-            if (selectedTrain == null) return 0.0;
-            String partenza = departureStationField.getText();
-            String arrivo = arrivalStationField.getText();
-            String username = UserSession.getUsername();
-            if (username == null || username.isEmpty()) return 0.0;
-            LocalDate date = datePicker.getValue();
-            String time = timeBox.getValue();
-            if (date == null || time == null) return 0.0;
             LocalTime localTime = LocalTime.parse(time);
             LocalDateTime ldt = LocalDateTime.of(date, localTime);
             Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
-            PurchaseTicketRequest req = PurchaseTicketRequest.newBuilder()
+
+            String username = UserSession.getUsername();
+            if (username == null || username.isEmpty()) {
+                promoValidationLabel.setText("Errore: utente non loggato");
+                promoValidationLabel.setStyle("-fx-text-fill: red;");
+                promoValid = false;
+                promoPrice = 0.0;
+                updatePrice();
+                return;
+            }
+
+            // Prima calcola il prezzo senza codice promo per confronto
+            PurchaseTicketRequest reqWithoutPromo = PurchaseTicketRequest.newBuilder()
                     .setTrainId(selectedTrain.getId())
                     .setDepartureStation(partenza)
                     .setArrivalStation(arrivo)
@@ -425,29 +437,16 @@ public class BuyTicketController {
                     .setSeats(1)
                     .setPassengerName(username)
                     .setTravelDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build())
-                    .setPromoCode("")
+                    .setPromoCode("") // Nessun codice promo
+                    .setPaymentMethod("")
+                    .setTrainType(selectedTrain != null ? selectedTrain.getName() : "")
                     .build();
-            PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
-            return resp.getPrice();
-        } catch (Exception e) {
-            return 0.0;
-        }
-    }
 
-    private double getPromoPrice(String promoCode) {
-        try {
-            if (selectedTrain == null) return 0.0;
-            String partenza = departureStationField.getText();
-            String arrivo = arrivalStationField.getText();
-            String username = UserSession.getUsername();
-            if (username == null || username.isEmpty()) return 0.0;
-            LocalDate date = datePicker.getValue();
-            String time = timeBox.getValue();
-            if (date == null || time == null) return 0.0;
-            LocalTime localTime = LocalTime.parse(time);
-            LocalDateTime ldt = LocalDateTime.of(date, localTime);
-            Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
-            PurchaseTicketRequest req = PurchaseTicketRequest.newBuilder()
+            PurchaseTicketResponse respWithoutPromo = ticketService.purchaseTicket(reqWithoutPromo);
+            double priceWithoutPromo = respWithoutPromo.getPrice();
+
+            // Poi calcola il prezzo con il codice promo
+            PurchaseTicketRequest reqWithPromo = PurchaseTicketRequest.newBuilder()
                     .setTrainId(selectedTrain.getId())
                     .setDepartureStation(partenza)
                     .setArrivalStation(arrivo)
@@ -456,12 +455,75 @@ public class BuyTicketController {
                     .setPassengerName(username)
                     .setTravelDate(com.google.protobuf.Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).build())
                     .setPromoCode(promoCode)
+                    .setPaymentMethod("")
+                    .setTrainType(selectedTrain != null ? selectedTrain.getName() : "")
                     .build();
-            PurchaseTicketResponse resp = ticketService.purchaseTicket(req);
-            return resp.getPrice();
+
+            PurchaseTicketResponse respWithPromo = ticketService.purchaseTicket(reqWithPromo);
+
+            if (!respWithPromo.getSuccess()) {
+                // Se il server restituisce errore, il codice non è valido
+                promoValidationLabel.setText(respWithPromo.getMessage());
+                promoValidationLabel.setStyle("-fx-text-fill: red;");
+                promoValid = false;
+                promoPrice = 0.0;
+            } else {
+                // Controlla se il prezzo è effettivamente cambiato
+                double priceWithPromo = respWithPromo.getPrice();
+
+                if (Math.abs(priceWithPromo - priceWithoutPromo) > 0.01) {
+                    // Il prezzo è cambiato, il codice promo è stato applicato
+                    double discountPerTicket = priceWithoutPromo - priceWithPromo;
+                    int totalSeats = seatsSpinner.getValue();
+                    double totalDiscount = discountPerTicket * totalSeats;
+
+                    // Trova la percentuale effettiva della promozione dal server
+                    double actualDiscountPercent = getActualPromotionPercent(promoCode);
+
+                    // Mostra sconto totale e percentuale corretta
+                    if (actualDiscountPercent > 0) {
+                        promoValidationLabel.setText(String.format("Codice valido! Sconto totale: %.2f€ (%.0f%%) per %d bigliett%s",
+                                totalDiscount, actualDiscountPercent, totalSeats, totalSeats > 1 ? "i" : "o"));
+                    } else {
+                        promoValidationLabel.setText(String.format("Codice valido! Sconto totale: %.2f€ per %d bigliett%s",
+                                totalDiscount, totalSeats, totalSeats > 1 ? "i" : "o"));
+                    }
+                    promoValidationLabel.setStyle("-fx-text-fill: green;");
+                    promoValid = true;
+                    promoPrice = priceWithPromo;
+                } else {
+                    // Il prezzo non è cambiato, il codice non è stato applicato
+                    promoValidationLabel.setText("Codice non valido o non applicabile");
+                    promoValidationLabel.setStyle("-fx-text-fill: red;");
+                    promoValid = false;
+                    promoPrice = 0.0;
+                }
+            }
+            updatePrice();
         } catch (Exception e) {
-            return 0.0;
+            promoValidationLabel.setText("Errore nella validazione del codice");
+            promoValidationLabel.setStyle("-fx-text-fill: red;");
+            promoValid = false;
+            promoPrice = 0.0;
+            updatePrice();
         }
+    }
+
+    /**
+     * Ottiene la percentuale di sconto effettiva della promozione dal server.
+     */
+    private double getActualPromotionPercent(String promoCode) {
+        try {
+            PromotionList promoList = promotionService.listPromotions(Empty.getDefaultInstance());
+            for (Promotion promo : promoList.getPromotionsList()) {
+                if (promo.getName().equalsIgnoreCase(promoCode)) {
+                    return promo.getDiscountPercent();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Errore nel recupero percentuale promozione: " + e.getMessage());
+        }
+        return 0.0;
     }
 
     // --- Suggerimenti e listeners ---
@@ -501,7 +563,7 @@ public class BuyTicketController {
         try {
             SearchStationRequest request = SearchStationRequest.newBuilder().setQuery(query).setLimit(10).build();
             SearchStationResponse response = trainService.searchStations(request);
-            return response.getStationsList().stream().map(station -> station.getName()).toList();
+            return response.getStationsList().stream().map(it.unical.trenical.grpc.common.Station::getName).toList(); // lambda -> method reference
         } catch (Exception e) {
             List<String> mockStations = Arrays.asList(
                     "Roma Termini", "Milano Centrale", "Napoli Centrale", "Firenze SMN", "Bologna Centrale"
@@ -533,14 +595,6 @@ public class BuyTicketController {
             selectedTrain = trainNameToTrain.get(newVal);
             buyButton.setDisable(selectedTrain == null);
             updateSeatsSpinnerMax();
-        });
-    }
-
-    // Forza update posti disponibili anche quando cambia solo il numero di posti richiesti
-    private void setupSeatsSpinnerListener() {
-        seatsSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
-            updateSeatsSpinnerMax();
-            updatePrice();
         });
     }
 
@@ -653,4 +707,3 @@ public class BuyTicketController {
         SceneManager.getInstance().switchTo(SceneManager.DASHBOARD);
     }
 }
-

@@ -25,6 +25,8 @@ message Station {
   string city = 3;        // Città in cui si trova la stazione
   string address = 4;     // Indirizzo della stazione
   int32 platforms = 5;    // Numero di binari disponibili
+  double latitude = 6;    // Latitudine GPS per calcolo distanze
+  double longitude = 7;   // Longitudine GPS per calcolo distanze
 }
 
 // Messaggio per i dettagli del biglietto

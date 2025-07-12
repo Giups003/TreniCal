@@ -15,6 +15,7 @@
             <TableColumn fx:id="colDiscount" style="-fx-alignment: CENTER;" text="Sconto (%)" />
             <TableColumn fx:id="colRoute" style="-fx-alignment: CENTER;" text="Tratta" />
             <TableColumn fx:id="colClass" style="-fx-alignment: CENTER;" text="Classe" />
+            <TableColumn fx:id="colUserTypes" style="-fx-alignment: CENTER;" text="Tipi Utente" />
             <TableColumn fx:id="colFrom" style="-fx-alignment: CENTER;" text="Dal" />
             <TableColumn fx:id="colTo" style="-fx-alignment: CENTER;" text="Al" />
             <TableColumn fx:id="colFidelity" style="-fx-alignment: CENTER;" text="Solo FedeltàTreno" />

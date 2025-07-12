@@ -1,205 +1,241 @@
 [{
   "id": 1,
   "name": "Roma Termini",
-  "city": "Roma"
+  "city": "Roma",
+  "latitude": 41.9009,
+  "longitude": 12.5024
 },{
   "id": 2,
   "name": "Milano Centrale",
-  "city": "Milano"
+  "city": "Milano",
+  "latitude": 45.4868,
+  "longitude": 9.2037
 },{
   "id": 3,
   "name": "Napoli Centrale",
-  "city": "Napoli"
+  "city": "Napoli",
+  "latitude": 40.8518,
+  "longitude": 14.2681
 },{
   "id": 4,
   "name": "Torino Porta Nuova",
-  "city": "Torino"
+  "city": "Torino",
+  "latitude": 45.0614,
+  "longitude": 7.6781
 },{
   "id": 5,
   "name": "Firenze Santa Maria Novella",
-  "city": "Firenze"
+  "city": "Firenze",
+  "latitude": 43.7766,
+  "longitude": 11.2486
 },{
   "id": 6,
   "name": "Venezia Santa Lucia",
-  "city": "Venezia"
+  "city": "Venezia",
+  "latitude": 45.4411,
+  "longitude": 12.3208
 },{
   "id": 7,
   "name": "Bologna Centrale",
-  "city": "Bologna"
+  "city": "Bologna",
+  "latitude": 44.5058,
+  "longitude": 11.3426
 },{
   "id": 8,
   "name": "Genova Piazza Principe",
-  "city": "Genova"
+  "city": "Genova",
+  "latitude": 44.4141,
+  "longitude": 8.9197
 },{
   "id": 9,
   "name": "Bari Centrale",
-  "city": "Bari"
+  "city": "Bari",
+  "latitude": 41.109,
+  "longitude": 16.865
 },{
   "id": 10,
   "name": "Reggio Calabria Centrale",
-  "city": "Reggio Calabria"
+  "city": "Reggio Calabria",
+  "latitude": 38.1133,
+  "longitude": 15.6418
 },{
   "id": 11,
   "name": "Lamezia Terme Centrale",
-  "city": "Lamezia Terme"
+  "city": "Lamezia Terme",
+  "latitude": 38.964,
+  "longitude": 16.307
 },{
   "id": 12,
   "name": "Catanzaro Lido",
-  "city": "Catanzaro"
+  "city": "Catanzaro",
+  "latitude": 38.8659,
+  "longitude": 16.6037
 },{
   "id": 13,
   "name": "Crotone",
-  "city": "Crotone"
+  "city": "Crotone",
+  "latitude": 39.0847,
+  "longitude": 17.1258
 },{
   "id": 14,
   "name": "Vibo Valentia-Pizzo",
-  "city": "Vibo Valentia"
+  "city": "Vibo Valentia",
+  "latitude": 38.6769,
+  "longitude": 15.997
 },{
   "id": 15,
   "name": "Paola",
-  "city": "Paola"
+  "city": "Paola",
+  "latitude": 39.3658,
+  "longitude": 16.0359
 },{
   "id": 16,
   "name": "Villa San Giovanni",
-  "city": "Villa San Giovanni"
+  "city": "Villa San Giovanni",
+  "latitude": 38.2154,
+  "longitude": 15.6398
 },{
   "id": 17,
   "name": "Gioia Tauro",
-  "city": "Gioia Tauro"
+  "city": "Gioia Tauro",
+  "latitude": 38.4259,
+  "longitude": 15.8979
 },{
   "id": 18,
   "name": "Rosarno",
-  "city": "Rosarno"
+  "city": "Rosarno",
+  "latitude": 38.4892,
+  "longitude": 15.9817
 },{
   "id": 19,
   "name": "Sibari",
-  "city": "Cassano allo Ionio"
+  "city": "Cassano allo Ionio",
+  "latitude": 39.7508,
+  "longitude": 16.4897
 },{
   "id": 20,
   "name": "Locri",
-  "city": "Locri"
+  "city": "Locri",
+  "latitude": 38.2392,
+  "longitude": 16.2608
 },{
   "id": 21,
   "name": "Siderno",
-  "city": "Siderno"
+  "city": "Siderno",
+  "latitude": 38.2708,
+  "longitude": 16.2947
 },{
   "id": 22,
   "name": "Scalea-Santa Domenica Talao",
-  "city": "Scalea"
+  "city": "Scalea",
+  "latitude": 39.8175,
+  "longitude": 15.7881
 },{
   "id": 23,
   "name": "Cetraro",
-  "city": "Cetraro"
+  "city": "Cetraro",
+  "latitude": 39.5136,
+  "longitude": 15.9408
 },{
   "id": 24,
   "name": "Bovalino",
-  "city": "Bovalino"
+  "city": "Bovalino",
+  "latitude": 38.1506,
+  "longitude": 16.1711
 },{
   "id": 25,
   "name": "Marina di Gioiosa Jonica",
-  "city": "Gioiosa Ionica"
+  "city": "Gioiosa Ionica",
+  "latitude": 38.3222,
+  "longitude": 16.3008
 },{
   "id": 26,
   "name": "Melito di Porto Salvo",
-  "city": "Melito di Porto Salvo"
+  "city": "Melito di Porto Salvo",
+  "latitude": 37.9219,
+  "longitude": 15.7714
 },{
   "id": 27,
   "name": "San Giovanni in Fiore",
-  "city": "San Giovanni in Fiore"
+  "city": "San Giovanni in Fiore",
+  "latitude": 39.2542,
+  "longitude": 16.7031
 },{
   "id": 28,
   "name": "Palmi",
-  "city": "Palmi"
+  "city": "Palmi",
+  "latitude": 38.36,
+  "longitude": 15.8506
 },{
   "id": 29,
   "name": "Amantea",
-  "city": "Amantea"
+  "city": "Amantea",
+  "latitude": 39.1397,
+  "longitude": 16.0719
 },{
   "id": 30,
   "name": "Cosenza",
-  "city": "Cosenza"
+  "city": "Cosenza",
+  "latitude": 39.2989,
+  "longitude": 16.2539
 },{
   "id": 31,
   "name": "Castiglione Cosentino",
-  "city": "Castiglione Cosentino"
+  "city": "Castiglione Cosentino",
+  "latitude": 39.3447,
+  "longitude": 16.2892
 },{
   "id": 32,
   "name": "Crotone",
-  "city": "Crotone"
+  "city": "Crotone",
+  "latitude": 39.0847,
+  "longitude": 17.1258
 },{
   "id": 33,
   "name": "Corigliano Calabro",
-  "city": "Corigliano Rossano"
+  "city": "Corigliano Rossano",
+  "latitude": 39.5986,
+  "longitude": 16.5208
 },{
   "id": 34,
   "name": "Rossano",
-  "city": "Corigliano Rossano"
+  "city": "Corigliano Rossano",
+  "latitude": 39.5764,
+  "longitude": 16.6314
 },{
   "id": 35,
   "name": "Cariati",
-  "city": "Cariati"
+  "city": "Cariati",
+  "latitude": 39.5019,
+  "longitude": 16.9572
 },{
   "id": 36,
   "name": "Cirò Marina",
-  "city": "Cirò Marina"
+  "city": "Cirò Marina",
+  "latitude": 39.3719,
+  "longitude": 17.1331
 },{
   "id": 37,
   "name": "Isola di Capo Rizzuto",
-  "city": "Isola di Capo Rizzuto"
+  "city": "Isola di Capo Rizzuto",
+  "latitude": 38.9547,
+  "longitude": 17.0889
 },{
   "id": 38,
   "name": "Cutro",
-  "city": "Cutro"
+  "city": "Cutro",
+  "latitude": 39.0278,
+  "longitude": 16.7825
 },{
   "id": 39,
   "name": "Melissa",
-  "city": "Melissa"
+  "city": "Melissa",
+  "latitude": 39.315,
+  "longitude": 16.9203
 },{
   "id": 40,
   "name": "Belvedere Marittimo",
-  "city": "Belvedere Marittimo"
-},{
-  "id": 41,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 42,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 43,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 44,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 45,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 46,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 47,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 48,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 49,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 50,
-  "name": "UpdatedStation",
-  "city": "TestCity"
-},{
-  "id": 51,
-  "name": "UpdatedStation",
-  "city": "TestCity"
+  "city": "Belvedere Marittimo",
+  "latitude": 39.6167,
+  "longitude": 15.8667
 }]

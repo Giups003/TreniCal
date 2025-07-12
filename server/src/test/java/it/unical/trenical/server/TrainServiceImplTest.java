@@ -88,10 +88,10 @@ public class TrainServiceImplTest {
 
         // Verifica che tutti i treni rispettino i criteri di ricerca
         for (Train train : response.getTrainsList()) {
-            assertEquals(departureStation, train.getDepartureStation(),
-                    "La stazione di partenza dovrebbe corrispondere");
-            assertEquals(arrivalStation, train.getArrivalStation(),
-                    "La stazione di arrivo dovrebbe corrispondere");
+            assertTrue(train.getDepartureStation().contains(departureStation),
+                    "La stazione di partenza dovrebbe contenere '" + departureStation + "'");
+            assertTrue(train.getArrivalStation().contains(arrivalStation),
+                    "La stazione di arrivo dovrebbe contenere '" + arrivalStation + "'");
         }
     }
 

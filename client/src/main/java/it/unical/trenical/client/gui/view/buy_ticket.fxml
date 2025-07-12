@@ -11,10 +11,11 @@
         <Label text="Acquista Biglietto" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #22304a; -fx-padding: 18px;"/>
     </top>
     <center>
-        <GridPane hgap="18" vgap="12" alignment="CENTER" minWidth="600" minHeight="350">
+        <GridPane hgap="18" vgap="12" alignment="CENTER" minWidth="600" minHeight="350" maxWidth="800">
             <columnConstraints>
-                <ColumnConstraints percentWidth="50" minWidth="250" halignment="RIGHT"/>
-                <ColumnConstraints percentWidth="50" minWidth="250" halignment="LEFT"/>
+                <ColumnConstraints minWidth="180" maxWidth="200" halignment="RIGHT"/>
+                <ColumnConstraints minWidth="250" maxWidth="350" halignment="LEFT"/>
+                <ColumnConstraints minWidth="200" halignment="LEFT"/>
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="40"/>
@@ -69,7 +70,7 @@
                     <tooltip><Tooltip text="Verifica la validità del codice promozionale"/></tooltip>
                 </Button>
             </HBox>
-            <Label fx:id="promoValidationLabel" text="" GridPane.rowIndex="8" GridPane.columnIndex="1" style="-fx-text-fill: #1976d2;"/>
+            <Label fx:id="promoValidationLabel" text="" GridPane.rowIndex="8" GridPane.columnIndex="1" GridPane.columnSpan="2" style="-fx-text-fill: #d0021b; -fx-font-size: 12px; -fx-font-weight: bold; -fx-wrap-text: true;"/>
             <!-- Metodo di pagamento -->
             <Label text="Metodo di pagamento:" GridPane.rowIndex="9" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-text-fill: #234a7c;" alignment="CENTER_RIGHT"/>
             <VBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="9" GridPane.columnIndex="1">

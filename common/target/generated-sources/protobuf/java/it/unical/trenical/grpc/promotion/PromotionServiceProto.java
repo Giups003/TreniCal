@@ -50,30 +50,30 @@ public final class PromotionServiceProto {
     java.lang.String[] descriptorData = {
       "\n\027promotion_service.proto\022\022trenical.prom" +
       "otion\032\037google/protobuf/timestamp.proto\032\033" +
-      "google/protobuf/empty.proto\"\226\002\n\tPromotio" +
+      "google/protobuf/empty.proto\"\252\002\n\tPromotio" +
       "n\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\023\n\013descripti" +
       "on\030\003 \001(\t\022\030\n\020discount_percent\030\004 \001(\001\022\023\n\013ro" +
       "ute_names\030\005 \003(\t\022\027\n\017service_classes\030\006 \003(\t" +
       "\022.\n\nvalid_from\030\007 \001(\0132\032.google.protobuf.T" +
       "imestamp\022,\n\010valid_to\030\010 \001(\0132\032.google.prot" +
       "obuf.Timestamp\022 \n\030only_for_loyalty_membe" +
-      "rs\030\t \001(\010\022\022\n\ntrain_type\030\n \001(\t\"B\n\rPromotio" +
-      "nList\0221\n\npromotions\030\001 \003(\0132\035.trenical.pro" +
-      "motion.Promotion\"G\n\023AddPromotionRequest\022" +
-      "0\n\tpromotion\030\001 \001(\0132\035.trenical.promotion." +
-      "Promotion\"$\n\026DeletePromotionRequest\022\n\n\002i" +
-      "d\030\001 \001(\005\">\n\032PromotionOperationResponse\022\017\n" +
-      "\007success\030\001 \001(\010\022\017\n\007message\030\002 \001(\t2\267\002\n\020Prom" +
-      "otionService\022K\n\016ListPromotions\022\026.google." +
-      "protobuf.Empty\032!.trenical.promotion.Prom" +
-      "otionList\022g\n\014AddPromotion\022\'.trenical.pro" +
-      "motion.AddPromotionRequest\032..trenical.pr" +
-      "omotion.PromotionOperationResponse\022m\n\017De" +
-      "letePromotion\022*.trenical.promotion.Delet" +
-      "ePromotionRequest\032..trenical.promotion.P" +
-      "romotionOperationResponseB<\n!it.unical.t" +
-      "renical.grpc.promotionB\025PromotionService" +
-      "ProtoP\001b\006proto3"
+      "rs\030\t \001(\010\022\022\n\ntrain_type\030\n \001(\t\022\022\n\nuser_typ" +
+      "es\030\013 \003(\t\"B\n\rPromotionList\0221\n\npromotions\030" +
+      "\001 \003(\0132\035.trenical.promotion.Promotion\"G\n\023" +
+      "AddPromotionRequest\0220\n\tpromotion\030\001 \001(\0132\035" +
+      ".trenical.promotion.Promotion\"$\n\026DeleteP" +
+      "romotionRequest\022\n\n\002id\030\001 \001(\005\">\n\032Promotion" +
+      "OperationResponse\022\017\n\007success\030\001 \001(\010\022\017\n\007me" +
+      "ssage\030\002 \001(\t2\267\002\n\020PromotionService\022K\n\016List" +
+      "Promotions\022\026.google.protobuf.Empty\032!.tre" +
+      "nical.promotion.PromotionList\022g\n\014AddProm" +
+      "otion\022\'.trenical.promotion.AddPromotionR" +
+      "equest\032..trenical.promotion.PromotionOpe" +
+      "rationResponse\022m\n\017DeletePromotion\022*.tren" +
+      "ical.promotion.DeletePromotionRequest\032.." +
+      "trenical.promotion.PromotionOperationRes" +
+      "ponseB<\n!it.unical.trenical.grpc.promoti" +
+      "onB\025PromotionServiceProtoP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -86,7 +86,7 @@ public final class PromotionServiceProto {
     internal_static_trenical_promotion_Promotion_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_trenical_promotion_Promotion_descriptor,
-        new java.lang.String[] { "Id", "Name", "Description", "DiscountPercent", "RouteNames", "ServiceClasses", "ValidFrom", "ValidTo", "OnlyForLoyaltyMembers", "TrainType", });
+        new java.lang.String[] { "Id", "Name", "Description", "DiscountPercent", "RouteNames", "ServiceClasses", "ValidFrom", "ValidTo", "OnlyForLoyaltyMembers", "TrainType", "UserTypes", });
     internal_static_trenical_promotion_PromotionList_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_trenical_promotion_PromotionList_fieldAccessorTable = new

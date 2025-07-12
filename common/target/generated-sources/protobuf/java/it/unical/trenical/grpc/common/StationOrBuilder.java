@@ -86,4 +86,24 @@ public interface StationOrBuilder extends
    * @return The platforms.
    */
   int getPlatforms();
+
+  /**
+   * <pre>
+   * Latitudine GPS per calcolo distanze
+   * </pre>
+   *
+   * <code>double latitude = 6;</code>
+   * @return The latitude.
+   */
+  double getLatitude();
+
+  /**
+   * <pre>
+   * Longitudine GPS per calcolo distanze
+   * </pre>
+   *
+   * <code>double longitude = 7;</code>
+   * @return The longitude.
+   */
+  double getLongitude();
 }

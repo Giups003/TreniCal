@@ -122,6 +122,7 @@ message GetTicketPriceRequest {
   google.protobuf.Timestamp travel_date = 4;
   string promo_code = 5;
   string train_type = 6;
+  string user_type = 7;
 }
 
 // Risposta per il calcolo del prezzo di un biglietto

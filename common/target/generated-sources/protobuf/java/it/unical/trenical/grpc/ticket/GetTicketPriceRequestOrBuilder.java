@@ -81,4 +81,16 @@ public interface GetTicketPriceRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getTrainTypeBytes();
+
+  /**
+   * <code>string user_type = 7;</code>
+   * @return The userType.
+   */
+  java.lang.String getUserType();
+  /**
+   * <code>string user_type = 7;</code>
+   * @return The bytes for userType.
+   */
+  com.google.protobuf.ByteString
+      getUserTypeBytes();
 }

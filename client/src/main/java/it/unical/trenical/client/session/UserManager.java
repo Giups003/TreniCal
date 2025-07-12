@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class UserManager {
-    private static final String USERS_FILE = System.getProperty("user.home") + "/.trenical_users.json";
+    // Unifica con il file del server per evitare duplicazioni
+    private static final String USERS_FILE = "C:/Users/Giuseppe/Documents/TreniCal/TreniCal/server/data/users.json";
     private static Map<String, User> users = new HashMap<>();
     static {
         loadUsers();
@@ -24,17 +25,121 @@ public class UserManager {
         public String email;
         public String password;
         public boolean fidelityMember = false;
+        public String customerType = "standard"; // NUOVO: tipo cliente
         public List<String> tickets = new ArrayList<>();
+
         public User(String username, String email, String password) {
             this.username = username;
             this.email = email;
             this.password = password;
         }
+
+        /**
+         * PATTERN STRATEGY - BUSINESS LOGIC CORRETTA
+         * Determina il tipo di cliente in base alle regole di business.
+         */
+        public String getCustomerType() {
+            // Se esplicitamente impostato e diverso da standard, usa quello (priorità massima)
+            if (customerType != null && !customerType.equals("standard") && !customerType.isEmpty()) {
+                return customerType;
+            }
+
+            if (email != null && !email.isEmpty()) {
+                // Regola aziendale VIP: se l'email contiene parole chiave VIP
+                if (isVipEmail(email)) {
+                    this.customerType = "vip"; // Aggiorna anche il campo interno
+                    return "vip";
+                }
+
+                if (isBusinessEmail(email)) {
+                    this.customerType = "corporate"; // Aggiorna anche il campo interno
+                    return "corporate";
+                }
+            }
+
+            // DEFAULT: tutti gli altri sono standard
+            this.customerType = "standard";
+            return "standard";
+        }
+
+        /**
+         * Imposta esplicitamente il tipo di cliente.
+         */
+        public void setCustomerType(String type) {
+            this.customerType = type != null ? type.toLowerCase() : "standard";
+        }
+
+        /**
+         * Regola business: determina se un'email è VIP.
+         */
+        private boolean isVipEmail(String email) {
+            String[] vipKeywords = {"vip", "premium", "platinum", "gold", "elite", "executive", "priority"};
+            String lowerEmail = email.toLowerCase();
+
+            for (String keyword : vipKeywords) {
+                if (lowerEmail.contains(keyword)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * Regola business: determina se un'email è aziendale.
+         */
+        private boolean isBusinessEmail(String email) {
+            String[] businessDomains = {
+                // Domini aziendali italiani
+                ".spa", ".srl", ".snc", ".sas", ".sapa",
+                // Domini aziendali internazionali
+                ".corp", ".company", ".business", ".enterprise", ".inc", ".ltd", ".llc",
+                // Altri pattern aziendali comuni
+                ".group", ".holding", ".industries", ".solutions", ".consulting",
+                ".services", ".tech", ".systems", ".global", ".international",
+                // Pattern email aziendali generici
+                "corporate", "business", "company", "enterprise", "azienda", "società"
+            };
+            String lowerEmail = email.toLowerCase();
+
+            for (String domain : businessDomains) {
+                if (lowerEmail.contains(domain)) {
+                    return true;
+                }
+            }
+
+            // Controllo aggiuntivo: se l'email non è da provider gratuiti comuni,
+            // potrebbe essere aziendale
+            String[] freeProviders = {"gmail", "yahoo", "hotmail", "outlook", "libero", "tiscali", "virgilio"};
+            boolean isFreeProvider = false;
+            for (String provider : freeProviders) {
+                if (lowerEmail.contains(provider)) {
+                    isFreeProvider = true;
+                    break;
+                }
+            }
+
+            // Se non è un provider gratuito e ha un dominio personalizzato,
+            // consideralo potenzialmente aziendale
+            if (!isFreeProvider && lowerEmail.contains("@") && !lowerEmail.endsWith(".com") && !lowerEmail.endsWith(".it")) {
+                return true;
+            }
+
+            return false;
+        }
     }
     public static synchronized boolean registerUser(String username, String email, String password) {
         if (users.containsKey(username)) return false;
-        users.put(username, new User(username, email, password));
+
+        User newUser = new User(username, email, password);
+        // DETERMINAZIONE AUTOMATICA del tipo utente SOLO durante la registrazione
+        String autoDetectedType = newUser.getCustomerType();
+        newUser.customerType = autoDetectedType; // Imposta il tipo determinato dall'email
+
+        users.put(username, newUser);
         saveUsers();
+
+        System.out.println("[REGISTRATION] Utente " + username + " registrato con tipo: " + autoDetectedType);
         return true;
     }
     public static synchronized boolean validateLogin(String username, String password) {
@@ -46,7 +151,10 @@ public class UserManager {
     }
     public static synchronized String getEmail(String username) {
         User u = users.get(username);
-        return u != null ? u.email : "";
+        if (u != null) {
+            return u.email;
+        }
+        return "";
     }
     public static synchronized boolean setFidelityMember(String username, boolean value) {
         User u = users.get(username);
@@ -73,6 +181,41 @@ public class UserManager {
     public static synchronized java.util.List<User> getAllUsers() {
         return new java.util.ArrayList<>(users.values());
     }
+
+    /**
+     * PATTERN STRATEGY - METODI PUBBLICI
+     * Ottiene il tipo di cliente per un utente.
+     */
+    public static synchronized String getCustomerType(String username) {
+        User u = users.get(username);
+        return u != null ? u.getCustomerType() : "standard";
+    }
+
+    /**
+     * PATTERN STRATEGY - METODI PUBBLICI
+     * Imposta il tipo di cliente per un utente.
+     */
+    public static synchronized boolean setCustomerType(String username, String customerType) {
+        User u = users.get(username);
+        if (u == null) return false;
+        u.setCustomerType(customerType);
+        saveUsers();
+        return true;
+    }
+
+    /**
+     * PATTERN STRATEGY - METODI PUBBLICI
+     * Registra un utente con tipo specifico (per admin o importazione).
+     */
+    public static synchronized boolean registerUserWithType(String username, String email, String password, String customerType) {
+        if (users.containsKey(username)) return false;
+        User user = new User(username, email, password);
+        user.setCustomerType(customerType);
+        users.put(username, user);
+        saveUsers();
+        return true;
+    }
+
     private static void loadUsers() {
         users.clear();
         File file = new File(USERS_FILE);
@@ -96,6 +239,7 @@ public class UserManager {
                 String email = obj.optString("email");
                 String password = obj.optString("password");
                 boolean fidelityMember = obj.optBoolean("fidelityMember", false);
+                String customerType = obj.optString("customerType", "standard"); // NUOVO
                 List<String> tickets = new ArrayList<>();
                 JSONArray ticketsArr = obj.optJSONArray("tickets");
                 if (ticketsArr != null) {
@@ -106,6 +250,7 @@ public class UserManager {
                 if (!username.isEmpty() && !password.isEmpty()) {
                     User user = new User(username, email, password);
                     user.fidelityMember = fidelityMember;
+                    user.customerType = customerType; // NUOVO
                     user.tickets = tickets;
                     users.put(username, user);
                 }
@@ -114,6 +259,7 @@ public class UserManager {
             try { Files.writeString(Paths.get(USERS_FILE), "[]"); } catch (IOException ignored) {}
         }
     }
+
     private static void saveUsers() {
         JSONArray arr = new JSONArray();
         for (User u : users.values()) {
@@ -122,11 +268,12 @@ public class UserManager {
             obj.put("email", u.email);
             obj.put("password", u.password);
             obj.put("fidelityMember", u.fidelityMember);
+            obj.put("customerType", u.customerType); // NUOVO
             obj.put("tickets", u.tickets);
             arr.put(obj);
         }
         try (FileWriter fw = new FileWriter(USERS_FILE)) {
-            fw.write(arr.toString());
+            fw.write(arr.toString(2)); // Indentazione per leggibilità
         } catch (IOException ignored) {}
     }
 }
