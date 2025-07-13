@@ -206,7 +206,6 @@ public class VIPCustomerPricingStrategy implements PriceCalculationStrategy {
      */
     private boolean shouldUpgradeToFirstClass(double currentPrice) {
         // Upgrade gratuito se il prezzo è superiore a 50€
-        // (significa viaggio lungo dove l'upgrade ha valore)
         return currentPrice > 50.0;
     }
 

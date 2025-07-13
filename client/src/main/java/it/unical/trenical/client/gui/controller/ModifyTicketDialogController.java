@@ -222,7 +222,6 @@ public class ModifyTicketDialogController {
         }
     }
 
-
     private void fetchOriginalTicketPrice() {
         if (ticketId == null || ticketId.isEmpty() || oldPriceLoaded) return;
         try {

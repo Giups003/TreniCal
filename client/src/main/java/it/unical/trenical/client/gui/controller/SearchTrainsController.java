@@ -61,6 +61,8 @@ public class SearchTrainsController {
 
         // Configura valori di default
         setupDefaults();
+
+        System.out.println("SearchTrainsController inizializzato correttamente");
     }
 
     private void setupTable() {

@@ -339,6 +339,81 @@ public class StandardPriceCalculationStrategy implements PriceCalculationStrateg
     }
 
     private void initializeDistanceMap() {
+        // Carica dinamicamente le stazioni dal DataStore e calcola le distanze
+        try {
+            DataStore dataStore = DataStore.getInstance();
+            var stations = dataStore.getAllStations();
+
+            // Per ogni stazione, calcola la distanza verso tutte le altre
+            for (var fromStation : stations) {
+                Map<String, Integer> distances = new HashMap<>();
+                String fromName = normalizeStationName(fromStation.getName());
+
+                for (var toStation : stations) {
+                    if (fromStation.getId() != toStation.getId()) {
+                        String toName = normalizeStationName(toStation.getName());
+
+                        // Calcola distanza usando coordinate geografiche
+                        double distance = calculateHaversineDistance(
+                            fromStation.getLatitude(), fromStation.getLongitude(),
+                            toStation.getLatitude(), toStation.getLongitude()
+                        );
+
+                        // Converte da km a intero arrotondato
+                        distances.put(toName, (int) Math.round(distance));
+                    }
+                }
+
+                distanceMap.put(fromName, distances);
+            }
+
+            System.out.println("[DISTANCE MAP] Mappa distanze inizializzata con " +
+                             distanceMap.size() + " stazioni dal database");
+
+        } catch (Exception e) {
+            System.err.println("[DISTANCE MAP] Errore nel caricamento stazioni: " + e.getMessage());
+            // Fallback ai valori hardcodati in caso di errore
+            initializeHardcodedDistances();
+        }
+    }
+
+    /**
+     * Calcola la distanza tra due punti geografici usando la formula di Haversine
+     * @param lat1 Latitudine punto 1
+     * @param lon1 Longitudine punto 1
+     * @param lat2 Latitudine punto 2
+     * @param lon2 Longitudine punto 2
+     * @return Distanza in chilometri
+     */
+    private double calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2) {
+        final double R = 6371.0; // Raggio della Terra in km
+
+        // Converte gradi in radianti
+        double lat1Rad = Math.toRadians(lat1);
+        double lon1Rad = Math.toRadians(lon1);
+        double lat2Rad = Math.toRadians(lat2);
+        double lon2Rad = Math.toRadians(lon2);
+
+        // Differenze
+        double deltaLat = lat2Rad - lat1Rad;
+        double deltaLon = lon2Rad - lon1Rad;
+
+        // Formula di Haversine
+        double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+                   Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+                   Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; // Distanza in km
+    }
+
+    /**
+     * Metodo di fallback con distanze hardcodated per compatibilità
+     */
+    private void initializeHardcodedDistances() {
+        System.out.println("[DISTANCE MAP] Usando distanze hardcodated come fallback");
+
         // Roma
         Map<String, Integer> romaDistances = new HashMap<>();
         romaDistances.put("Milano", 570);
@@ -346,6 +421,8 @@ public class StandardPriceCalculationStrategy implements PriceCalculationStrateg
         romaDistances.put("Firenze", 270);
         romaDistances.put("Bologna", 370);
         romaDistances.put("Torino", 670);
+        romaDistances.put("Venezia", 530);
+        romaDistances.put("Bari", 400);
         distanceMap.put("Roma", romaDistances);
 
         // Milano
@@ -355,17 +432,20 @@ public class StandardPriceCalculationStrategy implements PriceCalculationStrateg
         milanoDistances.put("Bologna", 210);
         milanoDistances.put("Firenze", 300);
         milanoDistances.put("Venezia", 270);
+        milanoDistances.put("Napoli", 790);
         distanceMap.put("Milano", milanoDistances);
 
         // Napoli
         Map<String, Integer> napoliDistances = new HashMap<>();
         napoliDistances.put("Roma", 220);
+        napoliDistances.put("Milano", 790);
         napoliDistances.put("Bari", 260);
+        napoliDistances.put("Firenze", 490);
         distanceMap.put("Napoli", napoliDistances);
     }
 
     private void initializeLegacyPromoCodes() {
-        legacyPromoCodeDiscounts.put("ESTATE2024", 0.15);
+        legacyPromoCodeDiscounts.put("ESTATE2025", 0.15);
         legacyPromoCodeDiscounts.put("WEEKEND", 0.10);
         legacyPromoCodeDiscounts.put("STUDENT", 0.20);
         legacyPromoCodeDiscounts.put("FAMILY", 0.12);

@@ -4,9 +4,10 @@ import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import it.unical.trenical.grpc.notification.*;
-import it.unical.trenical.grpc.common.Ticket;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -187,10 +188,10 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
         try {
             int trainId = request.getTrainId();
             Timestamp dateTs = request.getDate();
-            java.time.LocalDateTime travelDateTime = null;
+            LocalDateTime travelDateTime = null;
             if (dateTs != null && dateTs.getSeconds() != 0) {
-                java.time.Instant instant = java.time.Instant.ofEpochSecond(dateTs.getSeconds());
-                travelDateTime = java.time.LocalDateTime.ofInstant(instant, java.time.ZoneId.systemDefault());
+                Instant instant = Instant.ofEpochSecond(dateTs.getSeconds());
+                travelDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
             }
             it.unical.trenical.grpc.common.Train train = null;
             if (trainId > 0 && travelDateTime != null) {
@@ -233,7 +234,6 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
             String message = request.getMessage();
             int platformChange = request.getPlatformChange();
             int delayMinutes = request.getDelayMinutes();
-            Timestamp date = request.getDate();
 
             Set<String> subscribers = trainSubscribers.getOrDefault(trainId, Collections.emptySet());
             NotificationType type = NotificationType.TRAIN_STATUS;
@@ -411,3 +411,4 @@ public class NotificationServiceImpl extends NotificationServiceGrpc.Notificatio
         responseObserver.onCompleted();
     }
 }
+

@@ -1,6 +1,7 @@
 package it.unical.trenical.server;
 
 import com.google.protobuf.util.JsonFormat;
+import com.google.protobuf.Message.*;
 import it.unical.trenical.grpc.common.Ticket;
 import it.unical.trenical.grpc.common.Train;
 import it.unical.trenical.grpc.common.Station;
@@ -19,7 +20,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.io.Serializable;
-import it.unical.trenical.server.util.DistanceCalculator;
 
 // Applicazione del pattern Singleton
 public final class DataStore implements Serializable {
@@ -99,7 +99,7 @@ public final class DataStore implements Serializable {
         resetFileIfMalformed(PROMOTIONS_FILE);
 
         try {
-            stations = loadStationsFromFile(STATIONS_FILE);
+            stations = loadEntitiesFromFile(STATIONS_FILE, Station::newBuilder, "stazione");
         } catch (Exception e) {
             System.out.println("Impossibile caricare le stazioni: " + e.getMessage());
             stations = new ArrayList<>();
@@ -108,28 +108,28 @@ public final class DataStore implements Serializable {
         // Pulisci i treni prima di rigenerarli
         trains.clear();
         try {
-            tickets = loadTicketsFromFile(TICKETS_FILE);
+            tickets = loadEntitiesFromFile(TICKETS_FILE, Ticket::newBuilder, "biglietto");
         } catch (Exception e) {
             System.out.println("Impossibile caricare i biglietti: " + e.getMessage());
             tickets = new ArrayList<>();
         }
 
         try {
-            routes = loadRoutesFromFile(ROUTES_FILE);
+            routes = loadEntitiesFromFile(ROUTES_FILE, Route::newBuilder, "tratta");
         } catch (Exception e) {
             System.out.println("Impossibile caricare le tratte: " + e.getMessage());
             routes = new ArrayList<>();
         }
 
         try {
-            promotions = loadPromotionsFromFile(PROMOTIONS_FILE);
+            promotions = loadEntitiesFromFile(PROMOTIONS_FILE, Promotion::newBuilder, "promozione");
         } catch (Exception e) {
             System.out.println("Impossibile caricare le promozioni: " + e.getMessage());
             promotions = new ArrayList<>();
         }
 
         generateTrainsForWeeks(2, 6, 22, 2); // 2 settimane, treni ogni 2 ore dalle 6 alle 22
-        saveData();        saveData();
+        saveData();
 
         for (Train t : trains) {
             trainSeatsAvailable.putIfAbsent(t.getId(), DEFAULT_SEATS_PER_TRAIN);
@@ -203,7 +203,7 @@ public final class DataStore implements Serializable {
      * @return List of loaded entities
      */
     private <T> List<T> loadEntitiesFromFile(String filename,
-            java.util.function.Supplier<com.google.protobuf.Message.Builder> entityBuilder,
+            java.util.function.Supplier<Builder> entityBuilder,
             String entityType) throws IOException {
         List<T> result = new ArrayList<>();
         File file = new File(filename);
@@ -216,7 +216,7 @@ public final class DataStore implements Serializable {
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = array.getJSONObject(i);
             try {
-                com.google.protobuf.Message.Builder builder = entityBuilder.get();
+                Builder builder = entityBuilder.get();
                 JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
                 result.add((T) builder.build());
             } catch (Exception e) {
@@ -226,22 +226,6 @@ public final class DataStore implements Serializable {
         return result;
     }
 
-    private List<Station> loadStationsFromFile(String filename) throws IOException {
-        return loadEntitiesFromFile(filename, Station::newBuilder, "stazione");
-    }
-
-
-    private List<Ticket> loadTicketsFromFile(String filename) throws IOException {
-        return loadEntitiesFromFile(filename, Ticket::newBuilder, "biglietto");
-    }
-
-    private List<Route> loadRoutesFromFile(String filename) throws IOException {
-        return loadEntitiesFromFile(filename, Route::newBuilder, "tratta");
-    }
-
-    private List<Promotion> loadPromotionsFromFile(String filename) throws IOException {
-        return loadEntitiesFromFile(filename, Promotion::newBuilder, "promozione");
-    }
 
     private void saveToFile(String filename, List<?> objects) throws IOException {
         File file = new File(filename);
@@ -391,28 +375,6 @@ public final class DataStore implements Serializable {
         }
     }
 
-    /**
-     * Importa tutti i dati da una stringa JSON.
-     */
-    public synchronized void importAllData(String json) {
-        // Placeholder: implementazione da completare
-    }
-
-    // --- LAZY LOADING E CACHE (ESEMPIO SU PROMOTIONS) ---
-    private boolean promotionsLoaded = false;
-
-    public synchronized List<Promotion> getPromotionsLazy() {
-        if (!promotionsLoaded) {
-            try {
-                promotions = loadPromotionsFromFile(PROMOTIONS_FILE);
-                promotionsLoaded = true;
-            } catch (Exception e) {
-                promotions = new ArrayList<>();
-            }
-        }
-        return new ArrayList<>(promotions);
-    }
-
     // --- METODI PUBBLICI DI ACCESSO E GESTIONE ---
     public synchronized List<Station> getAllStations() {
         return new ArrayList<>(stations);
@@ -554,11 +516,6 @@ public final class DataStore implements Serializable {
             routes.add(route);
             saveData();
         }
-    }
-
-    public synchronized void deleteRoute(int id) {
-        routes.removeIf(r -> r.getId() == id);
-        saveData();
     }
 
     public synchronized List<Promotion> getAllPromotions() {

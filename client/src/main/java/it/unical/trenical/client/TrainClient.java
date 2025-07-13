@@ -129,30 +129,6 @@ public class TrainClient {
     }
 
     /**
-     * Ottiene i dettagli di un treno specifico.
-     * 
-     * @param trainId ID del treno
-     * @return Dettagli del treno
-     */
-    public TrainDetailsResponse getTrainDetails(int trainId) {
-        logger.info("Richiesta dettagli del treno (ID: " + trainId + ")");
-
-        TrainDetailsRequest request = TrainDetailsRequest.newBuilder()
-                .setTrainId(trainId)
-                .build();
-
-        TrainDetailsResponse response;
-        try {
-            response = blockingStub.getTrainDetails(request);
-            logger.info("Ricevuti dettagli del treno");
-            return response;
-        } catch (StatusRuntimeException e) {
-            logger.log(Level.WARNING, "Errore RPC: {0}", e.getStatus());
-            throw e;
-        }
-    }
-
-    /**
      * Ottiene i dettagli di un treno specifico per data e ora.
      *
      * @param trainId ID del treno
@@ -196,32 +172,6 @@ public class TrainClient {
         try {
             SearchStationResponse response = blockingStub.searchStations(request);
             logger.info("Trovate " + response.getStationsCount() + " stazioni");
-            return response;
-        } catch (StatusRuntimeException e) {
-            logger.log(Level.WARNING, "Errore RPC: {0}", e.getStatus());
-            throw e;
-        }
-    }
-    /**
-     * Ottiene gli orari dei treni per una stazione specifica.
-     * 
-     * @param station Nome della stazione
-     * @param date Data (formato YYYY-MM-DD)
-     * @return Orari dei treni
-     */
-    public ScheduleResponse getTrainSchedule(String station, Timestamp date) {
-        logger.info("Richiesta orari per la stazione " + station + " il " + date);
-
-        ScheduleRequest request = ScheduleRequest.newBuilder()
-                .setStation(station)
-                .setDate(date)
-                .build();
-
-        ScheduleResponse response;
-        try {
-            response = blockingStub.getTrainSchedule(request);
-            logger.info("Ricevuti " + response.getDeparturesCount() + " partenze e " + 
-                    response.getArrivalsCount() + " arrivi");
             return response;
         } catch (StatusRuntimeException e) {
             logger.log(Level.WARNING, "Errore RPC: {0}", e.getStatus());
