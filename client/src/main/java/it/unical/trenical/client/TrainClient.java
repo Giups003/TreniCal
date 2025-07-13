@@ -144,7 +144,7 @@ public class TrainClient {
         TrainDetailsResponse response;
         try {
             response = blockingStub.getTrainDetails(request);
-            logger.info("Ricevuti dettagli del treno con " + response.getStopsCount() + " fermate");
+            logger.info("Ricevuti dettagli del treno");
             return response;
         } catch (StatusRuntimeException e) {
             logger.log(Level.WARNING, "Errore RPC: {0}", e.getStatus());
@@ -177,7 +177,7 @@ public class TrainClient {
         TrainDetailsResponse response;
         try {
             response = blockingStub.getTrainDetails(requestBuilder.build());
-            logger.info("Ricevuti dettagli del treno con " + response.getStopsCount() + " fermate");
+            logger.info("Ricevuti dettagli del treno");
             return response;
         } catch (StatusRuntimeException e) {
             logger.log(Level.WARNING, "Errore RPC: {0}", e.getStatus());

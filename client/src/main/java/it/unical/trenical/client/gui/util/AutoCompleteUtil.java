@@ -1,6 +1,7 @@
 package it.unical.trenical.client.gui.util;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -9,9 +10,19 @@ import javafx.stage.Popup;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Utility per l'autocompletamento dei campi di testo.
+ * Fornisce funzionalità di suggerimenti dinamici mentre l'utente digita.
+ */
 public class AutoCompleteUtil {
 
+    /**
+     * Configura l'autocompletamento per un campo di testo.
+     * @param field Il campo di testo su cui attivare l'autocompletamento
+     * @param fetchSuggestions Funzione che restituisce i suggerimenti basati sul testo inserito
+     */
     public static void setupAutoComplete(TextField field, Function<String, List<String>> fetchSuggestions) {
+        // --- Configurazione componenti UI ---
         ListView<String> suggestionsList = new ListView<>();
         suggestionsList.setPrefHeight(180);
         suggestionsList.setMaxHeight(220);
@@ -20,7 +31,9 @@ public class AutoCompleteUtil {
         popup.setAutoHide(true);
         popup.setHideOnEscape(true);
 
+        // --- Listener per cambiamenti del testo ---
         field.textProperty().addListener((obs, oldVal, newVal) -> {
+            // Nasconde popup se campo vuoto
             if (newVal == null || newVal.trim().isEmpty()) {
                 popup.hide();
                 Platform.runLater(() -> {
@@ -30,6 +43,7 @@ public class AutoCompleteUtil {
                 return;
             }
 
+            // Recupera suggerimenti
             List<String> suggestions;
             try {
                 suggestions = fetchSuggestions.apply(newVal);
@@ -42,6 +56,7 @@ public class AutoCompleteUtil {
                 return;
             }
 
+            // Nasconde popup se nessun suggerimento
             if (suggestions == null || suggestions.isEmpty()) {
                 popup.hide();
                 Platform.runLater(() -> {
@@ -112,7 +127,7 @@ public class AutoCompleteUtil {
                     popup.getContent().clear();
                     suggestionsList.getItems().clear();
                 });
-                field.fireEvent(new javafx.event.ActionEvent());
+                field.fireEvent(new ActionEvent());
                 field.getParent().requestFocus();
             }
         });
@@ -140,7 +155,7 @@ public class AutoCompleteUtil {
                             popup.getContent().clear();
                             suggestionsList.getItems().clear();
                         });
-                        field.fireEvent(new javafx.event.ActionEvent());
+                        field.fireEvent(new ActionEvent());
                         field.getParent().requestFocus();
                     }
                 }

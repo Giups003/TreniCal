@@ -242,65 +242,6 @@ package it.unical.trenical.server;
         }
 
         @Override
-        public void getTrainStops(GetTrainStopsRequest request, StreamObserver<GetTrainStopsResponse> responseObserver) {
-            try {
-                int trainId = request.getTrainId();
-                Train train = null; // Non supportato più senza data
-                // ...existing code...
-                if (train == null) {
-                    responseObserver.onError(Status.NOT_FOUND
-                            .withDescription("Treno con ID " + trainId + " non trovato")
-                            .asRuntimeException());
-                    return;
-                }
-                Route route = dataStore.getAllRoutes().stream()
-                        .filter(r -> r.getId() == trainId)
-                        .findFirst().orElse(null);
-                List<Stop> stops = new java.util.ArrayList<>();
-                if (route != null) {
-                    // Fermata di partenza
-                    Stop.Builder dep = Stop.newBuilder()
-                        .setId(1)
-                        .setTrainId(trainId)
-                        .setStationId(route.getDepartureStationId())
-                        .setDepartureTime(parseTimeToTimestamp(route.getDepartureTime()))
-                        .setNote("Partenza");
-                    stops.add(dep.build());
-                    // Fermata di arrivo
-                    Stop.Builder arr = Stop.newBuilder()
-                        .setId(2)
-                        .setTrainId(trainId)
-                        .setStationId(route.getArrivalStationId())
-                        .setArrivalTime(parseTimeToTimestamp(route.getArrivalTime()))
-                        .setNote("Arrivo");
-                    stops.add(arr.build());
-                }
-                GetTrainStopsResponse response = GetTrainStopsResponse.newBuilder()
-                        .addAllStops(stops)
-                        .build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-            } catch (Exception e) {
-                responseObserver.onError(Status.INTERNAL
-                        .withDescription("Errore interno: " + e.getMessage())
-                        .asRuntimeException());
-            }
-        }
-
-        private Timestamp parseTimeToTimestamp(String time) {
-            if (time == null || time.isEmpty()) return Timestamp.getDefaultInstance();
-            try {
-                LocalTime localTime = LocalTime.parse(time);
-                LocalDate today = LocalDate.now();
-                LocalDateTime dateTime = LocalDateTime.of(today, localTime);
-                return Timestamp.newBuilder().setSeconds(dateTime.toEpochSecond(ZoneOffset.UTC)).build();
-            } catch (Exception e) {
-                System.err.println("Errore nel parsing del tempo: " + e.getMessage() + " per il valore: '" + time + "'");
-                return Timestamp.getDefaultInstance();
-            }
-        }
-
-        @Override
         public void listRoutes(ListRoutesRequest request, StreamObserver<ListRoutesResponse> responseObserver) {
             try {
                 List<Route> routes = dataStore.getAllRoutes();

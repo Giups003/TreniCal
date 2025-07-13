@@ -23,8 +23,10 @@ import java.time.ZoneOffset;
 
 /**
  * Controller per la schermata di visualizzazione biglietti acquistati.
+ * Gestisce la tabella dei biglietti, le operazioni di modifica, annullamento e visualizzazione.
  */
 public class MyTicketsController {
+    // --- Campi UI ---
     @FXML private TableView<TicketViewModel> ticketsTable;
     @FXML private TableColumn<TicketViewModel, String> colTrain;
     @FXML private TableColumn<TicketViewModel, String> colDeparture;
@@ -312,4 +314,3 @@ public class MyTicketsController {
         public int getTrainId() { return trainId; }
     }
 }
-

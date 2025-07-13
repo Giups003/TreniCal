@@ -5,9 +5,9 @@ import it.unical.trenical.client.gui.util.AlertUtils;
 import it.unical.trenical.client.session.UserSession;
 import it.unical.trenical.client.session.UserManager;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
 import java.util.prefs.Preferences;
 
@@ -17,25 +17,19 @@ import java.util.prefs.Preferences;
  * Salva username ed email nelle preferenze locali.
  */
 public class LoginController {
-    /** Campo per l'inserimento dello username */
-    @FXML
-    private TextField usernameField;
 
-    /** Campo per l'inserimento della password (solo admin) */
-    @FXML
-    private PasswordField passwordField;
-
-    /** Campo per l'inserimento dell'email (solo utenti normali) */
-    @FXML
-    private TextField emailField;
-
-    /** CheckBox per "Ricorda accesso" */
-    @FXML
-    private CheckBox rememberMeCheckBox;
-
+    // Costanti per le preferenze
     private static final String PREF_KEY = "trenical_username";
     private static final String PREF_EMAIL_KEY = "trenical_email";
+    private static final String PREF_REMEMBER_KEY = "trenical_remember_me";
 
+    // Campi UI
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private TextField emailField;
+    @FXML private CheckBox rememberMeCheckBox;
+
+    // Stato interno
     private boolean loginInProgress = false;
 
     /**
@@ -43,20 +37,30 @@ public class LoginController {
      */
     @FXML
     public void initialize() {
+        loadSavedPreferences();
+        setupDynamicUI();
+        setupEnterKeyHandlers();
+    }
+
+    private void loadSavedPreferences() {
         Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
         String savedUsername = prefs.get(PREF_KEY, "");
         String savedEmail = prefs.get(PREF_EMAIL_KEY, "");
-        boolean rememberMe = prefs.getBoolean("trenical_remember_me", false);
-        if (savedUsername != null && !savedUsername.isEmpty()) {
+        boolean rememberMe = prefs.getBoolean(PREF_REMEMBER_KEY, false);
+
+        if (!savedUsername.isEmpty()) {
             usernameField.setText(savedUsername);
         }
-        if (savedEmail != null && !savedEmail.isEmpty()) {
+        if (!savedEmail.isEmpty()) {
             emailField.setText(savedEmail);
         }
         if (rememberMeCheckBox != null) {
             rememberMeCheckBox.setSelected(rememberMe);
         }
-        // Logica dinamica: aggiorna i campi in base al nome inserito
+    }
+
+    private void setupDynamicUI() {
+        // Aggiorna UI in base al tipo di utente (admin vs normale)
         usernameField.textProperty().addListener((obs, oldVal, newVal) -> {
             if ("admin".equalsIgnoreCase(newVal.trim())) {
                 emailField.setPromptText("Email (opzionale per admin)");
@@ -68,7 +72,10 @@ public class LoginController {
                 if (rememberMeCheckBox != null) rememberMeCheckBox.setVisible(true);
             }
         });
-        // Permetti login con Invio su tutti i campi
+    }
+
+    private void setupEnterKeyHandlers() {
+        // Permetti login con tasto Invio su tutti i campi
         usernameField.setOnAction(e -> onLogin());
         passwordField.setOnAction(e -> onLogin());
         emailField.setOnAction(e -> onLogin());
@@ -141,12 +148,12 @@ public class LoginController {
                 prefs.put(PREF_KEY, username);
                 prefs.put(PREF_EMAIL_KEY, email);
                 prefs.put("trenical_password", password);
-                prefs.putBoolean("trenical_remember_me", true);
+                prefs.putBoolean(PREF_REMEMBER_KEY, true);
             } else {
                 prefs.remove(PREF_KEY);
                 prefs.remove(PREF_EMAIL_KEY);
                 prefs.remove("trenical_password");
-                prefs.putBoolean("trenical_remember_me", false);
+                prefs.putBoolean(PREF_REMEMBER_KEY, false);
             }
             UserSession.setUsername(username);
             UserSession.setEmail(email);

@@ -28,7 +28,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
 
     // PATTERN STRATEGY: Calcolatore di prezzi con strategia intercambiabile
     private final PriceCalculator priceCalculator;
-    // DataStore per la persistenza reale
+    // DataStore per la persistenza dei dati
     private final DataStore dataStore;
 
     /**

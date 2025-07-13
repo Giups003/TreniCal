@@ -209,4 +209,60 @@
   "status": "Scaduto",
   "travelTime": "1970-01-01T15:00:00Z",
   "purchaseDate": "2025-07-08T16:40:10Z"
+},{
+  "id": "815c1f10-18e8-4454-966c-c42dd82ff07f",
+  "trainId": 502,
+  "passengerName": "cap",
+  "departureStation": "Reggio Calabria Centrale",
+  "arrivalStation": "Lamezia Terme Centrale",
+  "travelDate": "2025-07-26T18:00:00Z",
+  "serviceClass": "Seconda Classe",
+  "price": 27.0,
+  "seat": "1",
+  "purchaseDate": "2025-07-13T16:46:28Z"
+},{
+  "id": "77d1367c-ac8e-450b-b6f4-31a03832f848",
+  "trainId": 502,
+  "passengerName": "cap",
+  "departureStation": "Reggio Calabria Centrale",
+  "arrivalStation": "Lamezia Terme Centrale",
+  "travelDate": "2025-07-26T18:00:00Z",
+  "serviceClass": "Seconda Classe",
+  "price": 27.0,
+  "seat": "2",
+  "purchaseDate": "2025-07-13T16:46:28Z"
+},{
+  "id": "cdc87c19-718c-4496-83e6-b83f0c752275",
+  "trainId": 502,
+  "passengerName": "cap",
+  "departureStation": "Reggio Calabria Centrale",
+  "arrivalStation": "Lamezia Terme Centrale",
+  "travelDate": "2025-07-26T18:00:00Z",
+  "serviceClass": "Seconda Classe",
+  "price": 27.0,
+  "seat": "3",
+  "purchaseDate": "2025-07-13T16:46:28Z"
+},{
+  "id": "646871f9-93b2-4ec1-9fdc-bff77f6d2e42",
+  "trainId": 502,
+  "passengerName": "cap",
+  "departureStation": "Reggio Calabria Centrale",
+  "arrivalStation": "Lamezia Terme Centrale",
+  "travelDate": "2025-07-26T18:00:00Z",
+  "serviceClass": "Seconda Classe",
+  "price": 27.0,
+  "seat": "5",
+  "purchaseDate": "2025-07-13T16:46:28Z"
+},{
+  "id": "136bd26c-5958-4994-9555-4f05cf6a1a1f",
+  "trainId": 489,
+  "passengerName": "cap",
+  "departureStation": "Reggio Calabria Centrale",
+  "arrivalStation": "Lamezia Terme Centrale",
+  "travelDate": "2025-07-26T10:00:00Z",
+  "serviceClass": "Prima Classe",
+  "price": 51.3,
+  "seat": "1",
+  "travelTime": "1970-01-01T12:00:00Z",
+  "purchaseDate": "2025-07-13T16:46:28Z"
 }]

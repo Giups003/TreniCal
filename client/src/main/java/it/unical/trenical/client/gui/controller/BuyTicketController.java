@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class BuyTicketController {
 
-    // Campi UI
+    // --- Campi UI ---
     @FXML private TextField trainField, departureStationField, arrivalStationField, promoCodeField;
     @FXML private ComboBox<String> classBox, timeBox;
     @FXML private Spinner<Integer> seatsSpinner;
@@ -37,12 +37,12 @@ public class BuyTicketController {
     @FXML private Button validatePromoButton, buyButton;
     @FXML private DatePicker datePicker;
 
-    // Servizi gRPC
+    // --- Servizi gRPC ---
     private TrainServiceGrpc.TrainServiceBlockingStub trainService;
     private TicketServiceGrpc.TicketServiceBlockingStub ticketService;
     private PromotionServiceGrpc.PromotionServiceBlockingStub promotionService;
 
-    // Stato interno
+    // --- Stato interno ---
     private final Map<String, Train> trainNameToTrain = new HashMap<>();
     private Train selectedTrain = null;
     private int seatsSpinnerMax = 10;
@@ -378,15 +378,6 @@ public class BuyTicketController {
 
     // --- Promo section ---
 
-    private void loadPromoCodesFromServer() {
-        try {
-            PromotionList promoList = promotionService.listPromotions(Empty.getDefaultInstance());
-            promoList.getPromotionsList();
-        } catch (Exception e) {
-            // In caso di errore lascia la lista vuota
-        }
-    }
-
     @FXML
     private void onValidatePromo() {
         String promoCode = promoCodeField.getText();
@@ -654,7 +645,6 @@ public class BuyTicketController {
                 return;
             }
             LocalDateTime ldt = LocalDateTime.of(date, localTime);
-            // Corretto: uso il fuso orario locale per il timestamp
             long epochSecond = ldt.atZone(ZoneId.systemDefault()).toEpochSecond();
             PurchaseTicketRequest.Builder builder = PurchaseTicketRequest.newBuilder()
                     .setTrainId(selectedTrain.getId())

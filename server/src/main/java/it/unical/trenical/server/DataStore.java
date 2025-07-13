@@ -128,8 +128,8 @@ public final class DataStore implements Serializable {
             promotions = new ArrayList<>();
         }
 
-        generateTrainsForWeeks(2); // 2 settimane, treni ogni 2 ore
-        saveData();
+        generateTrainsForWeeks(2, 6, 22, 2); // 2 settimane, treni ogni 2 ore dalle 6 alle 22
+        saveData();        saveData();
 
         for (Train t : trains) {
             trainSeatsAvailable.putIfAbsent(t.getId(), DEFAULT_SEATS_PER_TRAIN);
@@ -141,14 +141,11 @@ public final class DataStore implements Serializable {
      *
      * @param weeks numero di settimane
      */
-    private void generateTrainsForWeeks(int weeks) {
+    private void generateTrainsForWeeks(int weeks, int firstHour, int lastHour, int step) {
         if (routes == null || routes.isEmpty()) return;
         int maxId = trains.stream().mapToInt(Train::getId).max().orElse(0);
         var today = java.time.LocalDate.now();
         var rand = new java.util.Random();
-        int firstHour = 7;
-        int lastHour = 19;
-        int step = 2;
         Set<String> uniqueTrainKeys = new HashSet<>();
         for (Route route : routes) {
             for (int w = 0; w < weeks; w++) {
@@ -163,7 +160,6 @@ public final class DataStore implements Serializable {
                         String key = routeKey + "_" + date + "_" + hour;
                         if (!uniqueTrainKeys.add(key)) continue;
 
-                        // Pattern BUILDER: utilizzo di Train.newBuilder() per costruire oggetti complessi in modo sicuro e leggibile
                         Train train = Train.newBuilder()
                                 .setId(++maxId)
                                 .setName(route.getName())
@@ -199,109 +195,52 @@ public final class DataStore implements Serializable {
         }
     }
 
-    private List<Station> loadStationsFromFile(String filename) throws IOException {
-        List<Station> result = new ArrayList<>();
+    /**
+     * Generic method to load entities from JSON file
+     * @param filename The file to load from
+     * @param entityBuilder Function to create builder for the entity type
+     * @param entityType String description for error messages
+     * @return List of loaded entities
+     */
+    private <T> List<T> loadEntitiesFromFile(String filename,
+            java.util.function.Supplier<com.google.protobuf.Message.Builder> entityBuilder,
+            String entityType) throws IOException {
+        List<T> result = new ArrayList<>();
         File file = new File(filename);
         if (!file.exists()) return result;
+
         String json = Files.readString(Paths.get(filename)).trim();
         if (json.equals("[]") || json.isEmpty()) return result;
+
         JSONArray array = new JSONArray(json);
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = array.getJSONObject(i);
             try {
-                // Pattern BUILDER: Station.newBuilder() per parsing e costruzione oggetto
-                Station.Builder builder = Station.newBuilder();
+                com.google.protobuf.Message.Builder builder = entityBuilder.get();
                 JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
-                result.add(builder.build());
+                result.add((T) builder.build());
             } catch (Exception e) {
-                System.out.println("Errore parsing stazione: " + obj + " - " + e.getMessage());
+                System.out.println("Errore parsing " + entityType + ": " + obj + " - " + e.getMessage());
             }
         }
         return result;
     }
 
-    private List<Train> loadTrainsFromFile(String filename) throws IOException {
-        List<Train> result = new ArrayList<>();
-        File file = new File(filename);
-        if (!file.exists()) return result;
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) return result;
-        JSONArray array = new JSONArray(json);
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject obj = array.getJSONObject(i);
-            try {
-                // Pattern BUILDER: Train.newBuilder() per parsing e costruzione oggetto
-                Train.Builder builder = Train.newBuilder();
-                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
-                result.add(builder.build());
-            } catch (Exception e) {
-                System.out.println("Errore parsing treno: " + obj + " - " + e.getMessage());
-            }
-        }
-        return result;
+    private List<Station> loadStationsFromFile(String filename) throws IOException {
+        return loadEntitiesFromFile(filename, Station::newBuilder, "stazione");
     }
+
 
     private List<Ticket> loadTicketsFromFile(String filename) throws IOException {
-        List<Ticket> result = new ArrayList<>();
-        File file = new File(filename);
-        if (!file.exists()) return result;
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) return result;
-        JSONArray array = new JSONArray(json);
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject obj = array.getJSONObject(i);
-            try {
-                // Pattern BUILDER: Ticket.newBuilder() per parsing e costruzione oggetto
-                Ticket.Builder builder = Ticket.newBuilder();
-                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
-                result.add(builder.build());
-            } catch (Exception e) {
-                System.out.println("Errore parsing biglietto: " + obj + " - " + e.getMessage());
-            }
-        }
-        return result;
+        return loadEntitiesFromFile(filename, Ticket::newBuilder, "biglietto");
     }
 
     private List<Route> loadRoutesFromFile(String filename) throws IOException {
-        List<Route> result = new ArrayList<>();
-        File file = new File(filename);
-        if (!file.exists()) return result;
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) return result;
-        JSONArray array = new JSONArray(json);
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject obj = array.getJSONObject(i);
-            try {
-                // Pattern BUILDER: Route.newBuilder() per parsing e costruzione oggetto
-                Route.Builder builder = Route.newBuilder();
-                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
-                result.add(builder.build());
-            } catch (Exception e) {
-                System.out.println("Errore parsing tratta: " + obj + " - " + e.getMessage());
-            }
-        }
-        return result;
+        return loadEntitiesFromFile(filename, Route::newBuilder, "tratta");
     }
 
     private List<Promotion> loadPromotionsFromFile(String filename) throws IOException {
-        List<Promotion> result = new ArrayList<>();
-        File file = new File(filename);
-        if (!file.exists()) return result;
-        String json = Files.readString(Paths.get(filename)).trim();
-        if (json.equals("[]") || json.isEmpty()) return result;
-        JSONArray array = new JSONArray(json);
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject obj = array.getJSONObject(i);
-            try {
-                // Pattern BUILDER: Promotion.newBuilder() per parsing e costruzione oggetto
-                Promotion.Builder builder = Promotion.newBuilder();
-                JsonFormat.parser().ignoringUnknownFields().merge(obj.toString(), builder);
-                result.add(builder.build());
-            } catch (Exception e) {
-                System.out.println("Errore parsing promozione: " + obj + " - " + e.getMessage());
-            }
-        }
-        return result;
+        return loadEntitiesFromFile(filename, Promotion::newBuilder, "promozione");
     }
 
     private void saveToFile(String filename, List<?> objects) throws IOException {
@@ -813,6 +752,46 @@ public final class DataStore implements Serializable {
     }
 
     /**
+     * Salva i dati utenti nel file JSON.
+     */
+    private synchronized void saveUsersData(Map<String, Map<String, Object>> usersData) {
+        try {
+            String usersFile = DATA_DIR + "/users.json";
+            JSONArray arr = new JSONArray();
+
+            for (Map.Entry<String, Map<String, Object>> entry : usersData.entrySet()) {
+                JSONObject obj = new JSONObject();
+                obj.put("username", entry.getKey());
+                obj.put("email", entry.getValue().getOrDefault("email", ""));
+                obj.put("fidelityMember", entry.getValue().getOrDefault("fidelityMember", false));
+                obj.put("customerType", entry.getValue().getOrDefault("customerType", "standard"));
+                arr.put(obj);
+            }
+
+            Files.writeString(Paths.get(usersFile), arr.toString());
+        } catch (Exception e) {
+            System.err.println("Errore salvataggio utenti: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Imposta il tipo di cliente per un utente (per i test).
+     */
+    public synchronized void setCustomerType(String username, String customerType) {
+        if (username == null || username.isEmpty() || customerType == null) return;
+
+        Map<String, Map<String, Object>> usersData = loadUsersData();
+        Map<String, Object> userData = usersData.getOrDefault(username, new HashMap<>());
+        userData.put("username", username);
+        userData.put("email", userData.getOrDefault("email", username + "@test.com"));
+        userData.put("fidelityMember", userData.getOrDefault("fidelityMember", false));
+        userData.put("customerType", customerType);
+
+        usersData.put(username, userData);
+        saveUsersData(usersData);
+    }
+
+    /**
      * Verifica se un utente è membro fidelity (SOLO LETTURA).
      */
     public boolean isFidelityMember(String username) {
@@ -828,7 +807,7 @@ public final class DataStore implements Serializable {
 
     /**
      * Ottiene il tipo di cliente per un utente (SOLO LETTURA).
-     * Legge direttamente il valore salvato nel file JSON senza logica automatica.
+     * Legge direttamente il valore salvato nel file JSON.
      */
     public String getCustomerType(String username) {
         if (username == null || username.isEmpty()) return "standard";
@@ -837,27 +816,9 @@ public final class DataStore implements Serializable {
         Map<String, Object> userData = usersData.get(username);
         if (userData == null) return "standard";
 
-        // Restituisce il tipo salvato nel file, senza logica automatica
+        // Restituisce il tipo salvato nel file JSON
         String customerType = (String) userData.getOrDefault("customerType", "standard");
         return customerType != null && !customerType.isEmpty() ? customerType : "standard";
     }
 
-    // --- CALCOLO DISTANZE ---
-
-    /**
-     * Calcola distanza tra due stazioni.
-     */
-    public synchronized double calculateDistance(int station1Id, int station2Id) {
-        Station s1 = getStationById(station1Id);
-        Station s2 = getStationById(station2Id);
-        return DistanceCalculator.calculateDistance(s1, s2);
-    }
-
-    /**
-     * Calcola prezzo basato su distanza.
-     */
-    public synchronized double calculatePrice(int depId, int arrId, double pricePerKm, double basePrice) {
-        double distance = calculateDistance(depId, arrId);
-        return DistanceCalculator.calculatePriceByDistance(distance, pricePerKm, basePrice);
-    }
 }

@@ -20,7 +20,6 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private TrainDetailsResponse() {
-    stops_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -82,75 +81,14 @@ private static final long serialVersionUID = 0L;
     return train_ == null ? it.unical.trenical.grpc.common.Train.getDefaultInstance() : train_;
   }
 
-  public static final int STOPS_FIELD_NUMBER = 2;
-  @SuppressWarnings("serial")
-  private java.util.List<it.unical.trenical.grpc.train.Stop> stops_;
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  @java.lang.Override
-  public java.util.List<it.unical.trenical.grpc.train.Stop> getStopsList() {
-    return stops_;
-  }
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  @java.lang.Override
-  public java.util.List<? extends it.unical.trenical.grpc.train.StopOrBuilder> 
-      getStopsOrBuilderList() {
-    return stops_;
-  }
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  @java.lang.Override
-  public int getStopsCount() {
-    return stops_.size();
-  }
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  @java.lang.Override
-  public it.unical.trenical.grpc.train.Stop getStops(int index) {
-    return stops_.get(index);
-  }
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  @java.lang.Override
-  public it.unical.trenical.grpc.train.StopOrBuilder getStopsOrBuilder(
-      int index) {
-    return stops_.get(index);
-  }
-
-  public static final int AVAILABLE_FIELD_NUMBER = 3;
+  public static final int AVAILABLE_FIELD_NUMBER = 2;
   private boolean available_ = false;
   /**
    * <pre>
    * Disponibilità del treno
    * </pre>
    *
-   * <code>bool available = 3;</code>
+   * <code>bool available = 2;</code>
    * @return The available.
    */
   @java.lang.Override
@@ -158,14 +96,14 @@ private static final long serialVersionUID = 0L;
     return available_;
   }
 
-  public static final int SEATS_AVAILABLE_FIELD_NUMBER = 4;
+  public static final int SEATS_AVAILABLE_FIELD_NUMBER = 3;
   private int seatsAvailable_ = 0;
   /**
    * <pre>
    * Numero di posti disponibili
    * </pre>
    *
-   * <code>int32 seats_available = 4;</code>
+   * <code>int32 seats_available = 3;</code>
    * @return The seatsAvailable.
    */
   @java.lang.Override
@@ -190,14 +128,11 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000001) != 0)) {
       output.writeMessage(1, getTrain());
     }
-    for (int i = 0; i < stops_.size(); i++) {
-      output.writeMessage(2, stops_.get(i));
-    }
     if (available_ != false) {
-      output.writeBool(3, available_);
+      output.writeBool(2, available_);
     }
     if (seatsAvailable_ != 0) {
-      output.writeInt32(4, seatsAvailable_);
+      output.writeInt32(3, seatsAvailable_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -212,17 +147,13 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(1, getTrain());
     }
-    for (int i = 0; i < stops_.size(); i++) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, stops_.get(i));
-    }
     if (available_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(3, available_);
+        .computeBoolSize(2, available_);
     }
     if (seatsAvailable_ != 0) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(4, seatsAvailable_);
+        .computeInt32Size(3, seatsAvailable_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -244,8 +175,6 @@ private static final long serialVersionUID = 0L;
       if (!getTrain()
           .equals(other.getTrain())) return false;
     }
-    if (!getStopsList()
-        .equals(other.getStopsList())) return false;
     if (getAvailable()
         != other.getAvailable()) return false;
     if (getSeatsAvailable()
@@ -264,10 +193,6 @@ private static final long serialVersionUID = 0L;
     if (hasTrain()) {
       hash = (37 * hash) + TRAIN_FIELD_NUMBER;
       hash = (53 * hash) + getTrain().hashCode();
-    }
-    if (getStopsCount() > 0) {
-      hash = (37 * hash) + STOPS_FIELD_NUMBER;
-      hash = (53 * hash) + getStopsList().hashCode();
     }
     hash = (37 * hash) + AVAILABLE_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
@@ -409,7 +334,6 @@ private static final long serialVersionUID = 0L;
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
         getTrainFieldBuilder();
-        getStopsFieldBuilder();
       }
     }
     @java.lang.Override
@@ -421,13 +345,6 @@ private static final long serialVersionUID = 0L;
         trainBuilder_.dispose();
         trainBuilder_ = null;
       }
-      if (stopsBuilder_ == null) {
-        stops_ = java.util.Collections.emptyList();
-      } else {
-        stops_ = null;
-        stopsBuilder_.clear();
-      }
-      bitField0_ = (bitField0_ & ~0x00000002);
       available_ = false;
       seatsAvailable_ = 0;
       return this;
@@ -456,22 +373,9 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public it.unical.trenical.grpc.train.TrainDetailsResponse buildPartial() {
       it.unical.trenical.grpc.train.TrainDetailsResponse result = new it.unical.trenical.grpc.train.TrainDetailsResponse(this);
-      buildPartialRepeatedFields(result);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
-    }
-
-    private void buildPartialRepeatedFields(it.unical.trenical.grpc.train.TrainDetailsResponse result) {
-      if (stopsBuilder_ == null) {
-        if (((bitField0_ & 0x00000002) != 0)) {
-          stops_ = java.util.Collections.unmodifiableList(stops_);
-          bitField0_ = (bitField0_ & ~0x00000002);
-        }
-        result.stops_ = stops_;
-      } else {
-        result.stops_ = stopsBuilder_.build();
-      }
     }
 
     private void buildPartial0(it.unical.trenical.grpc.train.TrainDetailsResponse result) {
@@ -483,10 +387,10 @@ private static final long serialVersionUID = 0L;
             : trainBuilder_.build();
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
+      if (((from_bitField0_ & 0x00000002) != 0)) {
         result.available_ = available_;
       }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
+      if (((from_bitField0_ & 0x00000004) != 0)) {
         result.seatsAvailable_ = seatsAvailable_;
       }
       result.bitField0_ |= to_bitField0_;
@@ -539,32 +443,6 @@ private static final long serialVersionUID = 0L;
       if (other.hasTrain()) {
         mergeTrain(other.getTrain());
       }
-      if (stopsBuilder_ == null) {
-        if (!other.stops_.isEmpty()) {
-          if (stops_.isEmpty()) {
-            stops_ = other.stops_;
-            bitField0_ = (bitField0_ & ~0x00000002);
-          } else {
-            ensureStopsIsMutable();
-            stops_.addAll(other.stops_);
-          }
-          onChanged();
-        }
-      } else {
-        if (!other.stops_.isEmpty()) {
-          if (stopsBuilder_.isEmpty()) {
-            stopsBuilder_.dispose();
-            stopsBuilder_ = null;
-            stops_ = other.stops_;
-            bitField0_ = (bitField0_ & ~0x00000002);
-            stopsBuilder_ = 
-              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                 getStopsFieldBuilder() : null;
-          } else {
-            stopsBuilder_.addAllMessages(other.stops_);
-          }
-        }
-      }
       if (other.getAvailable() != false) {
         setAvailable(other.getAvailable());
       }
@@ -604,29 +482,16 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000001;
               break;
             } // case 10
-            case 18: {
-              it.unical.trenical.grpc.train.Stop m =
-                  input.readMessage(
-                      it.unical.trenical.grpc.train.Stop.parser(),
-                      extensionRegistry);
-              if (stopsBuilder_ == null) {
-                ensureStopsIsMutable();
-                stops_.add(m);
-              } else {
-                stopsBuilder_.addMessage(m);
-              }
-              break;
-            } // case 18
-            case 24: {
+            case 16: {
               available_ = input.readBool();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 16
+            case 24: {
+              seatsAvailable_ = input.readInt32();
               bitField0_ |= 0x00000004;
               break;
             } // case 24
-            case 32: {
-              seatsAvailable_ = input.readInt32();
-              bitField0_ |= 0x00000008;
-              break;
-            } // case 32
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -801,325 +666,13 @@ private static final long serialVersionUID = 0L;
       return trainBuilder_;
     }
 
-    private java.util.List<it.unical.trenical.grpc.train.Stop> stops_ =
-      java.util.Collections.emptyList();
-    private void ensureStopsIsMutable() {
-      if (!((bitField0_ & 0x00000002) != 0)) {
-        stops_ = new java.util.ArrayList<it.unical.trenical.grpc.train.Stop>(stops_);
-        bitField0_ |= 0x00000002;
-       }
-    }
-
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        it.unical.trenical.grpc.train.Stop, it.unical.trenical.grpc.train.Stop.Builder, it.unical.trenical.grpc.train.StopOrBuilder> stopsBuilder_;
-
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public java.util.List<it.unical.trenical.grpc.train.Stop> getStopsList() {
-      if (stopsBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(stops_);
-      } else {
-        return stopsBuilder_.getMessageList();
-      }
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public int getStopsCount() {
-      if (stopsBuilder_ == null) {
-        return stops_.size();
-      } else {
-        return stopsBuilder_.getCount();
-      }
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public it.unical.trenical.grpc.train.Stop getStops(int index) {
-      if (stopsBuilder_ == null) {
-        return stops_.get(index);
-      } else {
-        return stopsBuilder_.getMessage(index);
-      }
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder setStops(
-        int index, it.unical.trenical.grpc.train.Stop value) {
-      if (stopsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureStopsIsMutable();
-        stops_.set(index, value);
-        onChanged();
-      } else {
-        stopsBuilder_.setMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder setStops(
-        int index, it.unical.trenical.grpc.train.Stop.Builder builderForValue) {
-      if (stopsBuilder_ == null) {
-        ensureStopsIsMutable();
-        stops_.set(index, builderForValue.build());
-        onChanged();
-      } else {
-        stopsBuilder_.setMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder addStops(it.unical.trenical.grpc.train.Stop value) {
-      if (stopsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureStopsIsMutable();
-        stops_.add(value);
-        onChanged();
-      } else {
-        stopsBuilder_.addMessage(value);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder addStops(
-        int index, it.unical.trenical.grpc.train.Stop value) {
-      if (stopsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureStopsIsMutable();
-        stops_.add(index, value);
-        onChanged();
-      } else {
-        stopsBuilder_.addMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder addStops(
-        it.unical.trenical.grpc.train.Stop.Builder builderForValue) {
-      if (stopsBuilder_ == null) {
-        ensureStopsIsMutable();
-        stops_.add(builderForValue.build());
-        onChanged();
-      } else {
-        stopsBuilder_.addMessage(builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder addStops(
-        int index, it.unical.trenical.grpc.train.Stop.Builder builderForValue) {
-      if (stopsBuilder_ == null) {
-        ensureStopsIsMutable();
-        stops_.add(index, builderForValue.build());
-        onChanged();
-      } else {
-        stopsBuilder_.addMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder addAllStops(
-        java.lang.Iterable<? extends it.unical.trenical.grpc.train.Stop> values) {
-      if (stopsBuilder_ == null) {
-        ensureStopsIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, stops_);
-        onChanged();
-      } else {
-        stopsBuilder_.addAllMessages(values);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder clearStops() {
-      if (stopsBuilder_ == null) {
-        stops_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
-        onChanged();
-      } else {
-        stopsBuilder_.clear();
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public Builder removeStops(int index) {
-      if (stopsBuilder_ == null) {
-        ensureStopsIsMutable();
-        stops_.remove(index);
-        onChanged();
-      } else {
-        stopsBuilder_.remove(index);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public it.unical.trenical.grpc.train.Stop.Builder getStopsBuilder(
-        int index) {
-      return getStopsFieldBuilder().getBuilder(index);
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public it.unical.trenical.grpc.train.StopOrBuilder getStopsOrBuilder(
-        int index) {
-      if (stopsBuilder_ == null) {
-        return stops_.get(index);  } else {
-        return stopsBuilder_.getMessageOrBuilder(index);
-      }
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public java.util.List<? extends it.unical.trenical.grpc.train.StopOrBuilder> 
-         getStopsOrBuilderList() {
-      if (stopsBuilder_ != null) {
-        return stopsBuilder_.getMessageOrBuilderList();
-      } else {
-        return java.util.Collections.unmodifiableList(stops_);
-      }
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public it.unical.trenical.grpc.train.Stop.Builder addStopsBuilder() {
-      return getStopsFieldBuilder().addBuilder(
-          it.unical.trenical.grpc.train.Stop.getDefaultInstance());
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public it.unical.trenical.grpc.train.Stop.Builder addStopsBuilder(
-        int index) {
-      return getStopsFieldBuilder().addBuilder(
-          index, it.unical.trenical.grpc.train.Stop.getDefaultInstance());
-    }
-    /**
-     * <pre>
-     * Fermate del treno
-     * </pre>
-     *
-     * <code>repeated .trenical.train.Stop stops = 2;</code>
-     */
-    public java.util.List<it.unical.trenical.grpc.train.Stop.Builder> 
-         getStopsBuilderList() {
-      return getStopsFieldBuilder().getBuilderList();
-    }
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        it.unical.trenical.grpc.train.Stop, it.unical.trenical.grpc.train.Stop.Builder, it.unical.trenical.grpc.train.StopOrBuilder> 
-        getStopsFieldBuilder() {
-      if (stopsBuilder_ == null) {
-        stopsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            it.unical.trenical.grpc.train.Stop, it.unical.trenical.grpc.train.Stop.Builder, it.unical.trenical.grpc.train.StopOrBuilder>(
-                stops_,
-                ((bitField0_ & 0x00000002) != 0),
-                getParentForChildren(),
-                isClean());
-        stops_ = null;
-      }
-      return stopsBuilder_;
-    }
-
     private boolean available_ ;
     /**
      * <pre>
      * Disponibilità del treno
      * </pre>
      *
-     * <code>bool available = 3;</code>
+     * <code>bool available = 2;</code>
      * @return The available.
      */
     @java.lang.Override
@@ -1131,14 +684,14 @@ private static final long serialVersionUID = 0L;
      * Disponibilità del treno
      * </pre>
      *
-     * <code>bool available = 3;</code>
+     * <code>bool available = 2;</code>
      * @param value The available to set.
      * @return This builder for chaining.
      */
     public Builder setAvailable(boolean value) {
 
       available_ = value;
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1147,11 +700,11 @@ private static final long serialVersionUID = 0L;
      * Disponibilità del treno
      * </pre>
      *
-     * <code>bool available = 3;</code>
+     * <code>bool available = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearAvailable() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000002);
       available_ = false;
       onChanged();
       return this;
@@ -1163,7 +716,7 @@ private static final long serialVersionUID = 0L;
      * Numero di posti disponibili
      * </pre>
      *
-     * <code>int32 seats_available = 4;</code>
+     * <code>int32 seats_available = 3;</code>
      * @return The seatsAvailable.
      */
     @java.lang.Override
@@ -1175,14 +728,14 @@ private static final long serialVersionUID = 0L;
      * Numero di posti disponibili
      * </pre>
      *
-     * <code>int32 seats_available = 4;</code>
+     * <code>int32 seats_available = 3;</code>
      * @param value The seatsAvailable to set.
      * @return This builder for chaining.
      */
     public Builder setSeatsAvailable(int value) {
 
       seatsAvailable_ = value;
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1191,11 +744,11 @@ private static final long serialVersionUID = 0L;
      * Numero di posti disponibili
      * </pre>
      *
-     * <code>int32 seats_available = 4;</code>
+     * <code>int32 seats_available = 3;</code>
      * @return This builder for chaining.
      */
     public Builder clearSeatsAvailable() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000004);
       seatsAvailable_ = 0;
       onChanged();
       return this;

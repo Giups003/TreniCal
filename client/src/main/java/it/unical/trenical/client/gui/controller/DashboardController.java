@@ -17,6 +17,7 @@ import javafx.scene.control.*;
  */
 public class DashboardController {
 
+    // Campi UI
     @FXML
     private Label emailLabel;
     @FXML
@@ -46,6 +47,7 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
+        // Configura visibilità elementi admin
         if (adminPromotionsButton != null) {
             boolean isAdmin = UserSession.isAdmin();
             adminPromotionsButton.setVisible(isAdmin);
@@ -61,25 +63,32 @@ public class DashboardController {
             adminPanelButton.setVisible(isAdmin);
             adminPanelButton.setManaged(isAdmin);
         }
+
+        // Configura UI loyalty e email
         if (loyaltyLabel != null && joinLoyaltyButton != null) {
             updateLoyaltyUI();
         }
         if (emailLabel != null) {
             updateEmailLabel();
         }
-        // --- VISIBILITÀ LOGOUT ---
+
+        // Configura pulsante logout
         if (logoutButton != null) {
             boolean isLogged = UserSession.getUsername() != null && !UserSession.getUsername().isEmpty();
             logoutButton.setVisible(isLogged);
             logoutButton.setManaged(isLogged);
         }
+
         updateLoginUI();
-        // Mostra il pulsante login se non loggato
+
+        // Configura pulsante login
         if (loginButton != null) {
             boolean loggedIn = UserSession.getUsername() != null && !UserSession.getUsername().isEmpty();
             loginButton.setVisible(!loggedIn);
             loginButton.setManaged(!loggedIn);
         }
+
+        // Setup listener per ridimensionamento finestra
         if (searchTrainsButton != null) {
             searchTrainsButton.sceneProperty().addListener((obs, oldScene, newScene) -> {
                 if (newScene != null) {
@@ -215,7 +224,7 @@ public class DashboardController {
     }
 
     @FXML
-    private void onSearchTrains(ActionEvent event) {
+    private void onSearchTrains() {
         SceneManager.getInstance().switchTo(SceneManager.SEARCH_TRAINS);
     }
 
@@ -241,7 +250,7 @@ public class DashboardController {
     }
 
     @FXML
-    private void onLogout(ActionEvent event) {
+    private void onLogout() {
         UserSession.setUsername(null);
         UserSession.setAdmin(false);
         UserSession.setLoyaltyMember(false);
@@ -296,20 +305,5 @@ public class DashboardController {
     private void onAdminPanel() {
         SceneManager.getInstance().showAdminPanel();
         updateStageMinSize();
-    }
-
-    @FXML
-    private void onLogout() {
-        // Chiamata diretta al logout del LoginController
-        try {
-            LoginController loginController = new LoginController();
-            loginController.onLogout();
-        } catch (Exception e) {
-            // Fallback: reset manuale
-            UserSession.setUsername("");
-            UserSession.setEmail("");
-            UserSession.setAdmin(false);
-            SceneManager.getInstance().switchTo(SceneManager.LOGIN);
-        }
     }
 }

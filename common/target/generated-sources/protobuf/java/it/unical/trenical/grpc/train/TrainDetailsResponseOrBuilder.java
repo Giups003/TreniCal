@@ -36,54 +36,10 @@ public interface TrainDetailsResponseOrBuilder extends
 
   /**
    * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  java.util.List<it.unical.trenical.grpc.train.Stop> 
-      getStopsList();
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  it.unical.trenical.grpc.train.Stop getStops(int index);
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  int getStopsCount();
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  java.util.List<? extends it.unical.trenical.grpc.train.StopOrBuilder> 
-      getStopsOrBuilderList();
-  /**
-   * <pre>
-   * Fermate del treno
-   * </pre>
-   *
-   * <code>repeated .trenical.train.Stop stops = 2;</code>
-   */
-  it.unical.trenical.grpc.train.StopOrBuilder getStopsOrBuilder(
-      int index);
-
-  /**
-   * <pre>
    * Disponibilità del treno
    * </pre>
    *
-   * <code>bool available = 3;</code>
+   * <code>bool available = 2;</code>
    * @return The available.
    */
   boolean getAvailable();
@@ -93,7 +49,7 @@ public interface TrainDetailsResponseOrBuilder extends
    * Numero di posti disponibili
    * </pre>
    *
-   * <code>int32 seats_available = 4;</code>
+   * <code>int32 seats_available = 3;</code>
    * @return The seatsAvailable.
    */
   int getSeatsAvailable();

@@ -8,7 +8,6 @@ import it.unical.trenical.grpc.ticket.*;
 import it.unical.trenical.grpc.train.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -18,9 +17,12 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Controller per la finestra di modifica biglietto.
+ * Controller per la finestra di dialogo di modifica biglietto.
+ * Gestisce la modifica di data, orario e classe di servizio per i biglietti esistenti.
  */
 public class ModifyTicketDialogController {
+
+    // --- Campi UI ---
     @FXML private TextField departureField;
     @FXML private TextField arrivalField;
     @FXML private DatePicker datePicker;
@@ -30,25 +32,29 @@ public class ModifyTicketDialogController {
     @FXML private Button confirmButton;
     @FXML private Label seatsAvailableLabel;
 
+    // --- Servizi gRPC ---
     private ManagedChannel channel;
     private TrainServiceGrpc.TrainServiceBlockingStub trainService;
     private TicketServiceGrpc.TicketServiceBlockingStub ticketService;
+
+    // --- Stato interno ---
     private String ticketId;
     private Runnable onSuccess;
     private Integer selectedTrainId = null;
-    private Integer originalTrainId = null;
-
-    private final Map<String, Integer> timeToTrainId = new HashMap<>();
-    private final Map<String, it.unical.trenical.grpc.common.Train> timeToTrain = new HashMap<>();
-    private it.unical.trenical.grpc.common.Train selectedTrain = null;
+    private final Map<String, Train> timeToTrain = new HashMap<>();
+    private Train selectedTrain = null;
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private static final ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
 
+    // --- Gestione prezzi ---
     private double oldPrice = 0.0;
     private double newPrice = 0.0;
     private double surcharge = 0.0;
     private boolean oldPriceLoaded = false;
 
+    /**
+     * Inizializza il controller configurando servizi gRPC e UI.
+     */
     @FXML
     public void initialize() {
         // Inizializzazione del canale gRPC e dei servizi
@@ -124,7 +130,7 @@ public class ModifyTicketDialogController {
                     .build();
             TrainResponse resp = trainService.searchTrains(req);
             List<String> allTimes = new ArrayList<>();
-            Map<String, it.unical.trenical.grpc.common.Train> localTimeToTrain = new HashMap<>();
+            Map<String, Train> localTimeToTrain = new HashMap<>();
             LocalTime now = LocalTime.now();
             boolean isToday = date.equals(LocalDate.now());
             for (Train train : resp.getTrainsList()) {
@@ -216,20 +222,6 @@ public class ModifyTicketDialogController {
         }
     }
 
-    private void updateTimeComboBox(List<String> times) {
-        timeBox.getItems().addAll(times);
-        if (!times.isEmpty()) {
-            timeBox.setValue(times.get(0));
-            confirmButton.setDisable(false);
-        }
-        updateSelectedTrainId();
-    }
-
-    private void updateSelectedTrainId() {
-        // Questo metodo ora è ridondante perché updateSelectedTrain già aggiorna selectedTrainId
-        // Ma lo manteniamo per compatibilità
-        updateSelectedTrain();
-    }
 
     private void fetchOriginalTicketPrice() {
         if (ticketId == null || ticketId.isEmpty() || oldPriceLoaded) return;
@@ -320,7 +312,7 @@ public class ModifyTicketDialogController {
                     .setServiceClass(serviceClass)
                     .setPromoCode("")
                     .setTrainType(selectedTrain != null ? selectedTrain.getName() : "")
-                    .setUserType(userType) // PASSA IL TIPO UTENTE
+                    .setUserType(userType)
                     .build();
 
             GetTicketPriceResponse resp = ticketService.getTicketPrice(req);
@@ -372,7 +364,6 @@ public class ModifyTicketDialogController {
         } else {
             classBox.setValue("Seconda Classe");
         }
-        originalTrainId = (trainId != null && trainId > 0) ? trainId : null;
         // Aggiorna gli orari disponibili
         updateAvailableTimes();
         // Tenta di ripristinare l'orario originale
@@ -432,7 +423,7 @@ public class ModifyTicketDialogController {
 
             // Verifica trainId
             if (selectedTrainId == null || selectedTrainId <= 0) {
-                updateSelectedTrainId();
+                updateSelectedTrain();
                 if (selectedTrainId == null || selectedTrainId <= 0) {
                     showError("Nessun treno selezionato. Scegli un orario valido.");
                     return;

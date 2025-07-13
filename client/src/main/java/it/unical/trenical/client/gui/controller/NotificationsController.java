@@ -31,12 +31,19 @@ import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
+ /**
+ * Controller per la gestione delle notifiche utente.
+ * Gestisce la visualizzazione, aggiornamento automatico e notifiche di sistema.
+ */
 public class NotificationsController {
+
+    // --- Campi UI ---
     @FXML private TableView<NotificationViewModel> notificationsTable;
     @FXML private TableColumn<NotificationViewModel, String> colTitle, colMessage, colTime, colType;
     @FXML private Label statusLabel;
     @FXML private CheckBox showReadCheckbox;
 
+    // --- Servizi e stato ---
     private ManagedChannel channel;
     private NotificationServiceGrpc.NotificationServiceBlockingStub notificationService;
     private final ObservableList<NotificationViewModel> notifications = FXCollections.observableArrayList();
@@ -45,6 +52,9 @@ public class NotificationsController {
     private static final String PREFS_FILE = System.getProperty("user.home") + "/trenical_notifications.json";
     private TrayIcon trayIcon;
 
+    /**
+     * Inizializza il controller configurando servizi, tabella e timer automatico.
+     */
     @FXML
     public void initialize() {
         channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();

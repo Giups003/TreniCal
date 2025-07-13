@@ -44,7 +44,7 @@ class TicketServiceImplIntegrationTest {
         // Setup: cliente standard nel DataStore
         dataStore.setCustomerType("mario.rossi", "standard");
 
-        // Mock delle chiamate al PriceCalculator
+        // Mock delle chiamate al PriceCalculator - Corretto con 6 parametri
         when(mockPriceCalculator.getCurrentStrategyName()).thenReturn("StandardPriceCalculationStrategy");
         when(mockPriceCalculator.isValidPromoCode("ESTATE2024", "standard")).thenReturn(true);
         when(mockPriceCalculator.calculateTicketPrice(any(), any(), any(), any(), any(), any()))
@@ -66,23 +66,7 @@ class TicketServiceImplIntegrationTest {
         CountDownLatch latch = new CountDownLatch(1);
         PurchaseTicketResponse[] response = new PurchaseTicketResponse[1];
 
-        StreamObserver<PurchaseTicketResponse> observer = new StreamObserver<>() {
-            @Override
-            public void onNext(PurchaseTicketResponse value) {
-                response[0] = value;
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                fail("Non dovrebbe verificarsi un errore: " + t.getMessage());
-                latch.countDown();
-            }
-
-            @Override
-            public void onCompleted() {
-                latch.countDown();
-            }
-        };
+        StreamObserver<PurchaseTicketResponse> observer = createPurchaseResponseObserver(response, latch);
 
         ticketService.purchaseTicket(request, observer);
 
@@ -94,7 +78,7 @@ class TicketServiceImplIntegrationTest {
         // Verifica che il codice promo sia stato validato
         verify(mockPriceCalculator).isValidPromoCode("ESTATE2024", "standard");
 
-        // Verifica che il prezzo sia stato calcolato con i parametri corretti
+        // Verifica che il prezzo sia stato calcolato con i parametri corretti (6 parametri)
         verify(mockPriceCalculator).calculateTicketPrice(
                 eq("Roma"), eq("Milano"), eq("Seconda Classe"),
                 any(Timestamp.class), eq("ESTATE2024"), eq("Frecciarossa")
@@ -124,28 +108,13 @@ class TicketServiceImplIntegrationTest {
                 .setPromoCode("INVALIDCODE")
                 .setPaymentMethod("Carta di Credito")
                 .setSeats(1)
+                .setTrainType("Frecciarossa")
                 .build();
 
         CountDownLatch latch = new CountDownLatch(1);
         PurchaseTicketResponse[] response = new PurchaseTicketResponse[1];
 
-        StreamObserver<PurchaseTicketResponse> observer = new StreamObserver<>() {
-            @Override
-            public void onNext(PurchaseTicketResponse value) {
-                response[0] = value;
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                fail("Non dovrebbe verificarsi un errore: " + t.getMessage());
-                latch.countDown();
-            }
-
-            @Override
-            public void onCompleted() {
-                latch.countDown();
-            }
-        };
+        StreamObserver<PurchaseTicketResponse> observer = createPurchaseResponseObserver(response, latch);
 
         ticketService.purchaseTicket(request, observer);
 
@@ -184,23 +153,7 @@ class TicketServiceImplIntegrationTest {
         CountDownLatch latch = new CountDownLatch(1);
         PurchaseTicketResponse[] response = new PurchaseTicketResponse[1];
 
-        StreamObserver<PurchaseTicketResponse> observer = new StreamObserver<>() {
-            @Override
-            public void onNext(PurchaseTicketResponse value) {
-                response[0] = value;
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                fail("Non dovrebbe verificarsi un errore: " + t.getMessage());
-                latch.countDown();
-            }
-
-            @Override
-            public void onCompleted() {
-                latch.countDown();
-            }
-        };
+        StreamObserver<PurchaseTicketResponse> observer = createPurchaseResponseObserver(response, latch);
 
         ticketService.purchaseTicket(request, observer);
 
@@ -217,68 +170,45 @@ class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test GetTicketPrice con strategia Corporate")
-    void testGetTicketPriceWithCorporateStrategy() throws InterruptedException {
-        // NOTA: GetTicketPriceRequest non ha passengerName, quindi testiamo diversamente
-        // Impostiamo manualmente il tipo cliente nel DataStore
-        dataStore.setCustomerType("corp.user", "corporate");
-
-        when(mockPriceCalculator.getCurrentStrategyName()).thenReturn("CorporateCustomerPricingStrategy");
+    @DisplayName("Test GetTicketPrice con strategia standard")
+    void testGetTicketPriceWithStandardStrategy() throws InterruptedException {
+        when(mockPriceCalculator.getCurrentStrategyName()).thenReturn("StandardPriceCalculationStrategy");
         when(mockPriceCalculator.calculateTicketPrice(
                 eq("Roma"), eq("Milano"), eq("Prima Classe"),
-                any(Timestamp.class), eq("CORP2024"), eq("Frecciarossa")))
-                .thenReturn(75.00);
+                any(Timestamp.class), eq(""), eq("Frecciarossa")))
+                .thenReturn(95.00);
 
         GetTicketPriceRequest request = GetTicketPriceRequest.newBuilder()
                 .setDepartureStation("Roma")
                 .setArrivalStation("Milano")
                 .setServiceClass("Prima Classe")
                 .setTravelDate(createTimestamp(7))
-                .setPromoCode("CORP2024")
+                .setPromoCode("")
                 .setTrainType("Frecciarossa")
                 .build();
 
         CountDownLatch latch = new CountDownLatch(1);
         GetTicketPriceResponse[] response = new GetTicketPriceResponse[1];
 
-        StreamObserver<GetTicketPriceResponse> observer = new StreamObserver<>() {
-            @Override
-            public void onNext(GetTicketPriceResponse value) {
-                response[0] = value;
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                fail("Non dovrebbe verificarsi un errore: " + t.getMessage());
-                latch.countDown();
-            }
-
-            @Override
-            public void onCompleted() {
-                latch.countDown();
-            }
-        };
+        StreamObserver<GetTicketPriceResponse> observer = createPriceResponseObserver(response, latch);
 
         ticketService.getTicketPrice(request, observer);
 
         assertTrue(latch.await(5, TimeUnit.SECONDS), "La risposta dovrebbe arrivare entro 5 secondi");
 
-        // NOTA: GetTicketPrice senza username usa la strategia standard di default
-        // Per testare la strategia corporate, dovremmo usare PurchaseTicket con SOLO_PREZZO
         assertNotNull(response[0], "La risposta non dovrebbe essere null");
-        assertEquals(75.00, response[0].getPrice(), 0.01, "Il prezzo dovrebbe essere calcolato");
+        assertEquals(95.00, response[0].getPrice(), 0.01, "Il prezzo dovrebbe essere calcolato");
 
         // Verifica che il calcolo del prezzo sia stato chiamato
         verify(mockPriceCalculator).calculateTicketPrice(
                 eq("Roma"), eq("Milano"), eq("Prima Classe"),
-                any(Timestamp.class), eq("CORP2024"), eq("Frecciarossa")
+                any(Timestamp.class), eq(""), eq("Frecciarossa")
         );
     }
 
     @Test
-    @DisplayName("Test calcolo prezzo con tipo cliente specifico tramite PurchaseTicket")
-    void testPriceCalculationWithSpecificCustomerType() throws InterruptedException {
-        // Test più accurato per la strategia corporate usando PurchaseTicket con SOLO_PREZZO
+    @DisplayName("Test calcolo prezzo con tipo cliente Corporate tramite PurchaseTicket")
+    void testPriceCalculationWithCorporateStrategy() throws InterruptedException {
         dataStore.setCustomerType("corp.user", "corporate");
 
         when(mockPriceCalculator.getCurrentStrategyName()).thenReturn("CorporateCustomerPricingStrategy");
@@ -302,23 +232,7 @@ class TicketServiceImplIntegrationTest {
         CountDownLatch latch = new CountDownLatch(1);
         PurchaseTicketResponse[] response = new PurchaseTicketResponse[1];
 
-        StreamObserver<PurchaseTicketResponse> observer = new StreamObserver<>() {
-            @Override
-            public void onNext(PurchaseTicketResponse value) {
-                response[0] = value;
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                fail("Non dovrebbe verificarsi un errore: " + t.getMessage());
-                latch.countDown();
-            }
-
-            @Override
-            public void onCompleted() {
-                latch.countDown();
-            }
-        };
+        StreamObserver<PurchaseTicketResponse> observer = createPurchaseResponseObserver(response, latch);
 
         ticketService.purchaseTicket(request, observer);
 
@@ -334,7 +248,86 @@ class TicketServiceImplIntegrationTest {
                   "Il messaggio dovrebbe indicare la strategia Corporate");
     }
 
-    // Metodi di utilità
+    @Test
+    @DisplayName("Test gestione posti non disponibili")
+    void testInsufficientSeatsHandling() throws InterruptedException {
+        dataStore.setCustomerType("test.user", "standard");
+
+        // Mock per simulare posti insufficienti
+        when(mockPriceCalculator.getCurrentStrategyName()).thenReturn("StandardPriceCalculationStrategy");
+        when(mockPriceCalculator.isValidPromoCode("", "standard")).thenReturn(true);
+
+        PurchaseTicketRequest request = PurchaseTicketRequest.newBuilder()
+                .setTrainId(9999) // ID treno inesistente
+                .setPassengerName("test.user")
+                .setDepartureStation("Roma")
+                .setArrivalStation("Milano")
+                .setServiceClass("Seconda Classe")
+                .setTravelDate(createTimestamp(7))
+                .setPromoCode("")
+                .setPaymentMethod("Carta di Credito")
+                .setSeats(1)
+                .setTrainType("Frecciarossa")
+                .build();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        PurchaseTicketResponse[] response = new PurchaseTicketResponse[1];
+
+        StreamObserver<PurchaseTicketResponse> observer = createPurchaseResponseObserver(response, latch);
+
+        ticketService.purchaseTicket(request, observer);
+
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "La risposta dovrebbe arrivare entro 5 secondi");
+
+        assertNotNull(response[0], "La risposta non dovrebbe essere null");
+        assertFalse(response[0].getSuccess(), "L'acquisto dovrebbe fallire per mancanza di posti");
+        assertTrue(response[0].getMessage().contains("disponibili") || response[0].getMessage().contains("posti"),
+                  "Il messaggio dovrebbe indicare il problema con i posti");
+    }
+
+    // Metodi di utilità per creare gli observer
+
+    private StreamObserver<PurchaseTicketResponse> createPurchaseResponseObserver(
+            PurchaseTicketResponse[] responseContainer, CountDownLatch latch) {
+        return new StreamObserver<>() {
+            @Override
+            public void onNext(PurchaseTicketResponse value) {
+                responseContainer[0] = value;
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                fail("Non dovrebbe verificarsi un errore: " + t.getMessage());
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        };
+    }
+
+    private StreamObserver<GetTicketPriceResponse> createPriceResponseObserver(
+            GetTicketPriceResponse[] responseContainer, CountDownLatch latch) {
+        return new StreamObserver<>() {
+            @Override
+            public void onNext(GetTicketPriceResponse value) {
+                responseContainer[0] = value;
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                fail("Non dovrebbe verificarsi un errore: " + t.getMessage());
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        };
+    }
 
     private void setupTestData() {
         // Setup promozioni di test

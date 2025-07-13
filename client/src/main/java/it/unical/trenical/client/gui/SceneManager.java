@@ -12,14 +12,16 @@ import java.io.IOException;
 import java.util.prefs.Preferences;
 
 /**
- * Gestisce il cambio centralizzato delle schermate principali dell'applicazione.
- * Singleton accessibile da tutti i controller.
+ * Gestisce la navigazione centralizzata tra le schermate dell'applicazione.
+ * Implementa il pattern Singleton per garantire un'unica istanza globale.
  */
 public class SceneManager {
+
+    // --- Istanza Singleton ---
     private static SceneManager instance;
     private Stage primaryStage;
 
-    // Percorsi FXML delle schermate
+    // --- Percorsi FXML delle schermate ---
     public static final String DASHBOARD = "src/main/java/it/unical/trenical/client/gui/view/dashboard.fxml";
     public static final String SEARCH_TRAINS = "src/main/java/it/unical/trenical/client/gui/view/search_trains.fxml";
     public static final String BUY_TICKET = "src/main/java/it/unical/trenical/client/gui/view/buy_ticket.fxml";
@@ -30,9 +32,16 @@ public class SceneManager {
     public static final String MODIFY_TICKET_DIALOG = "src/main/java/it/unical/trenical/client/gui/view/modify_ticket_dialog.fxml";
     public static final String NOTIFICATIONS = "src/main/java/it/unical/trenical/client/gui/view/notifications.fxml";
 
+    /**
+     * Costruttore privato per implementare il pattern Singleton.
+     */
     private SceneManager() {
     }
 
+    /**
+     * Restituisce l'istanza unica del SceneManager.
+     * @return L'istanza singleton del SceneManager
+     */
     public static SceneManager getInstance() {
         if (instance == null) {
             instance = new SceneManager();
@@ -40,6 +49,10 @@ public class SceneManager {
         return instance;
     }
 
+    /**
+     * Imposta lo stage principale dell'applicazione e gestisce il login automatico.
+     * @param stage Lo stage principale di JavaFX
+     */
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
         // Se l'utente ha scelto "ricorda accesso" e c'è un username salvato, vai direttamente alla dashboard

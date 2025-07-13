@@ -1,25 +1,30 @@
 package it.unical.trenical.client.gui.controller;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.StringProperty;
+import com.google.protobuf.Empty;
+import it.unical.trenical.client.gui.SceneManager;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import it.unical.trenical.client.gui.SceneManager;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import it.unical.trenical.grpc.promotion.*;
 import com.google.protobuf.Timestamp;
 import it.unical.trenical.grpc.train.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Controller per la gestione amministrativa delle promozioni.
+ * Permette agli amministratori di visualizzare, creare, modificare ed eliminare promozioni.
+ */
 public class PromotionsAdminController {
+
+    // --- Campi UI ---
     @FXML private TableView<PromotionViewModel> promotionsTable;
     @FXML private TableColumn<PromotionViewModel, Integer> colId;
     @FXML private TableColumn<PromotionViewModel, String> colName;
@@ -33,14 +38,21 @@ public class PromotionsAdminController {
     @FXML private TableColumn<PromotionViewModel, Boolean> colFidelity;
     @FXML private TableColumn<PromotionViewModel, String> colTrainType;
 
+    // --- Stato interno ---
     private final ObservableList<PromotionViewModel> promotions = FXCollections.observableArrayList();
     private PromotionServiceGrpc.PromotionServiceBlockingStub promotionStub;
 
+    /**
+     * Costruttore che inizializza la connessione gRPC.
+     */
     public PromotionsAdminController() {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         promotionStub = PromotionServiceGrpc.newBlockingStub(channel);
     }
 
+    /**
+     * Inizializza la tabella delle promozioni e carica i dati.
+     */
     @FXML
     public void initialize() {
         colId.setCellValueFactory(data -> data.getValue().idProperty().asObject());
@@ -72,7 +84,7 @@ public class PromotionsAdminController {
     private void loadPromotions() {
         promotions.clear();
         try {
-            PromotionList list = promotionStub.listPromotions(com.google.protobuf.Empty.getDefaultInstance());
+            PromotionList list = promotionStub.listPromotions(Empty.getDefaultInstance());
             for (Promotion p : list.getPromotionsList()) {
                 promotions.add(protoToViewModel(p));
             }
@@ -83,10 +95,10 @@ public class PromotionsAdminController {
 
     @FXML
     private void onAddPromotion() {
-        java.util.List<String> routes = getRoutesList();
-        java.util.List<String> classes = getClassesList();
-        java.util.List<String> trainTypes = getTrainTypesList();
-        java.util.List<String> userTypes = getUserTypesList();
+        List<String> routes = getRoutesList();
+        List<String> classes = getClassesList();
+        List<String> trainTypes = getTrainTypesList();
+        List<String> userTypes = getUserTypesList();
         PromotionViewModel newPromo = PromotionDialog.showDialog(null, routes, classes, trainTypes, userTypes);
         if (newPromo != null) {
             try {
@@ -136,10 +148,10 @@ public class PromotionsAdminController {
     private void onEditPromotion() {
         PromotionViewModel selected = promotionsTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            java.util.List<String> routes = getRoutesList();
-            java.util.List<String> classes = getClassesList();
-            java.util.List<String> trainTypes = getTrainTypesList();
-            java.util.List<String> userTypes = getUserTypesList();
+            List<String> routes = getRoutesList();
+            List<String> classes = getClassesList();
+            List<String> trainTypes = getTrainTypesList();
+            List<String> userTypes = getUserTypesList();
             PromotionViewModel edited = PromotionDialog.showDialog(selected, routes, classes, trainTypes, userTypes);
             if (edited != null) {
                 try {
@@ -167,8 +179,8 @@ public class PromotionsAdminController {
     }
 
     // --- Metodi per recuperare le liste reali ---
-    private java.util.List<String> getRoutesList() {
-        java.util.List<String> routes = new java.util.ArrayList<>();
+    private List<String> getRoutesList() {
+        List<String> routes = new ArrayList<>();
         try {
             // Usa il servizio dei treni per recuperare le tratte
             TrainServiceGrpc.TrainServiceBlockingStub trainStub =
@@ -192,13 +204,12 @@ public class PromotionsAdminController {
     }
 
     private List<String> getTrainTypesList() {
-        // Puoi popolare dinamicamente se hai i tipi treno, qui statico
         return Arrays.asList("Frecciarossa", "Intercity", "Regionale", "Italo");
     }
 
     private List<String> getUserTypesList() {
         // Tipi di utente standard nel sistema
-        return java.util.Arrays.asList(
+        return Arrays.asList(
             "Standard",
             "VIP",
             "corporate"
@@ -260,30 +271,30 @@ public class PromotionsAdminController {
 
     // ViewModel per la tabella
     public static class PromotionViewModel {
-        private final javafx.beans.property.IntegerProperty id;
-        private final javafx.beans.property.StringProperty name;
-        private final javafx.beans.property.StringProperty description;
-        private final javafx.beans.property.DoubleProperty discountPercent;
-        private final javafx.beans.property.StringProperty routeName;
-        private final javafx.beans.property.StringProperty serviceClass;
-        private final javafx.beans.property.StringProperty validFrom;
-        private final javafx.beans.property.StringProperty validTo;
-        private final javafx.beans.property.BooleanProperty fidelityOnly;
-        private final javafx.beans.property.StringProperty trainType;
-        private final javafx.beans.property.StringProperty userTypes;
+        private final IntegerProperty id;
+        private final StringProperty name;
+        private final StringProperty description;
+        private final DoubleProperty discountPercent;
+        private final StringProperty routeName;
+        private final StringProperty serviceClass;
+        private final StringProperty validFrom;
+        private final StringProperty validTo;
+        private final BooleanProperty fidelityOnly;
+        private final StringProperty trainType;
+        private final StringProperty userTypes;
 
         public PromotionViewModel(int id, String name, String description, double discountPercent, String routeName, String serviceClass, String validFrom, String validTo, boolean fidelityOnly, String trainType, String userTypes) {
-            this.id = new javafx.beans.property.SimpleIntegerProperty(id);
-            this.name = new javafx.beans.property.SimpleStringProperty(name);
-            this.description = new javafx.beans.property.SimpleStringProperty(description);
-            this.discountPercent = new javafx.beans.property.SimpleDoubleProperty(discountPercent);
-            this.routeName = new javafx.beans.property.SimpleStringProperty(routeName);
-            this.serviceClass = new javafx.beans.property.SimpleStringProperty(serviceClass);
-            this.validFrom = new javafx.beans.property.SimpleStringProperty(validFrom);
-            this.validTo = new javafx.beans.property.SimpleStringProperty(validTo);
-            this.fidelityOnly = new javafx.beans.property.SimpleBooleanProperty(fidelityOnly);
-            this.trainType = new javafx.beans.property.SimpleStringProperty(trainType);
-            this.userTypes = new javafx.beans.property.SimpleStringProperty(userTypes);
+            this.id = new SimpleIntegerProperty(id);
+            this.name = new SimpleStringProperty(name);
+            this.description = new SimpleStringProperty(description);
+            this.discountPercent = new SimpleDoubleProperty(discountPercent);
+            this.routeName = new SimpleStringProperty(routeName);
+            this.serviceClass = new SimpleStringProperty(serviceClass);
+            this.validFrom = new SimpleStringProperty(validFrom);
+            this.validTo = new SimpleStringProperty(validTo);
+            this.fidelityOnly = new SimpleBooleanProperty(fidelityOnly);
+            this.trainType = new SimpleStringProperty(trainType);
+            this.userTypes = new SimpleStringProperty(userTypes);
         }
         public IntegerProperty idProperty() { return id; }
         public StringProperty nameProperty() { return name; }

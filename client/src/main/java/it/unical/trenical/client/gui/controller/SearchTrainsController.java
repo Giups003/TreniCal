@@ -23,43 +23,47 @@ import java.util.stream.Collectors;
 
 /**
  * Controller per la schermata di ricerca treni.
+ * Gestisce la ricerca dei treni disponibili e la selezione per l'acquisto.
  */
 public class SearchTrainsController {
-    @FXML
-    private TextField departureField;
-    @FXML
-    private TextField arrivalField;
-    @FXML
-    private DatePicker datePicker;
-    @FXML
-    private ComboBox<String> trainTypeBox;
-    @FXML
-    private ComboBox<String> classBox;
-    @FXML
-    private TableView<TrainSearchResult> resultsTable;
-    @FXML
-    private TableColumn<TrainSearchResult, String> colTrain;
-    @FXML
-    private TableColumn<TrainSearchResult, String> colDeparture;
-    @FXML
-    private TableColumn<TrainSearchResult, String> colArrival;
-    @FXML
-    private TableColumn<TrainSearchResult, String> colTime;
-    @FXML
-    private TableColumn<TrainSearchResult, Integer> colSeats;
-    @FXML
-    private TableColumn<TrainSearchResult, String> colDate;
-    @FXML
-    private TableColumn<TrainSearchResult, Integer> colTrainId;
+    // --- Campi UI ---
+    @FXML private TextField departureField;
+    @FXML private TextField arrivalField;
+    @FXML private DatePicker datePicker;
+    @FXML private ComboBox<String> trainTypeBox;
+    @FXML private ComboBox<String> classBox;
+    @FXML private TableView<TrainSearchResult> resultsTable;
+    @FXML private TableColumn<TrainSearchResult, String> colTrain;
+    @FXML private TableColumn<TrainSearchResult, String> colDeparture;
+    @FXML private TableColumn<TrainSearchResult, String> colArrival;
+    @FXML private TableColumn<TrainSearchResult, String> colTime;
+    @FXML private TableColumn<TrainSearchResult, Integer> colSeats;
+    @FXML private TableColumn<TrainSearchResult, String> colDate;
+    @FXML private TableColumn<TrainSearchResult, Integer> colTrainId;
 
+    // --- Stato interno ---
     private final ObservableList<TrainSearchResult> searchResults = FXCollections.observableArrayList();
     private TrainClient trainClient;
 
+    /**
+     * Inizializza il controller configurando tabella, autocompletamento e validazioni.
+     */
     @FXML
     public void initialize() {
-        // Inizializza il client gRPC
+        // Inizializza client
         trainClient = new TrainClient("localhost", 9090);
 
+        // Configura tabella risultati
+        setupTable();
+
+        // Configura autocompletamento
+        setupAutoComplete();
+
+        // Configura valori di default
+        setupDefaults();
+    }
+
+    private void setupTable() {
         // Imposta il datePicker con la data odierna e limita la selezione a oggi o date future
         datePicker.setValue(LocalDate.now());
         datePicker.setDayCellFactory(picker -> new DateCell() {
@@ -97,19 +101,23 @@ public class SearchTrainsController {
             }
         });
 
+        // Assegna i risultati alla tabella
+        resultsTable.setItems(searchResults);
+    }
+
+    private void setupAutoComplete() {
+        // Uso la utility centralizzata per l'autocompletamento delle stazioni
+        AutoCompleteUtil.setupAutoComplete(departureField, this::fetchStationSuggestions);
+        AutoCompleteUtil.setupAutoComplete(arrivalField, this::fetchStationSuggestions);
+    }
+
+    private void setupDefaults() {
         // Inizializza i combobox con i valori predefiniti
         trainTypeBox.setItems(FXCollections.observableArrayList("Tutti", "Regionale", "Intercity", "Frecciarossa"));
         trainTypeBox.getSelectionModel().selectFirst();
 
         classBox.setItems(FXCollections.observableArrayList("Tutte", "Economy", "Business", "Executive"));
         classBox.getSelectionModel().selectFirst();
-
-        // Uso la utility centralizzata per l'autocompletamento delle stazioni
-        AutoCompleteUtil.setupAutoComplete(departureField, this::fetchStationSuggestions);
-        AutoCompleteUtil.setupAutoComplete(arrivalField, this::fetchStationSuggestions);
-
-        // Assegna i risultati alla tabella
-        resultsTable.setItems(searchResults);
     }
 
     private void handleTrainSelection(TrainSearchResult result) {
@@ -131,7 +139,6 @@ public class SearchTrainsController {
                     if (responseDetails != null) {
                         // Estrai le informazioni dal treno
                         Train trainDetails = responseDetails.getTrain();
-                        List<Stop> stops = responseDetails.getStopsList();
                         boolean isAvailable = responseDetails.getAvailable();
                         int seatsAvailable = responseDetails.getSeatsAvailable();
 
@@ -139,7 +146,6 @@ public class SearchTrainsController {
                         if (isAvailable && seatsAvailable > 0) {
                             // Salva i dettagli del treno selezionato in un servizio condiviso
                             SelectedTrainService.getInstance().setSelectedTrain(trainDetails);
-                            SelectedTrainService.getInstance().setStops(stops);
                             // Salva anche la data e l'orario selezionati
                             SelectedTrainService.getInstance().setSelectedDate(result.getDate());
                             SelectedTrainService.getInstance().setSelectedTime(result.getTime());
@@ -158,15 +164,6 @@ public class SearchTrainsController {
                 }
             }
         });
-    }
-
-
-    private void buyTicketForTrain(Train train) {
-        // Salva il treno selezionato (magari in un service condiviso)
-        SelectedTrainService.getInstance().setSelectedTrain(train);
-
-        // Passa alla schermata di acquisto
-        SceneManager.getInstance().switchTo(SceneManager.BUY_TICKET);
     }
 
     /**
@@ -204,7 +201,7 @@ public class SearchTrainsController {
                     dateTimestamp,
                     timeFromTimestamp,
                     timeToTimestamp,
-                    tipologia // nuovo parametro
+                    tipologia
             );
 
             // Converte i risultati e aggiorna la tabella
