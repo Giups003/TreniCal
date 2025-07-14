@@ -39,7 +39,7 @@ public class TicketServer {
             // Avvia il server
             server.start();
 
-            // Registra un hook per lo spegnimento pulito
+            // Registra un hook per lo spegnimento pulito del server
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 System.out.println("Arresto del server in corso...");
                 server.shutdown();
