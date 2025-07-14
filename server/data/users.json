@@ -1,0 +1,34 @@
+[
+  {
+    "password": "password123",
+    "customerType": "vip",
+    "tickets": [],
+    "fidelityMember": true,
+    "email": "executive@vipservices.premium",
+    "username": "vip.customer"
+  },
+  {
+    "password": "password123",
+    "customerType": "corporate",
+    "tickets": [],
+    "fidelityMember": false,
+    "email": "admin@acmecorp.business",
+    "username": "corp.user"
+  },
+  {
+    "password": "capo",
+    "customerType": "corporate",
+    "tickets": [],
+    "fidelityMember": false,
+    "email": "capo@info.corp.it",
+    "username": "cap"
+  },
+  {
+    "password": "password123",
+    "customerType": "standard",
+    "tickets": [],
+    "fidelityMember": false,
+    "email": "mario.rossi@gmail.com",
+    "username": "mario.rossi"
+  }
+]
