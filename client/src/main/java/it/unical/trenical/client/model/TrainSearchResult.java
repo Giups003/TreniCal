@@ -3,6 +3,10 @@ package it.unical.trenical.client.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Modello dati per risultati ricerca treni.
+ * Utilizzato per il trasferimento dati tra servizi gRPC e UI client.
+ */
 public class TrainSearchResult {
     private final int trainId;
     private final String trainName;

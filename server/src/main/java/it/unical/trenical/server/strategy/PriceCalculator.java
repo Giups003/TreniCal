@@ -322,14 +322,14 @@ public class PriceCalculator {
      */
     private void initializePromoCodeDiscounts() {
         // Codici promozionali standard - SOLO per utenti generali
-        promoCodeDiscounts.put("ESTATE2024", 0.15);
+        promoCodeDiscounts.put("ESTATE2025", 0.15);
         promoCodeDiscounts.put("WEEKEND", 0.10);
         promoCodeDiscounts.put("STUDENT", 0.20);
         promoCodeDiscounts.put("FAMILY", 0.12);
         promoCodeDiscounts.put("SENIOR", 0.18);
 
         // Codici temporanei/stagionali generali
-        promoCodeDiscounts.put("NATALE2024", 0.14);
+        promoCodeDiscounts.put("NATALE2025", 0.14);
         promoCodeDiscounts.put("PASQUA", 0.16);
         promoCodeDiscounts.put("BLACKFRIDAY", 0.35);
     }

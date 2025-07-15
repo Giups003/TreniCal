@@ -398,6 +398,13 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
     }
     /**
      * Gestisce la richiesta di annullamento di un biglietto.
+     * Calcola la penale in base ai giorni rimanenti prima della partenza:
+     * - Più di 7 giorni: 0% di penale
+     * - 4-7 giorni: 10% di penale
+     * - 2-3 giorni: 25% di penale
+     * - 1 giorno: 50% di penale
+     * - Stesso giorno: 100% di penale (nessun rimborso)
+     *
      * @param request Richiesta contenente l'ID del biglietto da annullare.
      * @param responseObserver Stream per inviare la risposta al client.
      */
@@ -406,6 +413,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
         try {
             String ticketId = request.getTicketId();
             System.out.println("[cancelTicket] Richiesta annullamento per biglietto ID: " + ticketId);
+
             if (ticketId.isEmpty()) {
                 OperationResponse response = OperationResponse.newBuilder()
                         .setSuccess(false)
@@ -415,6 +423,7 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 responseObserver.onCompleted();
                 return;
             }
+
             Ticket ticket = dataStore.getTicketById(ticketId);
             if (ticket == null) {
                 OperationResponse response = OperationResponse.newBuilder()
@@ -425,22 +434,107 @@ public class TicketServiceImpl extends TicketServiceGrpc.TicketServiceImplBase {
                 responseObserver.onCompleted();
                 return;
             }
-            // Aggiorna lo stato del biglietto a "Annullato" invece di cancellarlo
-            Ticket annullato = ticket.toBuilder().setStatus("Annullato").build();
+
+            // Verifica se il biglietto è già annullato o scaduto
+            if ("Annullato".equalsIgnoreCase(ticket.getStatus()) || "Scaduto".equalsIgnoreCase(ticket.getStatus())) {
+                OperationResponse response = OperationResponse.newBuilder()
+                        .setSuccess(false)
+                        .setMessage("Il biglietto è già " + ticket.getStatus().toLowerCase() + "!")
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+
+            // Calcola i giorni rimanenti fino alla partenza
+            LocalDate today = LocalDate.now();
+            LocalDate travelDate = Instant.ofEpochSecond(ticket.getTravelDate().getSeconds())
+                    .atZone(ZoneId.systemDefault()).toLocalDate();
+
+            long daysUntilTravel = java.time.temporal.ChronoUnit.DAYS.between(today, travelDate);
+
+            // Se la data di viaggio è nel passato, non permettere l'annullamento
+            if (daysUntilTravel < 0) {
+                OperationResponse response = OperationResponse.newBuilder()
+                        .setSuccess(false)
+                        .setMessage("Non è possibile annullare un biglietto per una data passata!")
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+
+            // Calcola la penale in base ai giorni rimanenti
+            double originalPrice = ticket.getPrice();
+            double penaltyPercentage = calculateCancellationPenalty(daysUntilTravel);
+            double penaltyAmount = originalPrice * (penaltyPercentage / 100.0);
+            double refundAmount = originalPrice - penaltyAmount;
+
+            // Aggiorna lo stato del biglietto a "Annullato"
+            Ticket cancelledTicket = ticket.toBuilder()
+                    .setStatus("Annullato")
+                    .setPrice(refundAmount) // Imposta il prezzo come importo rimborsato
+                    .build();
+
             dataStore.deleteTicket(ticketId);
-            dataStore.addTicket(annullato);
+            dataStore.addTicket(cancelledTicket);
+
+            // Prepara il messaggio di risposta dettagliato
+            String message;
+            if (penaltyPercentage == 0) {
+                message = String.format(
+                    "Biglietto annullato con successo! Rimborso completo di %.2f € (nessuna penale applicata - annullamento con più di 7 giorni di anticipo).",
+                    refundAmount
+                );
+            } else if (penaltyPercentage == 100) {
+                message = String.format(
+                    "Biglietto annullato. Nessun rimborso disponibile (annullamento nel giorno di partenza). Prezzo originale: %.2f €.",
+                    originalPrice
+                );
+            } else {
+                message = String.format(
+                    "Biglietto annullato con successo! Prezzo originale: %.2f €, Penale (%.0f%%): %.2f €, Rimborso: %.2f € (annullamento con %d giorni di anticipo).",
+                    originalPrice, penaltyPercentage, penaltyAmount, refundAmount, daysUntilTravel
+                );
+            }
+
             OperationResponse response = OperationResponse.newBuilder()
                     .setSuccess(true)
-                    .setMessage("Biglietto annullato con successo.")
+                    .setMessage(message)
+                    .setOldPrice(originalPrice)
+                    .setPenalty(penaltyAmount)
+                    .setTotal(refundAmount)
                     .build();
+
             responseObserver.onNext(response);
             responseObserver.onCompleted();
+
         } catch (Exception e) {
             responseObserver.onError(
                     Status.INTERNAL
                             .withDescription("Errore durante l'annullamento del biglietto: " + e.getMessage())
                             .asRuntimeException()
             );
+        }
+    }
+
+    /**
+     * Calcola la percentuale di penale per l'annullamento in base ai giorni rimanenti.
+     *
+     * @param daysUntilTravel Numero di giorni tra oggi e la data di viaggio
+     * @return Percentuale di penale (0-100)
+     */
+    private double calculateCancellationPenalty(long daysUntilTravel) {
+        if (daysUntilTravel > 7) {
+            return 0.0;   // Nessuna penale se più di 7 giorni
+        } else if (daysUntilTravel >= 4) {
+            return 10.0;  // 10% di penale tra 4-7 giorni
+        } else if (daysUntilTravel >= 2) {
+            return 25.0;  // 25% di penale tra 2-3 giorni
+        } else if (daysUntilTravel == 1) {
+            return 50.0;  // 50% di penale se 1 giorno
+        } else {
+            return 100.0; // 100% di penale (nessun rimborso) se stesso giorno
         }
     }
 

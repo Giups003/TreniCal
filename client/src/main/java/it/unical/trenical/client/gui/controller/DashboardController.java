@@ -5,7 +5,6 @@ import io.grpc.ManagedChannelBuilder;
 import it.unical.trenical.client.gui.SceneManager;
 import it.unical.trenical.client.session.UserSession;
 import it.unical.trenical.grpc.notification.NotificationServiceGrpc;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -251,6 +250,9 @@ public class DashboardController {
 
     @FXML
     private void onLogout() {
+        // Pulisce anche le preferenze salvate (ricorda accesso)
+        LoginController.clearSavedPreferences();
+
         UserSession.setUsername(null);
         UserSession.setAdmin(false);
         UserSession.setLoyaltyMember(false);

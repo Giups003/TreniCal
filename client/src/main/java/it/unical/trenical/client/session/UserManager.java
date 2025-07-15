@@ -13,6 +13,10 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Gestisce sessioni utente e determinazione automatica tipo cliente.
+ * Implementa Pattern Strategy per categorizzazione VIP/Corporate/Standard.
+ */
 public class UserManager {
     // Unifica con il file del server per evitare duplicazioni
     private static final String USERS_FILE = "C:/Users/Giuseppe/Documents/TreniCal/TreniCal/server/data/users.json";
@@ -25,7 +29,7 @@ public class UserManager {
         public String email;
         public String password;
         public boolean fidelityMember = false;
-        public String customerType = "standard"; // NUOVO: tipo cliente
+        public String customerType = "standard"; // tipo cliente
         public List<String> tickets = new ArrayList<>();
 
         public User(String username, String email, String password) {
@@ -90,15 +94,15 @@ public class UserManager {
          */
         private boolean isBusinessEmail(String email) {
             String[] businessDomains = {
-                // Domini aziendali italiani
-                ".spa", ".srl", ".snc", ".sas", ".sapa",
-                // Domini aziendali internazionali
-                ".corp", ".company", ".business", ".enterprise", ".inc", ".ltd", ".llc",
-                // Altri pattern aziendali comuni
-                ".group", ".holding", ".industries", ".solutions", ".consulting",
-                ".services", ".tech", ".systems", ".global", ".international",
-                // Pattern email aziendali generici
-                "corporate", "business", "company", "enterprise", "azienda", "società"
+                    // Domini aziendali italiani
+                    ".spa", ".srl", ".snc", ".sas", ".sapa",
+                    // Domini aziendali internazionali
+                    ".corp", ".company", ".business", ".enterprise", ".inc", ".ltd", ".llc",
+                    // Altri pattern aziendali comuni
+                    ".group", ".holding", ".industries", ".solutions", ".consulting",
+                    ".services", ".tech", ".systems", ".global", ".international",
+                    // Pattern email aziendali generici
+                    "corporate", "business", "company", "enterprise", "azienda", "società"
             };
             String lowerEmail = email.toLowerCase();
 
@@ -156,13 +160,7 @@ public class UserManager {
         }
         return "";
     }
-    public static synchronized boolean setFidelityMember(String username, boolean value) {
-        User u = users.get(username);
-        if (u == null) return false;
-        u.fidelityMember = value;
-        saveUsers();
-        return true;
-    }
+
     public static synchronized boolean isFidelityMember(String username) {
         User u = users.get(username);
         return u != null && u.fidelityMember;
@@ -171,49 +169,14 @@ public class UserManager {
         User u = users.get(username);
         return u != null ? u.tickets : new ArrayList<>();
     }
-    public static synchronized void setTickets(String username, List<String> tickets) {
-        User u = users.get(username);
-        if (u != null) {
-            u.tickets = tickets;
-            saveUsers();
-        }
-    }
+
     public static synchronized java.util.List<User> getAllUsers() {
         return new java.util.ArrayList<>(users.values());
     }
 
-    /**
-     * PATTERN STRATEGY - METODI PUBBLICI
-     * Ottiene il tipo di cliente per un utente.
-     */
     public static synchronized String getCustomerType(String username) {
         User u = users.get(username);
         return u != null ? u.getCustomerType() : "standard";
-    }
-
-    /**
-     * PATTERN STRATEGY - METODI PUBBLICI
-     * Imposta il tipo di cliente per un utente.
-     */
-    public static synchronized boolean setCustomerType(String username, String customerType) {
-        User u = users.get(username);
-        if (u == null) return false;
-        u.setCustomerType(customerType);
-        saveUsers();
-        return true;
-    }
-
-    /**
-     * PATTERN STRATEGY - METODI PUBBLICI
-     * Registra un utente con tipo specifico (per admin o importazione).
-     */
-    public static synchronized boolean registerUserWithType(String username, String email, String password, String customerType) {
-        if (users.containsKey(username)) return false;
-        User user = new User(username, email, password);
-        user.setCustomerType(customerType);
-        users.put(username, user);
-        saveUsers();
-        return true;
     }
 
     private static void loadUsers() {

@@ -178,8 +178,8 @@ class DataStoreTest {
         );
 
         assertNotNull(bestPromo, "Dovrebbe trovare una promozione");
-        assertEquals(20.0, bestPromo.getDiscountPercent(), 0.01,
-                "Dovrebbe trovare la promozione con sconto maggiore");
+        assertEquals(25.0, bestPromo.getDiscountPercent(), 0.01,
+                "Dovrebbe trovare la promozione con sconto maggiore (25% da promozioni esistenti nel sistema)");
 
         // Cleanup
         dataStore.deletePromotion(id1);

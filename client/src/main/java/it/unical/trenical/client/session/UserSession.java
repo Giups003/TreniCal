@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
+/**
+ * Gestisce lo stato della sessione utente corrente.
+ * Mantiene informazioni di login, privilegi admin e preferenze utente.
+ */
+
 public class UserSession {
     private static String username;
     private static boolean isAdmin = false;
@@ -85,4 +90,3 @@ public class UserSession {
         prefs.remove(LOYALTY_KEY);
     }
 }
-

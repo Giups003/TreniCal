@@ -189,21 +189,15 @@ public class LoginController {
         }
     }
 
-    @FXML
-    public void onLogout() {
+    /**
+     * Pulisce le preferenze salvate per il "ricorda accesso".
+     * Chiamato dal DashboardController durante il logout.
+     */
+    public static void clearSavedPreferences() {
         Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
         prefs.remove(PREF_KEY);
         prefs.remove(PREF_EMAIL_KEY);
         prefs.remove("trenical_password");
-        UserSession.setUsername("");
-        UserSession.setEmail("");
-        UserSession.setAdmin(false);
-        UserSession.setLoyaltyMember(false);
-        UserSession.clearTickets();
-        usernameField.setText("");
-        emailField.setText("");
-        passwordField.setText("");
-        // Torna alla schermata di login
-        SceneManager.getInstance().switchTo(SceneManager.LOGIN);
+        prefs.putBoolean(PREF_REMEMBER_KEY, false);
     }
 }

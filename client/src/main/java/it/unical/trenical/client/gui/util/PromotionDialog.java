@@ -1,5 +1,6 @@
-package it.unical.trenical.client.gui.controller;
+package it.unical.trenical.client.gui.util;
 
+import it.unical.trenical.client.gui.controller.PromotionsAdminController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;

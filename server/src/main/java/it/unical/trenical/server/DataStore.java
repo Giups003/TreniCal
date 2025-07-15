@@ -21,7 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.io.Serializable;
 
-// Applicazione del pattern Singleton
+/**
+ * Gestisce la persistenza e l'accesso centralizzato ai dati del sistema.
+ * Implementa pattern Singleton con generazione automatica treni e fuso orario corretto.
+ */
 public final class DataStore implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -146,6 +149,8 @@ public final class DataStore implements Serializable {
         int maxId = trains.stream().mapToInt(Train::getId).max().orElse(0);
         var today = java.time.LocalDate.now();
         var rand = new java.util.Random();
+        // Usa il fuso orario italiano per evitare problemi di conversione
+        var zoneId = java.time.ZoneId.of("Europe/Rome");
         Set<String> uniqueTrainKeys = new HashSet<>();
         for (Route route : routes) {
             for (int w = 0; w < weeks; w++) {
@@ -166,10 +171,10 @@ public final class DataStore implements Serializable {
                                 .setDepartureStation(getStationById(route.getDepartureStationId()).getName())
                                 .setArrivalStation(getStationById(route.getArrivalStationId()).getName())
                                 .setDepartureTime(com.google.protobuf.Timestamp.newBuilder()
-                                        .setSeconds(departure.toEpochSecond(java.time.ZoneOffset.UTC))
+                                        .setSeconds(departure.atZone(zoneId).toEpochSecond())
                                         .build())
                                 .setArrivalTime(com.google.protobuf.Timestamp.newBuilder()
-                                        .setSeconds(arrival.toEpochSecond(java.time.ZoneOffset.UTC))
+                                        .setSeconds(arrival.atZone(zoneId).toEpochSecond())
                                         .build())
                                 .build();
                         trains.add(train);
@@ -505,19 +510,6 @@ public final class DataStore implements Serializable {
         return new ArrayList<>(routes);
     }
 
-    public synchronized Route getRouteById(int id) {
-        return routes.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
-    }
-
-    public synchronized void addRoute(Route route) {
-        if (route == null || route.getId() <= 0) return;
-        boolean exists = routes.stream().anyMatch(r -> r.getId() == route.getId());
-        if (!exists) {
-            routes.add(route);
-            saveData();
-        }
-    }
-
     public synchronized List<Promotion> getAllPromotions() {
         return new ArrayList<>(promotions);
     }
@@ -746,20 +738,6 @@ public final class DataStore implements Serializable {
 
         usersData.put(username, userData);
         saveUsersData(usersData);
-    }
-
-    /**
-     * Verifica se un utente è membro fidelity (SOLO LETTURA).
-     */
-    public boolean isFidelityMember(String username) {
-        if (username == null || username.isEmpty()) return false;
-
-        Map<String, Map<String, Object>> usersData = loadUsersData();
-        Map<String, Object> userData = usersData.get(username);
-        if (userData != null) {
-            return (Boolean) userData.getOrDefault("fidelityMember", false);
-        }
-        return false;
     }
 
     /**

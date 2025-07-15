@@ -62,7 +62,7 @@ class PriceCalculatorTest {
 
         // Prezzo con promo
         double priceWithPromo = priceCalculator.calculateTicketPrice(
-                "Roma", "Milano", "Seconda Classe", travelDate, "ESTATE2024", "Frecciarossa"
+                "Roma", "Milano", "Seconda Classe", travelDate, "ESTATE2025", "Frecciarossa"
         );
 
         assertTrue(priceWithPromo < priceWithoutPromo,
@@ -129,22 +129,22 @@ class PriceCalculatorTest {
     void testPromoCodeValidationAcrossStrategies() {
         // Test strategia Standard
         priceCalculator.setStrategyByType("standard");
-        assertTrue(priceCalculator.isValidPromoCode("ESTATE2024", "standard"),
-                  "ESTATE2024 dovrebbe essere valido per clienti standard");
+        assertTrue(priceCalculator.isValidPromoCode("ESTATE2025", "standard"),
+                  "ESTATE2025 dovrebbe essere valido per clienti standard");
         assertFalse(priceCalculator.isValidPromoCode("INVALIDCODE", "standard"),
                    "INVALIDCODE non dovrebbe essere valido");
 
         // Test strategia VIP
         priceCalculator.setStrategyByType("vip");
-        assertTrue(priceCalculator.isValidPromoCode("ESTATE2024", "vip"),
-                  "ESTATE2024 dovrebbe essere valido per clienti VIP");
-        assertTrue(priceCalculator.isValidPromoCode("VIP2024", "vip"),
-                  "VIP2024 dovrebbe essere valido per clienti VIP");
+        assertTrue(priceCalculator.isValidPromoCode("ESTATE2025", "vip"),
+                  "ESTATE2025 dovrebbe essere valido per clienti VIP");
+        assertTrue(priceCalculator.isValidPromoCode("VIP2025", "vip"),
+                  "VIP2025 dovrebbe essere valido per clienti VIP");
 
         // Test strategia Corporate
         priceCalculator.setStrategyByType("corporate");
-        assertTrue(priceCalculator.isValidPromoCode("CORP2024", "corporate"),
-                  "CORP2024 dovrebbe essere valido per clienti corporate");
+        assertTrue(priceCalculator.isValidPromoCode("CORP2025", "corporate"),
+                  "CORP2025 dovrebbe essere valido per clienti corporate");
     }
 
     @Test
@@ -153,7 +153,7 @@ class PriceCalculatorTest {
         Timestamp travelDate = createTravelDate(7);
 
         var comparison = priceCalculator.calculatePriceWithAllStrategies(
-                "Roma", "Milano", "Prima Classe", travelDate, "ESTATE2024", "Frecciarossa"
+                "Roma", "Milano", "Prima Classe", travelDate, "ESTATE2025", "Frecciarossa"
         );
 
         assertEquals(3, comparison.size(), "Dovrebbero esserci 3 strategie");
@@ -174,7 +174,7 @@ class PriceCalculatorTest {
         assertTrue(corporatePrice <= standardPrice,
                   "Il prezzo Corporate dovrebbe essere minore o uguale al prezzo standard");
 
-        System.out.println("Confronto prezzi con ESTATE2024:");
+        System.out.println("Confronto prezzi con ESTATE2025:");
         comparison.forEach((strategy, price) ->
             System.out.println(strategy + ": " + String.format("%.2f", price) + "€")
         );
@@ -258,7 +258,7 @@ class PriceCalculatorTest {
         // Promozione generale
         Promotion generalPromo = Promotion.newBuilder()
                 .setId(1)
-                .setName("ESTATE2024")
+                .setName("ESTATE2025")
                 .setDescription("Sconto estivo del 15%")
                 .setDiscountPercent(15.0)
                 .setValidFrom(createTimestamp(-30))
@@ -269,7 +269,7 @@ class PriceCalculatorTest {
         // Promozione VIP esclusiva
         Promotion vipPromo = Promotion.newBuilder()
                 .setId(2)
-                .setName("VIP2024")
+                .setName("VIP2025")
                 .setDescription("Sconto VIP esclusivo del 25%")
                 .setDiscountPercent(25.0)
                 .setValidFrom(createTimestamp(-10))
@@ -280,7 +280,7 @@ class PriceCalculatorTest {
         // Promozione Corporate
         Promotion corpPromo = Promotion.newBuilder()
                 .setId(3)
-                .setName("CORP2024")
+                .setName("CORP2025")
                 .setDescription("Sconto aziendale del 18%")
                 .setDiscountPercent(18.0)
                 .setValidFrom(createTimestamp(-15))

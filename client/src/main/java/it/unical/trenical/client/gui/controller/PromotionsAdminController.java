@@ -2,6 +2,7 @@ package it.unical.trenical.client.gui.controller;
 
 import com.google.protobuf.Empty;
 import it.unical.trenical.client.gui.SceneManager;
+import it.unical.trenical.client.gui.util.PromotionDialog;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

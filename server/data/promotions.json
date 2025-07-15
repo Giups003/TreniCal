@@ -19,8 +19,11 @@
   "id": 3,
   "name": "CORP2025",
   "description": "Sconto aziendale del 18%",
-  "discountPercent": 18.0,
-  "validFrom": "2025-06-10T22:00:00Z",
-  "validTo": "2025-08-09T22:00:00Z",
-  "userTypes": ["corporate"]
+  "discountPercent": 20.0,
+  "routeNames": ["Frecciarossa Roma-Milano", "Italo Milano-Napoli", "Intercity Napoli-Reggio Calabria", "Regionale Reggio-Lamezia", "Regionale Lamezia-Cosenza", "Regionale Cosenza-Catanzaro", "Regionale Bari-Venezia", "Regionale Torino-Genova", "Regionale Firenze-Bologna", "Regionale Napoli-Paola", "Regionale Cosenza-Reggio Calabria", "Regionale Lamezia-Catanzaro", "Regionale Crotone-Catanzaro", "Regionale Paola-Cosenza", "Regionale Lamezia-Crotone"],
+  "serviceClasses": ["Prima Classe", "Seconda Classe"],
+  "validFrom": "2025-06-10T00:00:00Z",
+  "validTo": "2025-08-09T00:00:00Z",
+  "trainType": "Frecciarossa,Intercity,Regionale,Italo",
+  "userTypes": ["Standard", "VIP", "corporate"]
 }]

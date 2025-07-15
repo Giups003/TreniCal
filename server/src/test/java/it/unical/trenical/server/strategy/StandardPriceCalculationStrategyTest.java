@@ -81,7 +81,7 @@ class StandardPriceCalculationStrategyTest {
         );
 
         double priceWithPromo = strategy.calculateTicketPrice(
-                "Roma", "Milano", "Seconda Classe", travelDate, "ESTATE2024", "Frecciarossa"
+                "Roma", "Milano", "Seconda Classe", travelDate, "ESTATE2025", "Frecciarossa"
         );
 
         assertTrue(priceWithPromo < priceWithoutPromo,
@@ -118,8 +118,8 @@ class StandardPriceCalculationStrategyTest {
     @DisplayName("Test validazione codici promo")
     void testPromoCodeValidation() {
         // Codici dal sistema promozioni
-        assertTrue(strategy.isValidPromoCode("ESTATE2024"),
-                  "ESTATE2024 dovrebbe essere valido");
+        assertTrue(strategy.isValidPromoCode("ESTATE2025"),
+                  "ESTATE2025 dovrebbe essere valido");
 
         // Codici legacy
         assertTrue(strategy.isValidPromoCode("WEEKEND"),
@@ -190,7 +190,7 @@ class StandardPriceCalculationStrategyTest {
         distanceMap.put("Milano", milanoDistances);
 
         // Setup codici promo legacy
-        promoCodeDiscounts.put("ESTATE2024", 0.15);
+        promoCodeDiscounts.put("ESTATE2025", 0.15);
         promoCodeDiscounts.put("WEEKEND", 0.10);
         promoCodeDiscounts.put("STUDENT", 0.20);
         promoCodeDiscounts.put("FAMILY", 0.12);
@@ -201,7 +201,7 @@ class StandardPriceCalculationStrategyTest {
 
         Promotion promo = Promotion.newBuilder()
                 .setId(1)
-                .setName("ESTATE2024")
+                .setName("ESTATE2025")
                 .setDescription("Sconto estivo del 15%")
                 .setDiscountPercent(15.0)
                 .setValidFrom(createTimestamp(-30))
