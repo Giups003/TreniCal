@@ -334,11 +334,4 @@ public class TicketServiceImplTest {
         assertFalse(response.getSuccess());
         assertTrue(response.getMessage().contains("non trovato"));
     }
-
-    @AfterEach
-    public void cleanup() {
-        // Pulisci il DataStore dopo ogni test
-        // Questo test è difficile da simulare con DataStore reale
-        // Possiamo testare un errore con PriceCalculator invece
-    }
 }
