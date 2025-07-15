@@ -1,8 +1,6 @@
 package it.unical.trenical.server;
 
 import com.google.protobuf.Timestamp;
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import it.unical.trenical.grpc.common.Ticket;
 import it.unical.trenical.grpc.ticket.*;
@@ -120,7 +118,6 @@ public class TicketServiceImplTest {
     public void testPurchaseTicket_NoSeatsAvailable_Failure() {
         // Preparazione - questo test non può funzionare con il DataStore reale
         // perché non posso mockare checkAvailableSeats su un oggetto reale
-        // Saltiamo questo test o lo modifichiamo per usare condizioni reali
 
         // Per ora, testiamo uno scenario dove i posti sono effettivamente esauriti
         // creando abbastanza biglietti da riempire il treno
